@@ -4,7 +4,6 @@
  */
 package com.mycompany.amzsprijave;
 
-import com.mycompany.amzsprijave.PrijaveFacade;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.DateFormatSymbols;
@@ -16,20 +15,19 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
 import org.opencyc.api.CycObjectFactory;
 import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycObject;
 import org.opencyc.cycobject.CycSymbol;
 import org.opencyc.cycobject.ELMt;
 import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
 import org.opencyc.inference.InferenceResultSet;
 import org.opencyc.inference.InferenceWorkerSynch;
-import org.opencyc.cycobject.CycObject;
 
 @Named
 @RequestScoped
