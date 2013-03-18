@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Prijava.</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top">
+            <ui:insert name="top">Nova prijava.</ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content">   
+                <h:form>
+                    <table class="table">
+                        <tr>
+                            <th class="fc"> AMZS clan: </th>
+                            <th>
+                                <h:selectOneRadio id="clan" value="#{indexPresenter.prijava.clan}">
+                                    <f:selectItem id="item1" itemLabel="Da." itemValue="Da" />
+                                    <f:selectItem id="item2" itemLabel="Ne." itemValue="Ne" />
+                                </h:selectOneRadio>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="fc"> Clanska stevilka: </th>
+                            <th> <h:inputText value="#{indexPresenter.prijava.clanska_st}" /> </th>
+                        </tr>
+                        <tr>
+                            <th class="fc"> Ime: </th>
+                            <th> <h:inputText value="#{indexPresenter.prijava.ime}" /> </th>
+                        </tr>
+                        <tr>
+                            <th class="fc"> Priimek: </th>
+                            <th> <h:inputText value="#{indexPresenter.prijava.priimek}" /> </th>
+                        </tr>
+                        <tr>
+                            <th class="fc"> Znamka avtomobila: </th>
+                            <th>
+                                <h:selectOneMenu id="znamka" value="#{indexPresenter.prijava.znamka}">
+                                    <f:selectItem id="item3" itemLabel="Kia" itemValue="KiaCar" />
+                                    <f:selectItem id="item4" itemLabel="Citroen" itemValue="CitroenCar" />
+                                    <f:selectItem id="item5" itemLabel="Peugeot" itemValue="PeugeotCar" />
+                                    <f:selectItem id="item6" itemLabel="Renault" itemValue="RenaultCar" />
+                                    <f:selectItem id="item7" itemLabel="Skoda" itemValue="SkodaCar" />
+                                </h:selectOneMenu>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="fc"> Tip: </th>
+                            <th> <h:inputText value="#{indexPresenter.prijava.tip}" /> </th>
+                        </tr>
+                        <tr>
+                            <th class="fc"> Registrska stevilka: </th>
+                            <th> <h:inputText value="#{indexPresenter.prijava.registrska}" /> </th>
+                        </tr>
+                        
+                        <tr>
+                            <th class="fc"> Okvara: </th>
+                            <th>
+                                <p:selectOneMenu id="grandparent" value="#{errorFacade.grandparent}">
+                                    <f:selectItem itemLabel="Izberi dogodek" itemValue="" /> 
+                                    <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
+                                    <p:ajax update="parent_malf" listener="#{errorFacade.handleGrandparentChange}"/>
+                                </p:selectOneMenu>
+                                
+                                <p:selectOneMenu id="parent_malf" value="#{errorFacade.parent}">
+                                    <f:selectItem itemLabel="Izberi dogodek" itemValue="" /> 
+                                    <f:selectItems value="#{errorFacade.parent_malfL}"/>
+                                    <p:ajax update="malfunction" listener="#{errorFacade.handleParentChange}"/>
+                                </p:selectOneMenu>
+                                
+                                <p:selectOneMenu id="malfunction" value="#{errorFacade.malfunction}">
+                                    <f:selectItem itemLabel="Izberi dogodek" itemValue="" /> 
+                                    <f:selectItems value="#{errorFacade.malfunctionL}"/>
+                                </p:selectOneMenu>
+                            </th>
+                        </tr>
+                        
+                        <tr>
+                            <th> </th>
+                            <th class="fc"> <h:commandButton value="Vnesi" action="#{indexPresenter.asserting()}" /> </th> 
+                        </tr>
+                    </table>
+                </h:form>
+            </ui:insert>
+        </div>
+    </h:body>
+</html>

@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Asserted.</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content">    
+                <table class="tableAss">
+                    <tr>
+                        <td class="fc"> <b> AMZS clan: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.member}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b> Clanska stevilka: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.member_no}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b> Ime: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.name}" /> </td> 
+                    </tr> 
+                    <tr> 
+                        <td class="fc"> <b> Priimek: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.surname}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b> Znamka: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.brand}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b> Tip: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.type}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b> Registrska stevilka: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.registration}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b>  DOGODEK: </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.parent2_malf}" /> </td> 
+                    </tr>
+                    <tr> 
+                        <td class="fc"> <b>   </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.parent_malf}" /> </td> 
+                    </tr><tr> 
+                        <td class="fc"> <b>   </b> </td> 
+                        <td> <h:outputText escape="false" value="#{responsePresenter.malfunction}" /> </td> 
+                    </tr>
+                </table>
+            </ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+            <h:form>
+                <ui:insert name="content">    
+                    <table class="table">
+                        <tr> 
+                            <td class="fc"> Asserted: </td>
+                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionIssue}" /> </td> 
+                        </tr>
+                        <tr>
+                            <td> </td>
+                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionSender}" /> </td> 
+                        </tr>
+                        <tr>
+                            <td> </td>
+                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionEvent}" /> </td> 
+                        </tr>
+                        <tr>
+                            <td> </td>
+                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionVehicle}" /> </td> 
+                        </tr>
+
+                        <tr>
+                            <td> </td>
+                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionTopic}" /> </td> 
+                        </tr>
+                        <!--                        <tr>
+                                                    <td> </td>
+                                                    <td> <h:outputText escape="false" value="#{assertingPresenter.assertionOccursAt}" /> </td> 
+                                                </tr>-->
+                        <tr>
+                            <td> </td>
+                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionDate}" /> </td> 
+                        </tr>
+                    </table>
+                </ui:insert>
+                <div id="wrap"> 
+                    <iframe id="cureFrame" name="cureFrame" frameborder="0" scrolling="auto" width="1000" height="500" src="#{assertingPresenter.cure()}">
+                        <p>Your browser does not support iframes.</p>
+                    </iframe>
+                </div>
+            </h:form>
+        </div>
+    </h:body>
+</html>
