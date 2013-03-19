@@ -139,7 +139,7 @@ public class amzsIssue {
                         
                         CycList NameString = _c.makeCycList("(#$nameString  (#$AMZSUserFn \"" +id +"\") \"" +name +" " +surname +"\")");
                         _c.assertGaf(NameString, Mt);
-			assertionSender = "(senderOfInfo " +Issue +" " +User +"), User named: " +name +" " +surname +", oseba je clan AMZS kluba: "+member +"." ;
+			assertionSender = SenderOfInfo + ", " + NameString +".";
                         return assertionSender; 				
 	}
          
@@ -225,7 +225,8 @@ public class amzsIssue {
                             CycList Overheated = _c.makeCycList("(#$stateOfDevice (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$VehicleDevice-Overheated)");
                             _c.assertGaf(Overheated, Mt);
                         }
-			assertionVehicle = "(objectActedOn #$"+amzsEvent+" (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +")), car of type "+brand +" " +type +", with registration number: "+registration;
+			assertionVehicle = ObjectActedOn +", " +Registrska; 
+//                        manjkajo type, model in overheated v assertionVehicle!
                         return assertionVehicle; 				
 	}
 
@@ -236,26 +237,25 @@ public class amzsIssue {
                         CycConstant Predicate = _c.getConstantByName("topicOfInfoTransfer");
                         CycObject Mt = _c.getConstantByName("AMZSMt");
                         _c.assertGaf(Mt, Predicate, Issue, Event);
-			assertionTopic = "(topicOfInfoTransfer " +Issue +" " +Event +")";
+			assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
                         return assertionTopic; 				
 	}
 
         
-//        public String importIntoCycOccursAt(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-//			CycConstant Event = _c.getConstantByName(amzsEvent);
-//                        CycConstant LocationFn = _c.getConstantByName("StreetNamedFn");
-//                        String Street = "\"Trzaska cesta\"";
-//                        String City = "CityOfLjubljanaSlovenia";
-//                        
-//                        String Place = "(#$" +LocationFn +" " +Street +" #$" +City +")";
-//                        CycObject Mt = _c.getConstantByName("AMZSMt");
-//                        CycConstant Predicate = _c.getConstantByName("eventOccursAt");
-//                        String StringEvent = "(#$eventOccursAt #$" +Event +" " +Place +")";
-//                        CycList EventL = _c.makeCycList(StringEvent);
-//                        _c.assertGaf(EventL, Mt);
-//			assertionOccursAt = "(" +Predicate +" " +Event +" ("+LocationFn +" "+Street +" "+City +"))";
-//                        return assertionOccursAt; 				
-//	}
+        public String importIntoCycOccursAt(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+			CycConstant Event = _c.getConstantByName(amzsEvent);
+                        CycConstant LocationFn = _c.getConstantByName("StreetNamedFn");
+                        String Street = "\"Trzaska cesta\"";
+                        String City = "CityOfLjubljanaSlovenia";
+                        
+                        String Place = "(#$" +LocationFn +" " +Street +" #$" +City +")";
+                        CycObject Mt = _c.getConstantByName("AMZSMt");
+                        String StringEvent = "(#$eventOccursAt #$" +Event +" " +Place +")";
+                        CycList EventL = _c.makeCycList(StringEvent);
+                        _c.assertGaf(EventL, Mt);
+//			assertionOccursAt = EventL;
+                        return StringEvent; 				
+	}
         
         public String importIntoCycDate(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                         CycConstant Event = _c.getConstantByName(amzsEvent);
@@ -272,9 +272,9 @@ public class amzsIssue {
                         CycList EventL = _c.makeCycList(StringDate);
                         _c.assertGaf(EventL, Mt);
                         
-                        assertionDate = "Date: " +Year + "-" + Month +"-" +Day;
+//                        assertionDate = "Date: " +Year + "-" + Month +"-" +Day;
                                               
-                        return assertionDate;
+                        return StringDate;
                         
         }
         
