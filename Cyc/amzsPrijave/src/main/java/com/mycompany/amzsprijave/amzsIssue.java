@@ -4,6 +4,7 @@
  */
 package com.mycompany.amzsprijave;
 
+import com.mycompany.amzsprijave.PrijaveFacade;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.DateFormatSymbols;
@@ -15,19 +16,20 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
 import org.opencyc.api.CycObjectFactory;
 import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycList;
-import org.opencyc.cycobject.CycObject;
 import org.opencyc.cycobject.CycSymbol;
 import org.opencyc.cycobject.ELMt;
 import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
 import org.opencyc.inference.InferenceResultSet;
 import org.opencyc.inference.InferenceWorkerSynch;
+import org.opencyc.cycobject.CycObject;
 
 @Named
 @RequestScoped
@@ -203,27 +205,27 @@ public class amzsIssue {
         public String importIntoCycVehicle(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
 			CycObject Mt = _c.getConstantByName("AMZSMt");
                         
-                        CycList ObjectActedOn = _c.makeCycList("(#$objectActedOn  #$"+amzsEvent +" ( #$AMZSRoadVehicleFn \"" +name +" " +surname +"\"))");
+                        CycList ObjectActedOn = _c.makeCycList("(#$objectActedOn  #$"+amzsEvent +" ( #$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +"))");
                         _c.assertGaf(ObjectActedOn, Mt);
                         
-                        CycList Registrska = _c.makeCycList("(#$nameString  (#$AMZSRoadVehicleFn \"" +name +" " +surname +"\") \"" +registration +"\")");
+                        CycList Registrska = _c.makeCycList("(#$nameString  (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
                         _c.assertGaf(Registrska, Mt);
                         
                         if (type.isEmpty() == false){
-                            CycList Type = _c.makeCycList("(#$isa (#$AMZSRoadVehicleFn \"" +name +" " +surname +"\") #$"+type +")");
+                            CycList Type = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+type +")");
                             _c.assertGaf(Type, Mt);
                         }
                         
                         if (brand.isEmpty() == false){
-                            CycList Model = _c.makeCycList("(#$isa (#$AMZSRoadVehicleFn \"" +name +" " +surname +"\") #$"+brand +")");
+                            CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+brand +")");
                             _c.assertGaf(Model, Mt);
                         }
 
                         if("zakuhal".equals(malfunction)){
-                            CycList Overheated = _c.makeCycList("(#$isa (#$AMZSRoadVehicleFn \"" +name +" " +surname +"\") #$VehicleDevice-Overheated)");
+                            CycList Overheated = _c.makeCycList("(#$stateOfDevice (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$VehicleDevice-Overheated)");
                             _c.assertGaf(Overheated, Mt);
                         }
-			assertionVehicle = "(objectActedOn #$"+amzsEvent+" (#$AMZSRoadVehicleFn \"" +name +" " +surname +"\")), car of type "+brand +" " +type +", with registration number: "+registration;
+			assertionVehicle = "(objectActedOn #$"+amzsEvent+" (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +")), car of type "+brand +" " +type +", with registration number: "+registration;
                         return assertionVehicle; 				
 	}
 
@@ -239,21 +241,21 @@ public class amzsIssue {
 	}
 
         
-        public String importIntoCycOccursAt(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-			CycConstant Event = _c.getConstantByName(amzsEvent);
-                        CycConstant LocationFn = _c.getConstantByName("StreetNamedFn");
-                        String Street = "\"Trzaska cesta\"";
-                        String City = "CityOfLjubljanaSlovenia";
-                        
-                        String Place = "(#$" +LocationFn +" " +Street +" #$" +City +")";
-                        CycObject Mt = _c.getConstantByName("AMZSMt");
-                        CycConstant Predicate = _c.getConstantByName("eventOccursAt");
-                        String StringEvent = "(#$eventOccursAt #$" +Event +" " +Place +")";
-                        CycList EventL = _c.makeCycList(StringEvent);
-                        _c.assertGaf(EventL, Mt);
-			assertionOccursAt = "(" +Predicate +" " +Event +" ("+LocationFn +" "+Street +" "+City +"))";
-                        return assertionOccursAt; 				
-	}
+//        public String importIntoCycOccursAt(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+//			CycConstant Event = _c.getConstantByName(amzsEvent);
+//                        CycConstant LocationFn = _c.getConstantByName("StreetNamedFn");
+//                        String Street = "\"Trzaska cesta\"";
+//                        String City = "CityOfLjubljanaSlovenia";
+//                        
+//                        String Place = "(#$" +LocationFn +" " +Street +" #$" +City +")";
+//                        CycObject Mt = _c.getConstantByName("AMZSMt");
+//                        CycConstant Predicate = _c.getConstantByName("eventOccursAt");
+//                        String StringEvent = "(#$eventOccursAt #$" +Event +" " +Place +")";
+//                        CycList EventL = _c.makeCycList(StringEvent);
+//                        _c.assertGaf(EventL, Mt);
+//			assertionOccursAt = "(" +Predicate +" " +Event +" ("+LocationFn +" "+Street +" "+City +"))";
+//                        return assertionOccursAt; 				
+//	}
         
         public String importIntoCycDate(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                         CycConstant Event = _c.getConstantByName(amzsEvent);
