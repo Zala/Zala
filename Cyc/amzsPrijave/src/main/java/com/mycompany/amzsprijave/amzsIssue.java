@@ -50,6 +50,7 @@ public class amzsIssue {
         private List<Prijave> podatki;
         private String assertionIssue;
         private String amzsEvent;
+        private String amzsIssue;
         private String assertionVehicle;
         private String assertionSender;
         private String assertionTopic;
@@ -89,12 +90,12 @@ public class amzsIssue {
 	}
         
             @Inject private PrijaveFacade facade;
-    
+            
             @PostConstruct
             private void postconstruct(){        
                 podatki = facade.getPrijave();
                 int n = podatki.size()-1; 
-
+                                
                 id = podatki.get(0).getId();
                 name = String.valueOf(podatki.get(0).getIme());
                 surname = String.valueOf(podatki.get(0).getPriimek());
@@ -113,6 +114,8 @@ public class amzsIssue {
 			CycConstant AMZSReport = _c.getConstantByName("AMZSReport");
 			CycConstant CycIssue = _c.makeCycConstant("AMZSIssue"+id);
 			_c.assertIsa(CycIssue, AMZSReport);
+                        amzsIssue = CycIssue.toString();
+                        
                         assertionIssue = "(isa " +CycIssue +" " +AMZSReport + ")";
                         return assertionIssue; 				
 	}
@@ -143,22 +146,22 @@ public class amzsIssue {
                         return assertionSender; 				
 	}
          
-        
+             
         public String importIntoCycEvent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-			 
-                        if ("nesreca".equals(parent2_malf)){
-                            CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
-                            CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+id);
-                            _c.assertIsa(CycAccident, VehicleAccident);
-                            amzsEvent = CycAccident.toString();
-                        } 
-                        
+			
+                        if("nesreca".equals(parent2_malf)){ 
+                                CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
+                                CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+id);
+                                _c.assertIsa(CycAccident, VehicleAccident);
+                                amzsEvent = CycAccident.toString();
+                            }
+                                                
                         if("resevanje vozila".equals(parent2_malf)){
                             if("ostal v blatu".equals(parent_malf)){ 
-                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInMudSituation");
-                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckInMud"+id);
-                                    _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation);
-                                    amzsEvent = AMZSStuckSituation.toString();
+                                CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInMudSituation");
+                                CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckInMud"+id);
+                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation);
+                                amzsEvent = AMZSStuckSituation.toString();
                             }
                             if("ostal v snegu".equals(parent_malf)){ 
                                     CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInSnowSituation");
@@ -193,9 +196,9 @@ public class amzsIssue {
                         }
                         
                         else {
-                            CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("RoadVehicleMalfunction");
+                            CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                             CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
-                            _c.assertIsa(AMZSVehicleMalfunction, StuckOrConfinedVehicleSituation);
+                            _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
                             amzsEvent = AMZSVehicleMalfunction.toString();
                         }
                              
@@ -279,7 +282,7 @@ public class amzsIssue {
         }
         
         public String importIntoCycHlid(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                        CycConstant Event = _c.getConstantByName(amzsEvent);
+                        CycConstant Event = _c.getConstantByName(amzsIssue);
                         String Hlid = CycConstant.toCompactExternalId(Event, _c);
                         return Hlid;
         }

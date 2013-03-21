@@ -125,6 +125,6 @@ public class AssertingPresenter {
     public String cure() throws JSONException, UnknownHostException, CycApiException, IOException {
         CycAccess c = new CycAccess("aidemo", 3600);
         assertionHlid = issue.importIntoCycHlid(c);
-        return "http://aidemo:3603/cure/edit.jsp?conceptid=" +assertionHlid +"&cycHost=aidemo&cycPort=3600&userName=CycAdministrator";
+        return "http://aidemo:3603/cure/edit.jsp?conceptid=" +assertionHlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
     }
 }

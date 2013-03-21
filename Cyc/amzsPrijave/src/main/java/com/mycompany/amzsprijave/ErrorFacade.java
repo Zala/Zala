@@ -88,7 +88,13 @@ public class ErrorFacade {
     }
     
     
-    
+//    public int getByClass(String grandp, String par) {
+//        Query q = entityManager.createQuery("SELECT ID FROM " + Error.class.getName() 
+//                + " WHERE parent2_malf = :grandp AND parent_malf = :par")
+//                                .setParameter("grandp", grandp)
+//                                .setParameter("par", par);
+//        return (Integer) q.getSingleResult();
+//    }
     
     
     
