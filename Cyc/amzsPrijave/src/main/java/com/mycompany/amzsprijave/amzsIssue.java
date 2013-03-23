@@ -195,31 +195,36 @@ public class amzsIssue {
                             }
                         }
                         
-                        else {
+                        if("null".equals(parent_malf)){
+                            amzsEvent = "";
+                        }                            
+                        
+                        else{
                             CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                             CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
                             _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
                             amzsEvent = AMZSVehicleMalfunction.toString();
                         }
-                             
+                        
                         return amzsEvent;			
 	}
        
         public String importIntoCycVehicle(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-			CycObject Mt = _c.getConstantByName("AMZSMt");
-                        
+                    if(!"".equals(amzsEvent)){
+                        CycObject Mt = _c.getConstantByName("AMZSMt");
+
                         CycList ObjectActedOn = _c.makeCycList("(#$objectActedOn  #$"+amzsEvent +" ( #$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +"))");
                         _c.assertGaf(ObjectActedOn, Mt);
-                        
+
                         CycList Registrska = _c.makeCycList("(#$nameString  (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
                         _c.assertGaf(Registrska, Mt);
-                        
-                        if (type.isEmpty() == false){
+
+                        if (!type.isEmpty()){
                             CycList Type = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+type +")");
                             _c.assertGaf(Type, Mt);
                         }
-                        
-                        if (brand.isEmpty() == false){
+
+                        if (!brand.isEmpty()){
                             CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+brand +")");
                             _c.assertGaf(Model, Mt);
                         }
@@ -228,20 +233,25 @@ public class amzsIssue {
                             CycList Overheated = _c.makeCycList("(#$stateOfDevice (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$VehicleDevice-Overheated)");
                             _c.assertGaf(Overheated, Mt);
                         }
-			assertionVehicle = ObjectActedOn +", " +Registrska; 
+                        assertionVehicle = ObjectActedOn +", " +Registrska; 
+                    }
 //                        manjkajo type, model in overheated v assertionVehicle!
-                        return assertionVehicle; 				
+                    return assertionVehicle; 	
+                        
 	}
 
          
         public String importIntoCycTopic(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-			CycConstant Event = _c.getConstantByName(amzsEvent);
+			
+                    if(!"".equals(amzsEvent)){   
+                        CycConstant Event = _c.getConstantByName(amzsEvent);
                         CycConstant Issue = _c.getConstantByName("AMZSIssue"+id);
                         CycConstant Predicate = _c.getConstantByName("topicOfInfoTransfer");
                         CycObject Mt = _c.getConstantByName("AMZSMt");
                         _c.assertGaf(Mt, Predicate, Issue, Event);
-			assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
-                        return assertionTopic; 				
+                        assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
+                    }
+                    return assertionTopic; 				
 	}
 
         

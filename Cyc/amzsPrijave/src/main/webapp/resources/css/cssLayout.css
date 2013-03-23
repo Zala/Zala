@@ -62,7 +62,7 @@
 .table{
     border-collapse: collapse;
     text-align: left;
-    width: 90%;
+    width: 100%;
     border: 1px solid;
     border-color:#AFAFAF ;
     
@@ -71,7 +71,7 @@
 .tableAss{
     border-collapse: collapse;
     text-align: left;
-    width: 40%;
+    width: 50%;
     border: 1px solid;
     border-color:#AFAFAF ;
     

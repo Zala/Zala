@@ -41,10 +41,10 @@ public class AssertingPresenter {
         assertionIssue = issue.importIntoCycIssue(c);
         assertionEvent = issue.importIntoCycEvent(c);
         assertionVehicle = issue.importIntoCycVehicle(c);
-        assertionSender = issue.importIntoCycSender(c);
+//        assertionSender = issue.importIntoCycSender(c);
         assertionTopic = issue.importIntoCycTopic(c);
 //        assertionOccursAt = issue.importIntoCycOccursAt(c);
-        assertionDate = issue.importIntoCycDate(c);
+//        assertionDate = issue.importIntoCycDate(c);
     }
     
     
