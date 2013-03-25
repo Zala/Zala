@@ -47,18 +47,28 @@
                         <tr>
                             <th class="fc"> Znamka avtomobila: </th>
                             <th>
-                                <h:selectOneMenu id="znamka" value="#{indexPresenter.prijava.znamka}">
-                                    <f:selectItem id="item3" itemLabel="Kia" itemValue="KiaCar" />
-                                    <f:selectItem id="item4" itemLabel="Citroen" itemValue="CitroenCar" />
-                                    <f:selectItem id="item5" itemLabel="Peugeot" itemValue="PeugeotCar" />
-                                    <f:selectItem id="item6" itemLabel="Renault" itemValue="RenaultCar" />
-                                    <f:selectItem id="item7" itemLabel="Skoda" itemValue="SkodaCar" />
-                                </h:selectOneMenu>
+                                <p:selectOneMenu id="brand" value="#{indexPresenter.prijava.znamka}">
+                                    <f:selectItem itemLabel="Izberi znamko avtomobila" itemValue="" /> 
+                                    <f:selectItem id="kia" itemLabel="Kia" itemValue="KiaCar" />
+                                    <f:selectItem id="citroen" itemLabel="Citroen" itemValue="CitroenCar" />
+                                    <f:selectItem id="peugeot" itemLabel="Peugeot" itemValue="PeugeotCar" />
+                                    <f:selectItem id="renault" itemLabel="Renault" itemValue="RenaultCar" />
+                                    <f:selectItem id="skoda" itemLabel="Skoda" itemValue="SkodaCar" />
+                                </p:selectOneMenu>
                             </th>
                         </tr>
                         <tr>
-                            <th class="fc"> Tip: </th>
-                            <th> <h:inputText value="#{indexPresenter.prijava.tip}" /> </th>
+                            <th class="fc"> Tip avtomobila: </th>
+                            <th> <p:selectOneMenu id="type" value="#{indexPresenter.prijava.tip}">
+                                    <f:selectItem itemLabel="Izberi tip avtomobila" itemValue="" /> 
+                                    <f:selectItem id="sedan" itemLabel="Sedan" itemValue="SedanCar" />
+                                    <f:selectItem id="stationWagon" itemLabel="Karavan" itemValue="StationWagon" />
+                                    <f:selectItem id="hatchback" itemLabel="Kombilimuzina" itemValue="HatchbackCar" />
+                                    <f:selectItem id="multiPurpose" itemLabel="Vecnamensko vozilo" itemValue="MultiPurposeVehicle" />
+                                    <f:selectItem id="sports" itemLabel="Sportni avto" itemValue="SportsCar" />
+                                    <f:selectItem id="micro" itemLabel="Mikro avto" itemValue="MicroCar" />
+                                </p:selectOneMenu>
+                            </th>
                         </tr>
                         <tr>
                             <th class="fc"> Registrska stevilka: </th>
