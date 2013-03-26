@@ -26,7 +26,10 @@ public class AssertingPresenter {
     private String assertionIssue;
     private String assertionEvent;
     private String assertionVehicle;
+    private String exportStringType;
+    private String exportStringBrand;
     private String assertionSender;
+    private String assertionMember;
     private String assertionTopic;
     private String assertionOccursAt;
     private String assertionDate;
@@ -41,7 +44,10 @@ public class AssertingPresenter {
         assertionIssue = issue.importIntoCycIssue(c);
         assertionEvent = issue.importIntoCycEvent(c);
         assertionVehicle = issue.importIntoCycVehicle(c);
+        exportStringBrand = issue.exportFromCycBrand(c);
+        exportStringType = issue.exportFromCycType(c);
         assertionSender = issue.importIntoCycSender(c);
+        assertionMember = issue.importIntoCycMember(c);
         assertionTopic = issue.importIntoCycTopic(c);
 //        assertionOccursAt = issue.importIntoCycOccursAt(c);
 //        assertionDate = issue.importIntoCycDate(c);
@@ -73,6 +79,22 @@ public class AssertingPresenter {
     public void setAssertionVehicle(String assertionVehicle) {
         this.assertionVehicle = assertionVehicle;
     }
+
+    public String getExportStringBrand() {
+        return exportStringBrand;
+    }
+
+    public void setExportStringBrand(String exportStringBrand) {
+        this.exportStringBrand = exportStringBrand;
+    }
+
+    public String getExportStringType() {
+        return exportStringType;
+    }
+
+    public void setExportStringType(String exportStringType) {
+        this.exportStringType = exportStringType;
+    }
     
     public String getAssertionSender() {
         return assertionSender;
@@ -82,6 +104,14 @@ public class AssertingPresenter {
         this.assertionSender = assertionSender;
     }
 
+    public String getAssertionMember() {
+        return assertionMember;
+    }
+
+    public void setAssertionMember(String assertionMember) {
+        this.assertionMember = assertionMember;
+    }
+    
     public String getAssertionTopic() {
         return assertionTopic;
     }
