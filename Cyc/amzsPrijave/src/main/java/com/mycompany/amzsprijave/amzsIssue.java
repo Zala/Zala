@@ -100,17 +100,17 @@ public class amzsIssue {
                 int n = podatki.size()-1; 
                                 
                 id = podatki.get(0).getId();
-                name = String.valueOf(podatki.get(0).getIme());
-                surname = String.valueOf(podatki.get(0).getPriimek());
-                brand = String.valueOf(podatki.get(0).getZnamka());
-                type = String.valueOf(podatki.get(0).getTip());
-                registration = String.valueOf(podatki.get(0).getRegistrska());
-                member = String.valueOf(podatki.get(0).getClan());
-                member_no = String.valueOf(podatki.get(0).getClanska_st());
+                name = podatki.get(0).getIme();
+                surname = podatki.get(0).getPriimek();
+                brand = podatki.get(0).getZnamka();
+                type = podatki.get(0).getTip();
+                registration = podatki.get(0).getRegistrska();
+                member = podatki.get(0).getClan();
+                member_no = podatki.get(0).getClanska_st();
                 date = podatki.get(0).getDatum();
-                parent2_malf = String.valueOf(podatki.get(0).getParent2_malf());
-                parent_malf = String.valueOf(podatki.get(0).getParent_malf());
-                malfunction = String.valueOf(podatki.get(0).getMalfunction());
+                parent2_malf = podatki.get(0).getParent2_malf();
+                parent_malf = podatki.get(0).getParent_malf();
+                malfunction = podatki.get(0).getMalfunction();
             }
 
 	public String importIntoCycIssue(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
@@ -161,7 +161,7 @@ public class amzsIssue {
                         _c.assertGaf(Member, Mt);
                     }
 
-                    else if ("null".equals(member)){
+                    else if (member == null){
                         member = " / ";
                     }
 
@@ -217,7 +217,7 @@ public class amzsIssue {
                                     _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
                                     amzsEvent = AMZSStuckSituation.toString();
                             }
-                            else if("ostalo".equals(parent_malf) || "null".equals(parent_malf)){ 
+                            else if("ostalo".equals(parent_malf) || parent_malf == null){ 
 //                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleSituation");
 //                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckSituation"+id);
                                     CycList AMZSStuckSituation = _c.makeCycList("(#$StuckOrConfinedVehicleSituationFn #$" + amzsIssue +")");
@@ -227,7 +227,7 @@ public class amzsIssue {
                             }
                         }
                         
-                        else if("null".equals(parent2_malf)){
+                        else if(parent2_malf == null){
                             amzsEvent = "";
                         }                            
                                           
@@ -242,7 +242,7 @@ public class amzsIssue {
 	}
        
         public String printMalfunction(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    if ("null".equals(malfunction)){
+            if (malfunction == null){
                         malfunction = " / ";
                     }
                     return malfunction;
@@ -250,7 +250,7 @@ public class amzsIssue {
         
         
         public String printGrandparent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    if ("null".equals(parent2_malf)){
+                    if (parent2_malf == null){
                         parent2_malf = " / ";
                     }
                     return parent2_malf;
@@ -258,24 +258,32 @@ public class amzsIssue {
         
         
         public String printParent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    if ("null".equals(parent_malf)){
+                    if (parent_malf == null){
                         parent_malf = " / ";
                     }
                     return parent_malf;
          }
         
         
+        public CycList exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
+            
+                    CycList instances = _c.getAllInstances(fort);
+                    
+                    return instances;
+        }
+        
         public String importIntoCycVehicle(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycObject Mt = _c.getConstantByName("AMZSMt");
                         
-                    if (!type.equals("null")){
+                    if (!(type == null)){
 //                            CycList Type = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+type +")");
                         CycList Type = _c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+type +")");
                         _c.assertGaf(Type, Mt);
                         assertType = String.valueOf(Type);
                     }
 
-                    if (!brand.equals("null")){
+                    if (!(brand == null)){
                         CycList Brand = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+brand +")");
                         _c.assertGaf(Brand, Mt);
                         assertBrand = String.valueOf(Brand);
@@ -321,11 +329,11 @@ public class amzsIssue {
          }
         
         public String exportFromCycBrand(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    if (!brand.equals("null")){
+                    
+                    if (!(brand == null)){
                         CycObject English = _c.getConstantByName("EnglishMt");
                         CycFort fort = _c.getKnownFortByName(brand);
                         brand = String.valueOf(_c.getNameStrings(fort, English).get(0));
-
                     }
                     else {brand = " / ";}
                     return brand;
@@ -334,7 +342,7 @@ public class amzsIssue {
         
         public String exportFromCycType(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                    
-                    if (!type.equals("null")){
+                    if (!(type == null)){
                         CycObject English = _c.getConstantByName("EnglishMt");
                         CycFort fort = _c.getKnownFortByName(type);
                         type = String.valueOf(_c.getNameStrings(fort, English).get(0));

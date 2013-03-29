@@ -58,6 +58,17 @@
                             </th>
                         </tr>
                         <tr>
+                            <th> Tip: </th>
+                            <th>    
+                                <p:selectOneMenu id="type" value="#{indexPresenter.prijava.tip}">
+                                    <f:selectItem itemLabel="Izberi tip avtomobila" itemValue="" /> 
+                                    <f:selectItems value="#{responsePresenter.carBodyType}" var="style">
+                                        <f:selectItem  itemLabel="#{style}" itemValue="#{style}"/>
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </th>
+                        </tr>
+<!--                        <tr>
                             <th class="fc"> Tip avtomobila: </th>
                             <th> <p:selectOneMenu id="type" value="#{indexPresenter.prijava.tip}">
                                     <f:selectItem itemLabel="Izberi tip avtomobila" itemValue="" /> 
@@ -69,7 +80,7 @@
                                     <f:selectItem id="micro" itemLabel="Mikro avto" itemValue="MicroCar" />
                                 </p:selectOneMenu>
                             </th>
-                        </tr>
+                        </tr>-->
                         <tr>
                             <th class="fc"> Registrska stevilka: </th>
                             <th> <h:inputText value="#{indexPresenter.prijava.registrska}" /> </th>

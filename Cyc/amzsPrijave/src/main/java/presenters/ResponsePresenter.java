@@ -38,19 +38,20 @@ public class ResponsePresenter {
     private Date date;
     
     private List<String> parent2_malfL;
-    
     private List<Prijave> podatki;
 
+    private CycList carBodyType;
     
     int n;
     
     @Inject private PrijaveFacade facade;
     @Inject private ErrorFacade errorFacade;
+    @Inject private amzsIssue issue;
     
     
     
     @PostConstruct
-    public void postconstruct() throws ParseException{
+    public void postconstruct() throws ParseException, UnknownHostException, IOException, JSONException{
           
         parent2_malfL = errorFacade.getByParent2();
         
@@ -74,6 +75,9 @@ public class ResponsePresenter {
         parent_malf = String.valueOf(podatki.get(0).getParent_malf());
         malfunction = String.valueOf(podatki.get(0).getMalfunction());
         
+        
+        CycAccess c = new CycAccess("aidemo", 3600);
+        carBodyType = issue.exportFromCycCarTypeList(c);
         
     }
     
@@ -184,6 +188,14 @@ public class ResponsePresenter {
 
     public void setMalfunction(String malfunction) {
         this.malfunction = malfunction;
+    }
+
+    public CycList getCarBodyType() {
+        return carBodyType;
+    }
+
+    public void setCarBodyType(CycList carBodyType) {
+        this.carBodyType = carBodyType;
     }
 
     
