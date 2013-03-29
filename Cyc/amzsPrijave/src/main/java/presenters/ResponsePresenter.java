@@ -7,6 +7,9 @@ package presenters;
 import com.mycompany.amzsprijave.ErrorFacade;
 import com.mycompany.amzsprijave.Prijave;
 import com.mycompany.amzsprijave.PrijaveFacade;
+import com.mycompany.amzsprijave.amzsIssue;
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +19,9 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.json.JSONException;
+import org.opencyc.api.CycAccess;
+import org.opencyc.cycobject.CycList;
 
 /**
  *
