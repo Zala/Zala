@@ -7,10 +7,14 @@ package com.mycompany.amzsprijave;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -38,7 +42,7 @@ public class amzsIssue {
         private Integer id;
         private String name;
         private String surname;
-        private String brand;
+        private String model;
         private String type;
         private String registration;
         private String member;
@@ -53,13 +57,22 @@ public class amzsIssue {
         private Integer event;
         private String amzsIssue;
         private String assertType;
-        private String assertBrand;
+        private String inputBrand;
+        private String assertModel;
+        private HashMap<Object, Object> mapTy;
+        private HashMap<Object, Object> mapBr;
+        private HashMap<Object, Object> mapMod;
+        private CycList nameStringsTy;
+        private CycList nameStringsBr;
+        private CycList nameStringsMod;
+        private ArrayList<String> modelL;
+        private String assertionEvent;
         private String assertionVehicle;
         private String assertionSender;
         private String assertionTopic;
-        private String assertionObject;
-        private String assertionOccursAt;
-        private String assertionDate;
+//        private String assertionObject;
+//        private String assertionOccursAt;
+//        private String assertionDate;
         
 	public static void main(String[] args) {
 		try {
@@ -102,7 +115,7 @@ public class amzsIssue {
                 id = podatki.get(0).getId();
                 name = podatki.get(0).getIme();
                 surname = podatki.get(0).getPriimek();
-                brand = podatki.get(0).getZnamka();
+                model = podatki.get(0).getZnamka();
                 type = podatki.get(0).getTip();
                 registration = podatki.get(0).getRegistrska();
                 member = podatki.get(0).getClan();
@@ -131,8 +144,10 @@ public class amzsIssue {
                         CycObject Mt = _c.getConstantByName("AMZSMt");
                         _c.assertGaf(SenderOfInfo, Mt);
                         
+                        
+                        CycObject English = _c.getConstantByName("EnglishMt");
                         CycList NameString = _c.makeCycList("(#$nameString  (#$AMZSUserFn \"" +id +"\") \"" +name +" " +surname +"\")");
-                        _c.assertGaf(NameString, Mt);
+                        _c.assertGaf(NameString, English);
 			assertionSender = SenderOfInfo + ", " + NameString +".";
                         return assertionSender; 				
 	}
@@ -168,22 +183,65 @@ public class amzsIssue {
                     return member;
         }
              
-         public String printMemberNo(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printMemberNo(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                     if (member_no.isEmpty()){
                         member_no = " / ";
                     }
                     return member_no;
          }
-         
+        
+        
+        enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
+        enum Position{IZVEN_CESTE_DO_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
         public String importIntoCycEvent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-			
-                        CycObject Mt = _c.getConstantByName("AMZSMt");
+			event = 0;
+                        CycObject Mt = _c.getConstantByName("BaseKB");
                         
                         if("nesreca".equals(parent2_malf)){ 
                                 CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
                                 CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+id);
                                 _c.assertIsa(CycAccident, VehicleAccident, Mt);
                                 amzsEvent = CycAccident.toString();
+                                assertionEvent = "(isa "+CycAccident +" VehicleAccident)";
+//                                Position pos = Position.valueOf(toEnumCase(parent_malf));
+//                                switch(pos)
+//                                {
+//                                    case V_JARKU_OB_CESTI:
+//                                        
+//                                        
+//                                }
+                                
+                                Orientation orient = Orientation.valueOf(toEnumCase(malfunction));
+                                switch(orient)
+                                {
+                                    case NA_KOLESIH: 
+                                        CycConstant topSideUp = _c.getConstantByName("TopSideUp");
+                                        CycList orient1 = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+                                            + "#$AMZSIssue" +id +") #$" +topSideUp +" #$AMZSVehicleAccident" +id +")");
+                                        _c.assertGaf(orient1, Mt);
+                                        assertionEvent = assertionEvent + ", " + orient1;
+                                        break;
+                                    case NA_STREHI:
+                                        CycConstant upsideDown = _c.getConstantByName("UpsideDown");
+                                        CycList orient2 = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+                                            + "#$AMZSIssue" +id +") #$" +upsideDown +" #$AMZSVehicleAccident" +id +")");
+                                        _c.assertGaf(orient2, Mt);
+                                        break;
+                                    case NA_BOKU:
+                                        CycConstant leftSideUp = _c.getConstantByName("LeftSideUp");
+                                        CycList orient3 = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+                                            + "#$AMZSIssue" +id +") #$" +leftSideUp +" #$AMZSVehicleAccident" +id +")");
+                                        _c.assertGaf(orient3, Mt);
+                                        break;
+                                
+                                }
+                                
+//                                if ("na kolesih".equals(malfunction)){
+//                                    CycConstant orientationVector = _c.getConstantByName("TopSideUp");
+//                                    CycList orientation = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+//                                            + "#$AMZSIssue" +id +") #$" +orientationVector +" #$AMZSVehicleAccident" +id +")");
+//                                    _c.assertGaf(orientation, Mt);
+//                                }
                             }
                                                 
                         else if("resevanje vozila".equals(parent2_malf)){
@@ -241,6 +299,9 @@ public class amzsIssue {
                         return amzsEvent;			
 	}
        
+        public String printEvent(){
+            return assertionEvent;
+        }
         public String printMalfunction(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
             if (malfunction == null){
                         malfunction = " / ";
@@ -249,7 +310,7 @@ public class amzsIssue {
          }
         
         
-        public String printGrandparent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printGrandparent() throws JSONException, UnknownHostException, CycApiException, IOException {
                     if (parent2_malf == null){
                         parent2_malf = " / ";
                     }
@@ -257,41 +318,125 @@ public class amzsIssue {
          }
         
         
-        public String printParent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printParent() throws JSONException, UnknownHostException, CycApiException, IOException {
                     if (parent_malf == null){
                         parent_malf = " / ";
                     }
                     return parent_malf;
          }
         
-        
-        public CycList exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+             
+        public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
-            
                     CycList instances = _c.getAllInstances(fort);
+                    CycObject English = _c.getConstantByName("EnglishMt");
                     
-                    return instances;
+                    mapTy = new HashMap<Object, Object>();
+                    nameStringsTy = new CycList();
+                    
+                    for (Iterator it = instances.iterator(); it.hasNext();) {
+                        Object constantTy = it.next();
+                        CycFort nameStrTy = _c.getKnownFortByName(String.valueOf(constantTy));
+                        CycList nameStr = _c.getNameStrings(nameStrTy, English);
+                        if (!nameStr.isEmpty()){
+                            mapTy.put(nameStr.get(0), constantTy);
+                            nameStringsTy.add(nameStr.get(0)) ; 
+                        }
+                    }
+                                        
+                    return mapTy;
         }
         
+        
+        public CycList exportFromCycCarBrandList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBrand");
+                    CycList instances = _c.getAllInstances(fort);
+                    CycObject English = _c.getConstantByName("EnglishMt");
+                    
+                    mapBr = new HashMap<Object, Object>();
+                    nameStringsBr = new CycList();
+                    
+                    for (Iterator it = instances.iterator(); it.hasNext();) {
+                        Object constantBr = it.next();
+                        CycFort nameStrBr = _c.getKnownFortByName(String.valueOf(constantBr));
+                        CycList nameStr = _c.getNameStrings(nameStrBr, English);
+                        if (!nameStr.isEmpty()){
+                            mapBr.put(nameStr.get(0), constantBr);
+                            nameStringsBr.add(nameStr.get(0)) ; 
+                        }
+                    }
+                    
+                    return nameStringsBr;
+        }
+        
+        
+        
+        public ArrayList<String> handleBrandChange() throws JSONException, UnknownHostException, CycApiException, IOException {  
+                    CycAccess c = new CycAccess("aidemo", 3600);
+                    modelL = new ArrayList<String>();
+                    
+                    if(!(inputBrand == null) && !inputBrand.equals("")) {
+                        HashMap<Object, Object> map = getModelByBrand(c, inputBrand);
+                        for (Map.Entry<Object, Object> entry :  map.entrySet()){
+                            Object nameString = entry.getKey();
+                            modelL.add(String.valueOf(nameString));
+                        }
+                    }  
+                    return modelL;
+    }
+        
+        public HashMap getModelByBrand(CycAccess _c, String _brand) throws JSONException, UnknownHostException, CycApiException, IOException {
+                    
+                    CycObject English = _c.getConstantByName("EnglishMt");
+                    CycList specializations = new CycList();
+                    mapMod = new HashMap<Object, Object>();
+                    nameStringsMod = new CycList();
+                    
+                    if(!(_brand == null) && !_brand.equals("")){
+                        Object mapBrand = mapBr.get(_brand);
+                        String constantBr = String.valueOf(mapBrand);
+                        CycFort fort = _c.getKnownFortByName(constantBr);
+                        specializations = _c.getAllSpecs(fort, English);
+                     }
+                    
+
+                    for (Iterator it = specializations.iterator(); it.hasNext();) {
+                        Object constantMod = it.next();
+                        CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
+                        CycList nameStr = _c.getNameStrings(nameStrMod, English);
+                        if (!nameStr.isEmpty()){
+                            mapMod.put(nameStr.get(0), constantMod);
+                            nameStringsMod.add(String.valueOf(nameStr.get(0)));
+                        }
+                    }
+                       
+                    return mapMod;
+                }
+        
+
+        
         public String importIntoCycVehicle(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycObject Mt = _c.getConstantByName("AMZSMt");
-                        
+                    CycObject Mt = _c.getConstantByName("BaseKB");
+                    CycObject English = _c.getConstantByName("EnglishMt");
+                    
+                    mapTy = exportFromCycCarTypeList(_c);
                     if (!(type == null)){
-//                            CycList Type = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+type +")");
-                        CycList Type = _c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+type +")");
+                        String typeConst = String.valueOf(mapTy.get(type));
+                        CycList Type = _c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+typeConst +")");
                         _c.assertGaf(Type, Mt);
                         assertType = String.valueOf(Type);
                     }
 
-                    if (!(brand == null)){
-                        CycList Brand = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+brand +")");
-                        _c.assertGaf(Brand, Mt);
-                        assertBrand = String.valueOf(Brand);
-                        
+                    mapMod = getModelByBrand(_c, inputBrand);
+                    if (!(model == null)){
+                        String modelConst = String.valueOf(mapMod.get(model));
+                        CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
+                        _c.assertGaf(Model, Mt);
+                        assertModel = String.valueOf(Model);
                     }
                     
                     CycList Registrska = _c.makeCycList("(#$nameString  (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
-                    _c.assertGaf(Registrska, Mt);
+                    _c.assertGaf(Registrska, English);
 
                     if(!"".equals(amzsEvent)){
                         CycList ObjectActedOn;
@@ -317,7 +462,7 @@ public class amzsIssue {
                     }
                     else {assertionVehicle = "";}
 //                        model in overheated v assertionVehicle!
-                    return assertionVehicle + assertType + ", " +assertBrand; 	
+                    return assertionVehicle + assertType + ", " +assertModel; 	
                         
 	}
         
@@ -328,31 +473,9 @@ public class amzsIssue {
                     return registration;
          }
         
-        public String exportFromCycBrand(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    
-                    if (!(brand == null)){
-                        CycObject English = _c.getConstantByName("EnglishMt");
-                        CycFort fort = _c.getKnownFortByName(brand);
-                        brand = String.valueOf(_c.getNameStrings(fort, English).get(0));
-                    }
-                    else {brand = " / ";}
-                    return brand;
-        }
-        
-        
-        public String exportFromCycType(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                   
-                    if (!(type == null)){
-                        CycObject English = _c.getConstantByName("EnglishMt");
-                        CycFort fort = _c.getKnownFortByName(type);
-                        type = String.valueOf(_c.getNameStrings(fort, English).get(0));
-                    }
-                    else {type = " / ";}
-                    return type;
-        }
-         
+       
         public String importIntoCycTopic(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-		    CycObject Mt = _c.getConstantByName("AMZSMt");
+		    CycObject Mt = _c.getConstantByName("BaseKB");
                     if(!"".equals(amzsEvent)){   
                         switch(event){
                             case 1: 
@@ -454,6 +577,16 @@ public class amzsIssue {
                 //	               s.substring(1).toLowerCase();
                 //	}*/
         
+                static String toEnumCase(String s){
+                    String[] parts = s.split(" ");
+                    String enumCaseString = "";
+                    for (String part : parts){
+                        enumCaseString = enumCaseString + part.toUpperCase()+"_" ;
+                    }
+                    int n = enumCaseString.length();
+                    enumCaseString = enumCaseString.substring(0,n-1);
+                    return enumCaseString;
+                }
 
 
     public Integer getId() {
@@ -480,12 +613,12 @@ public class amzsIssue {
         this.surname = surname;
     }
 
-    public String getBrand() {
-        return brand;
+    public String getModel() {
+        return model;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getType() {
@@ -551,5 +684,46 @@ public class amzsIssue {
     public void setPodatki(List<Prijave> podatki) {
         this.podatki = podatki;
     }
+
+    public List<String> getModelL() {
+        return modelL;
+    }
+
+    public void setModelL(ArrayList<String> modelL) {
+        this.modelL = modelL;
+    }
+
+    public String getInputBrand() {
+        return inputBrand;
+    }
+
+    public void setInputBrand(String inputBrand) {
+        this.inputBrand = inputBrand;
+    }
+
+    public HashMap<Object, Object> getMapTy() {
+        return mapTy;
+    }
+
+    public void setMapTy(HashMap<Object, Object> mapTy) {
+        this.mapTy = mapTy;
+    }
+
+    public HashMap<Object, Object> getMapBr() {
+        return mapBr;
+    }
+
+    public void setMapBr(HashMap<Object, Object> mapBr) {
+        this.mapBr = mapBr;
+    }
+
+    public HashMap<Object, Object> getMapMod() {
+        return mapMod;
+    }
+
+    public void setMapMod(HashMap<Object, Object> mapMod) {
+        this.mapMod = mapMod;
+    }
+    
     
 }

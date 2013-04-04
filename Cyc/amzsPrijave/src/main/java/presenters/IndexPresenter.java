@@ -1,9 +1,5 @@
 package presenters;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 import com.mycompany.amzsprijave.ErrorFacade;
 import com.mycompany.amzsprijave.Prijave;
@@ -22,13 +18,10 @@ public class IndexPresenter {
 
     @Inject private PrijaveFacade facade;
     private Prijave prijava = new Prijave();
-    
     @Inject private ErrorFacade errorFacade;
     
        
-//    void saveError(){
-//    }
-
+    
     public Prijave getPrijava() {
         return prijava;
     }
@@ -55,7 +48,7 @@ public class IndexPresenter {
         facade.shraniPrijavo(prijava);
         return "asserting.xhtml?faces-redirect=true";
     }
-             
+                 
     public String response() {
         return "response.xhtml?faces-redirect=true";
     }

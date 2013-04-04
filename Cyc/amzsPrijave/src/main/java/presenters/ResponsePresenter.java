@@ -12,10 +12,11 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,7 +34,7 @@ import org.opencyc.cycobject.CycList;
 public class ResponsePresenter {
     private String name;
     private String surname;
-    private String brand;
+    private String model;
     private String type;
     private String registration;
     private String member;
@@ -47,13 +48,16 @@ public class ResponsePresenter {
     private List<Prijave> podatki;
 
     private CycList carBodyType;
+    private CycList carBrand;
+    private CycList carModel;
+
     
     int n;
     
     @Inject private PrijaveFacade facade;
+    private Prijave prijava = new Prijave();
     @Inject private ErrorFacade errorFacade;
     @Inject private amzsIssue issue;
-    
     
     
     @PostConstruct
@@ -69,29 +73,50 @@ public class ResponsePresenter {
         }
          
       
-        name = String.valueOf(podatki.get(0).getIme());
-        surname = String.valueOf(podatki.get(0).getPriimek());
-        brand = String.valueOf(podatki.get(0).getZnamka());
-        type = String.valueOf(podatki.get(0).getTip());
-        registration = String.valueOf(podatki.get(0).getRegistrska());
-        member = String.valueOf(podatki.get(0).getClan());
-        member_no = String.valueOf(podatki.get(0).getClanska_st());
+        name = podatki.get(0).getIme();
+        surname = podatki.get(0).getPriimek();
+        model = podatki.get(0).getZnamka();
+        type = podatki.get(0).getTip();
+        registration = podatki.get(0).getRegistrska();
+        member = podatki.get(0).getClan();
+        member_no = podatki.get(0).getClanska_st();
         date = podatki.get(0).getDatum();
-        parent2_malf = String.valueOf(podatki.get(0).getParent2_malf());
-        parent_malf = String.valueOf(podatki.get(0).getParent_malf());
-        malfunction = String.valueOf(podatki.get(0).getMalfunction());
+        parent2_malf = podatki.get(0).getParent2_malf();
+        parent_malf = podatki.get(0).getParent_malf();
+        malfunction = podatki.get(0).getMalfunction();
         
         
         CycAccess c = new CycAccess("aidemo", 3600);
-        carBodyType = issue.exportFromCycCarTypeList(c);
+        carBrand = issue.exportFromCycCarBrandList(c);
         
     }
     
     
-   
+    public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
+        CycAccess c = new CycAccess("aidemo", 3600);
+        HashMap<Object, Object> map = issue.exportFromCycCarTypeList(c);
+        carBodyType = new CycList();
+        for ( Map.Entry<Object, Object> entry :  map.entrySet()){
+            Object nameString = entry.getKey();
+            carBodyType.add(nameString);
+        }
+        return carBodyType;
+    }
+    
+//    Zakaj to ne dela???
+//    public String asserting() {
+//        prijava.setParent2_malf(errorFacade.getGrandparent());
+//        prijava.setParent_malf(errorFacade.getParent());
+//        prijava.setMalfunction(errorFacade.getMalfunction());
+//        facade.shraniPrijavo(prijava);
+//        return "asserting.xhtml?faces-redirect=true";
+//    }
+
     
     
-       
+    
+    
+    
     public String getName() {
         return name;
     }
@@ -108,12 +133,12 @@ public class ResponsePresenter {
         this.surname = surname;
     }
 
-    public String getBrand() {
-        return brand;
+    public String getModel() {
+        return model;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getType() {
@@ -204,7 +229,31 @@ public class ResponsePresenter {
         this.carBodyType = carBodyType;
     }
 
+    public CycList getCarBrand() {
+        return carBrand;
+    }
+
+    public void setCarBrand(CycList carBrand) {
+        this.carBrand = carBrand;
+    }
+
+    public CycList getCarModel() {
+        return carModel;
+    }
+
+    public void setCarModel(CycList carModel) {
+        this.carModel = carModel;
+    }
+
     
+    public ErrorFacade getErrorFacade() {
+        return errorFacade;
+    }
+
+    public void setErrorFacade(ErrorFacade errorFacade) {
+        this.errorFacade = errorFacade;
+    }
+           
 
        
 

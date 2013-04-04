@@ -25,6 +25,7 @@ public class AssertingPresenter {
 
     private String assertionIssue;
     private String assertionEvent;
+    private String printEvent;
     private String printMalfunction;
     private String printParent;
     private String printGrandparent;
@@ -50,13 +51,13 @@ public class AssertingPresenter {
         CycAccess c = new CycAccess("aidemo", 3600);
         assertionIssue = issue.importIntoCycIssue(c);
         assertionEvent = issue.importIntoCycEvent(c);
+        printEvent = issue.printEvent();
         printMalfunction = issue.printMalfunction(c);
-        printParent = issue.printParent(c);        
-        printGrandparent = issue.printGrandparent(c);
+        printParent = issue.printParent();        
+        printGrandparent = issue.printGrandparent();
         assertionVehicle = issue.importIntoCycVehicle(c);
         printRegistration = issue.printRegistration(c);
-        exportStringBrand = issue.exportFromCycBrand(c);
-        exportStringType = issue.exportFromCycType(c);
+        exportStringType = issue.getType();
         assertionSender = issue.importIntoCycSender(c);
         printName = issue.printName(c);       
         printSurname = issue.printSurname(c);       
@@ -84,6 +85,14 @@ public class AssertingPresenter {
 
     public void setAssertionEvent(String assertionEvent) {
         this.assertionEvent = assertionEvent;
+    }
+
+    public String getPrintEvent() {
+        return printEvent;
+    }
+
+    public void setPrintEvent(String printEvent) {
+        this.printEvent = printEvent;
     }
 
     public String getPrintMalfunction() {

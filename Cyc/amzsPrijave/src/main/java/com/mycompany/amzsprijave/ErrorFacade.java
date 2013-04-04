@@ -56,7 +56,7 @@ public class ErrorFacade {
     
     public void handleGrandparentChange() {  
         
-        if(grandparent !=null && !grandparent.equals("")) {
+        if(!(grandparent == null) && !grandparent.equals("")) {
             parent_malfL = getByGrandparent(grandparent);
         }  
     }
