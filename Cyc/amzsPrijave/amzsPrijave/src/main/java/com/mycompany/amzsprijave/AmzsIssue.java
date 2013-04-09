@@ -138,6 +138,8 @@ public class AmzsIssue {
                 _c = new CycAccess("aidemo", 3600);
 //                mapBr = new HashMap<Object,Object>();
                 amzsIssue = cycService.getIssue();
+                amzsEvent = cycService.getEvent();
+                event = 0;
             }
             
 //        public String getIssue(){
@@ -210,8 +212,10 @@ public class AmzsIssue {
         
 //        enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
 //        enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
-        public String importIntoCycEvent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-			event = 0;
+        public String importIntoCycEvent() throws JSONException, UnknownHostException, CycApiException, IOException {
+                        if (log.isLoggable(Level.FINE))
+                            log.fine("Importing itno cyc event");
+                        
                         CycObject Mt = _c.getConstantByName("BaseKB");
                         amzsEvent = "";
                         
@@ -285,38 +289,42 @@ public class AmzsIssue {
                         return amzsEvent;			
 	}
        
-        public String printEvent(){
-            return assertionEvent;
-        }
+//        public String printEvent() throws JSONException, UnknownHostException, CycApiException, IOException{
+//            assertionEvent = importIntoCycEvent();
+//            return assertionEvent;
+//        }
         
         public String printMalfunction(){
+                    String malf = malfunction;
                     if (malfunction == null){
-                        malfunction = " / ";
+                        malf = " / ";
                     }
-                    return malfunction;
+                    return malf;
          }
         
         
         public String printGrandparent(){
+                    String par2 = parent2_malf;
                     if (parent2_malf == null){
-                        parent2_malf = " / ";
+                        par2 = " / ";
                     }
-                    return parent2_malf;
+                    return par2;
          }
         
         
         public String printParent(){
+                    String par = parent_malf;
                     if (parent_malf == null){
-                        parent_malf = " / ";
+                        par = " / ";
                     }
-                    return parent_malf;
+                    return par;
          }
         
           
         public String importIntoCycVehicle(String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
-                amzsEvent = importIntoCycEvent(_c);
-                if (log.isLoggable(Level.FINE))
-                    log.fine("asserting vehicle");
+                    amzsEvent = importIntoCycEvent();
+                    if (log.isLoggable(Level.FINE))
+                        log.fine("asserting vehicle");
                 
 //                    _inputBrand = indexPres.getInputBrand();
                     CycObject Mt = _c.getConstantByName("BaseKB");
@@ -342,7 +350,6 @@ public class AmzsIssue {
                     CycList Registrska = _c.makeCycList("(#$nameString  (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
                     _c.assertGaf(Registrska, English);
                     
-                    amzsEvent = importIntoCycEvent(_c);
                     if(!"".equals(amzsEvent) ){
                         CycList ObjectActedOn = new CycList();
                         switch (event){
@@ -375,16 +382,18 @@ public class AmzsIssue {
 //                    return importIntoCycVehicle(_inputBrand);
 //        }
         
+//        a bi tele ubistvu lahko bli static???
         public String printRegistration(){
+                    String reg = registration;
                     if (registration.isEmpty()){
-                        registration = " / ";
+                        reg = " / ";
                     }
-                    return registration;
+                    return reg;
          }
         
        
         public String importIntoCycTopic() throws JSONException, UnknownHostException, CycApiException, IOException {
-                    amzsEvent = importIntoCycEvent(_c);
+                    amzsEvent = cycService.getEvent();
 		    CycObject Mt = _c.getConstantByName("BaseKB");
                     if(!"".equals(amzsEvent)){   
                         switch(event){

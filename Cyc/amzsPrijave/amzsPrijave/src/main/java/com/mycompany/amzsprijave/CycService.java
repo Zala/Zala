@@ -62,12 +62,14 @@ public class CycService{
                                 +getIssue() +") #$" +position +")");
                         _c.assertGaf(posL, Mt);
                         assertionEvent = assertionEvent + ", " + posL;
+                        _c.assertGaf(posL, Mt);
                         break;
                     case NA_CESTI: 
                         position = _c.getConstantByName("Roadway");
                         posL = _c.makeCycList("(#$objectFoundInLocationType #$" +getIssue() + " (#$VehicleInvolvedInAMZSReportFn #$" 
                                 +getIssue() +") #$" +position +")");
                         assertionEvent = assertionEvent + ", " + posL;
+                        _c.assertGaf(posL, Mt);
                         break;
                     case IZVEN_CESTE_DO_20M: break;
                     case IZVEN_CESTE_NAD_20M: break;
@@ -75,7 +77,7 @@ public class CycService{
                     default: break;
 
                 }
-                _c.assertGaf(posL, Mt);
+//                _c.assertGaf(posL, Mt); ko bojo vsi dokoncani
                 
                 
                 return assertionEvent;
