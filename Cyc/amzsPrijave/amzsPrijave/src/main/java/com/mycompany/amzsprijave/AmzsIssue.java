@@ -56,6 +56,8 @@ public class AmzsIssue {
         private String parent_malf;
         private String parent2_malf;
         private List<Prijave> podatki;
+//        a je to kul ce tukaj definiram CycAccess??
+        private CycAccess _c;
         private String assertionIssue;
         private String amzsEvent;
         private Integer event;
@@ -64,7 +66,7 @@ public class AmzsIssue {
         private String assertModel;
         private String _inputBrand;
         private HashMap<Object, Object> mapTy;
-        private HashMap<Object, Object> mapBr;
+//        private HashMap<Object, Object> mapBr;
         private HashMap<Object, Object> mapMod;
         private CycList nameStringsTy;
         private CycList nameStringsBr;
@@ -110,10 +112,10 @@ public class AmzsIssue {
 //	}
         
             @Inject private PrijaveFacade facade;
-            private IndexPresenter indexPres;
+            @Inject private CycService cycService;
             
             @PostConstruct
-            private void postconstruct(){  
+            private void postconstruct() throws UnknownHostException, IOException{  
                 if (log.isLoggable(Level.FINE))
                     log.fine("initiaizing AmzsIssue");
                 
@@ -133,27 +135,32 @@ public class AmzsIssue {
                 parent_malf = podatki.get(0).getParent_malf();
                 malfunction = podatki.get(0).getMalfunction();
                 
-                mapBr = new HashMap<Object,Object>();
+                _c = new CycAccess("aidemo", 3600);
+//                mapBr = new HashMap<Object,Object>();
+                amzsIssue = cycService.getIssue();
             }
-
-	public String importIntoCycIssue(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+            
+//        public String getIssue(){
+//                amzsIssue = "AMZSIssue"+id;
+//                return amzsIssue;
+//        }
+            
+	public String importIntoCycIssue() throws JSONException, UnknownHostException, CycApiException, IOException {
 			CycConstant AMZSReport = _c.getConstantByName("AMZSReport");
-			CycConstant CycIssue = _c.makeCycConstant("AMZSIssue"+id);
+			CycConstant CycIssue = _c.makeCycConstant(amzsIssue);
 			_c.assertIsa(CycIssue, AMZSReport);
-                        amzsIssue = CycIssue.toString();
+//                        amzsIssue = CycIssue.toString();
                         
                         assertionIssue = "(isa " +CycIssue +" " +AMZSReport + ")";
                         return assertionIssue; 				
 	}
         
-         public String importIntoCycSender(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-//                        String User = "(AMZSUserFn \"" +id +"\")";
-//                        CycConstant Issue = _c.getConstantByName("AMZSIssue"+id);
+        
+        public String importIntoCycSender() throws JSONException, UnknownHostException, CycApiException, IOException {
                                                 
                         CycList SenderOfInfo = _c.makeCycList("(#$senderOfInfo #$"+amzsIssue +" (#$AMZSUserFn \"" +id +"\"))");
                         CycObject Mt = _c.getConstantByName("AMZSMt");
-                        _c.assertGaf(SenderOfInfo, Mt);
-                        
+                        _c.assertGaf(SenderOfInfo, Mt);                        
                         
                         CycObject English = _c.getConstantByName("EnglishMt");
                         CycList NameString = _c.makeCycList("(#$nameString  (#$AMZSUserFn \"" +id +"\") \"" +name +" " +surname +"\")");
@@ -163,23 +170,23 @@ public class AmzsIssue {
 	}
         
          
-         public String printName(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printName(){
                     if (name.isEmpty()){
                         name = " / ";
                     }
                     return name;
          }
          
-         public String printSurname(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printSurname(){
                     if (surname.isEmpty()){
                         surname = " / ";
                     }
                     return surname;
          }
-         
-         
-         
-        public String importIntoCycMember(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+          
+        public String importIntoCycMember() throws JSONException, UnknownHostException, CycApiException, IOException {
+                    
+                    CycAccess _c = new CycAccess("aidemo", 3600);
                     CycObject Mt = _c.getConstantByName("AMZSMt"); 
                     if ("Da".equals(member) && !member_no.isEmpty()){ 
                         CycList Member = _c.makeCycList("(#$groupMemberWithMembershipID (#$AMZSUserFn \"" +id +"\") #$AMZSKlub \""+member_no +"\")");
@@ -193,7 +200,7 @@ public class AmzsIssue {
                     return member;
         }
              
-        public String printMemberNo(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printMemberNo(){
                     if (member_no.isEmpty()){
                         member_no = " / ";
                     }
@@ -201,80 +208,21 @@ public class AmzsIssue {
          }
         
         
-        enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
-        enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
+//        enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
+//        enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
         public String importIntoCycEvent(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
 			event = 0;
                         CycObject Mt = _c.getConstantByName("BaseKB");
+                        amzsEvent = "";
                         
                         if("nesreca".equals(parent2_malf)){ 
-                                CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
-                                CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+id);
-                                _c.assertIsa(CycAccident, VehicleAccident, Mt);
-                                amzsEvent = CycAccident.toString();
-                                assertionEvent = "(isa "+CycAccident +" VehicleAccident)";
-                                
-                                CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$VehicleAccident)");
-                                _c.assertGaf(issueEventType, Mt);
-                                
-                                Position pos = Position.valueOf(toEnumCase(parent_malf));
-                                CycConstant position;
-                                CycList posL = new CycList(); 
-                                switch(pos)
-                                {
-                                    case V_JARKU_OB_CESTI: 
-                                        position = _c.getConstantByName("Ditch");
-                                        posL = _c.makeCycList("(#$objectFoundInLocationType #$" +amzsIssue + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                                +amzsIssue +") #$" +position +")");
-                                        _c.assertGaf(posL, Mt);
-                                        assertionEvent = assertionEvent + ", " + posL;
-                                        break;
-                                    case NA_CESTI: 
-                                        position = _c.getConstantByName("Roadway");
-                                        posL = _c.makeCycList("(#$objectFoundInLocationType #$" +amzsIssue + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                                +amzsIssue +") #$" +position +")");
-                                        assertionEvent = assertionEvent + ", " + posL;
-                                        break;
-                                    case IZVEN_CESTE_DO_20M:
-                                    case IZVEN_CESTE_NAD_20M:
-                                    case POD_CESTO:              
-                                }
-                                _c.assertGaf(posL, Mt);
-                                
-                                
-                                Orientation orient = Orientation.valueOf(toEnumCase(malfunction));
-                                CycConstant orientation;
-                                CycList orientL = new CycList(); 
-                                switch(orient)
-                                {
-                                    case NA_KOLESIH: 
-                                        orientation = _c.getConstantByName("TopSideUp");
-                                        orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                            + "#$AMZSIssue" +id +") #$" +orientation +" #$AMZSVehicleAccident" +id +")");
-                                        assertionEvent = assertionEvent + ", " + orientL;
-                                        break;
-                                    case NA_STREHI:
-                                        orientation = _c.getConstantByName("UpsideDown");
-                                        orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                            + "#$AMZSIssue" +id +") #$" +orientation +" #$AMZSVehicleAccident" +id +")");
-                                        assertionEvent = assertionEvent + ", " + orientL;
-                                        break;
-                                    case NA_BOKU:
-                                        orientation = _c.getConstantByName("LeftSideUp");
-                                        orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                            + "#$AMZSIssue" +id +") #$" +orientation +" #$AMZSVehicleAccident" +id +")");
-                                        assertionEvent = assertionEvent + ", " + orientL;
-                                        break;
-                                }
-                                _c.assertGaf(orientL, Mt);
-                                
-//                                if ("na kolesih".equals(malfunction)){
-//                                    CycConstant orientationVector = _c.getConstantByName("TopSideUp");
-//                                    CycList orientation = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-//                                            + "#$AMZSIssue" +id +") #$" +orientationVector +" #$AMZSVehicleAccident" +id +")");
-//                                    _c.assertGaf(orientation, Mt);
-//                                }
+                            assertionEvent = cycService.accident();
+                            amzsEvent = cycService.getEvent();
+
+                            if(malfunction != null){
+                                assertionEvent = assertionEvent + cycService.orientation();
                             }
+                        }
                                                 
                         else if("resevanje vozila".equals(parent2_malf)){
                             CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
@@ -340,15 +288,16 @@ public class AmzsIssue {
         public String printEvent(){
             return assertionEvent;
         }
-        public String printMalfunction(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-            if (malfunction == null){
+        
+        public String printMalfunction(){
+                    if (malfunction == null){
                         malfunction = " / ";
                     }
                     return malfunction;
          }
         
         
-        public String printGrandparent() throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printGrandparent(){
                     if (parent2_malf == null){
                         parent2_malf = " / ";
                     }
@@ -356,107 +305,35 @@ public class AmzsIssue {
          }
         
         
-        public String printParent() throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String printParent(){
                     if (parent_malf == null){
                         parent_malf = " / ";
                     }
                     return parent_malf;
          }
         
-             
-        public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
-                    CycList instances = _c.getAllInstances(fort);
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    
-                    mapTy = new HashMap<Object, Object>();
-                    nameStringsTy = new CycList();
-                    
-                    for (Iterator it = instances.iterator(); it.hasNext();) {
-                        Object constantTy = it.next();
-                        CycFort nameStrTy = _c.getKnownFortByName(String.valueOf(constantTy));
-                        CycList nameStr = _c.getNameStrings(nameStrTy, English);
-                        if (!nameStr.isEmpty()){
-                            mapTy.put(nameStr.get(0), constantTy);
-                            nameStringsTy.add(nameStr.get(0)) ; 
-                        }
-                    }
-                                        
-                    return mapTy;
-        }
-        
-        
-        public CycList exportFromCycCarBrandList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBrand");
-                    CycList instances = _c.getAllInstances(fort);
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    
-                    mapBr = new HashMap<Object, Object>();
-                    nameStringsBr = new CycList();
-                    
-                    for (Iterator it = instances.iterator(); it.hasNext();) {
-                        Object constantBr = it.next();
-                        CycFort nameStrBr = _c.getKnownFortByName(String.valueOf(constantBr));
-                        CycList nameStr = _c.getNameStrings(nameStrBr, English);
-                        if (!nameStr.isEmpty()){
-                            mapBr.put(nameStr.get(0), constantBr);
-                            nameStringsBr.add(nameStr.get(0)) ; 
-                        }
-                    }
-                    
-                    return nameStringsBr;
-        }
-        
-        
-        
-        public HashMap getModelByBrand(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    CycList specializations = new CycList();
-                    mapMod = new HashMap<Object, Object>();
-                    nameStringsMod = new CycList();
-                    
-                    if(_inputBrand != null && !_inputBrand.equals("")){
-                        Object mapBrand = mapBr.get(_inputBrand);
-                        String constantBr = String.valueOf(mapBrand);
-                        CycFort fort = _c.getKnownFortByName(constantBr);
-                        specializations = _c.getAllSpecs(fort, English);
-                     }
-                    
-
-                    for (Iterator it = specializations.iterator(); it.hasNext();) {
-                        Object constantMod = it.next();
-                        CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
-                        CycList nameStr = _c.getNameStrings(nameStrMod, English);
-                        if (!nameStr.isEmpty()){
-                            mapMod.put(nameStr.get(0), constantMod);
-                            nameStringsMod.add(String.valueOf(nameStr.get(0)));
-                        }
-                    }
-                       
-                    return mapMod;
-                }
-            
-        
-
-        
-        public String importIntoCycVehicle(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
-            
+          
+        public String importIntoCycVehicle(String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+                amzsEvent = importIntoCycEvent(_c);
+                if (log.isLoggable(Level.FINE))
+                    log.fine("asserting vehicle");
+                
 //                    _inputBrand = indexPres.getInputBrand();
                     CycObject Mt = _c.getConstantByName("BaseKB");
                     CycObject English = _c.getConstantByName("EnglishMt");
                     
-                    mapTy = exportFromCycCarTypeList(_c);
-                    if (!(type == null)){
+                    mapTy = cycService.exportFromCycCarTypeList(_c);
+                    if (type != null){
                         String typeConst = String.valueOf(mapTy.get(type));
                         CycList Type = _c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+typeConst +")");
                         _c.assertGaf(Type, Mt);
                         assertType = String.valueOf(Type);
                     }
 
-                    mapMod = getModelByBrand(_c, _inputBrand);
-                    if (!(model == null)){
-                        String modelConst = String.valueOf(mapMod.get(model));
+//                    prestavi if() vrstico nizje oz resi problem s seznami!
+                    mapMod = cycService.getModelByBrandAllNameStrings(_c, _inputBrand);
+                    String modelConst = String.valueOf(mapMod.get(model));
+                    if (!"null".equals(modelConst)){
                         CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
                         _c.assertGaf(Model, Mt);
                         assertModel = String.valueOf(Model);
@@ -464,9 +341,10 @@ public class AmzsIssue {
                     
                     CycList Registrska = _c.makeCycList("(#$nameString  (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
                     _c.assertGaf(Registrska, English);
-
-                    if(!"".equals(amzsEvent)){
-                        CycList ObjectActedOn;
+                    
+                    amzsEvent = importIntoCycEvent(_c);
+                    if(!"".equals(amzsEvent) ){
+                        CycList ObjectActedOn = new CycList();
                         switch (event){
                             case 1: 
                                 ObjectActedOn = _c.makeCycList("(#$objectActedOn (#$StuckOrConfinedVehicleSituationFn #$" + amzsIssue +") (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
@@ -493,7 +371,11 @@ public class AmzsIssue {
                         
 	}
         
-        public String printRegistration(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+//        public String printVehicle() throws JSONException, CycApiException, UnknownHostException, IOException{
+//                    return importIntoCycVehicle(_inputBrand);
+//        }
+        
+        public String printRegistration(){
                     if (registration.isEmpty()){
                         registration = " / ";
                     }
@@ -501,7 +383,8 @@ public class AmzsIssue {
          }
         
        
-        public String importIntoCycTopic(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycTopic() throws JSONException, UnknownHostException, CycApiException, IOException {
+                    amzsEvent = importIntoCycEvent(_c);
 		    CycObject Mt = _c.getConstantByName("BaseKB");
                     if(!"".equals(amzsEvent)){   
                         switch(event){
@@ -523,7 +406,7 @@ public class AmzsIssue {
 	}
 
         
-        public String importIntoCycOccursAt(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycOccursAt() throws JSONException, UnknownHostException, CycApiException, IOException {
 			CycConstant Event = _c.getConstantByName(amzsEvent);
                         CycConstant LocationFn = _c.getConstantByName("StreetNamedFn");
                         String Street = "\"Trzaska cesta\"";
@@ -538,7 +421,7 @@ public class AmzsIssue {
                         return StringEvent; 				
 	}
         
-        public String importIntoCycDate(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycDate() throws JSONException, UnknownHostException, CycApiException, IOException {
                         CycConstant Event = _c.getConstantByName(amzsEvent);
                         
                         long timestamp = date.getTime();
@@ -569,6 +452,11 @@ public class AmzsIssue {
                         return new DateFormatSymbols(Locale.ENGLISH).getMonths()[month-1];
         }
         
+        
+        public String cure() throws JSONException, UnknownHostException, CycApiException, IOException {
+                    String Hlid = importIntoCycHlid(_c);
+                    return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
+        }
         
 		private static void queryCyc(CycAccess ca,	DefaultInferenceParameters _inferenceParameters)
 				throws CycApiException, IOException {
@@ -728,13 +616,13 @@ public class AmzsIssue {
         this.mapTy = mapTy;
     }
 
-    public HashMap<Object, Object> getMapBr() {
-        return mapBr;
-    }
-
-    public void setMapBr(HashMap<Object, Object> mapBr) {
-        this.mapBr = mapBr;
-    }
+//    public HashMap<Object, Object> getMapBr() {
+//        return mapBr;
+//    }
+//
+//    public void setMapBr(HashMap<Object, Object> mapBr) {
+//        this.mapBr = mapBr;
+//    }
 
     public HashMap<Object, Object> getMapMod() {
         return mapMod;

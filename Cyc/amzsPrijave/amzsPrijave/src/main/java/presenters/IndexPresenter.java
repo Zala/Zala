@@ -5,6 +5,7 @@ import com.mycompany.amzsprijave.Error;
 import com.mycompany.amzsprijave.Prijave;
 import com.mycompany.amzsprijave.PrijaveFacade;
 import com.mycompany.amzsprijave.AmzsIssue;
+import com.mycompany.amzsprijave.CycService;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
@@ -52,11 +53,12 @@ public class IndexPresenter implements Serializable {
     @Inject private PrijaveFacade facade;
     private Prijave prijava = new Prijave();
     @Inject private AmzsIssue issue;
+    @Inject private CycService cycService;
     
     @PostConstruct
    public void postconstruct() throws UnknownHostException, IOException, JSONException{
         CycAccess c = new CycAccess("aidemo", 3600);
-        carBrand = issue.exportFromCycCarBrandList(c);
+        carBrand = cycService.carBrandStrings();
         
         
         Query q = entityManager.createQuery("SELECT DISTINCT parent2_malf FROM "+ Error.class.getName());
@@ -68,7 +70,7 @@ public class IndexPresenter implements Serializable {
     
     public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
         CycAccess c = new CycAccess("aidemo", 3600);
-        HashMap<Object, Object> map = issue.exportFromCycCarTypeList(c);
+        HashMap<Object, Object> map = cycService.exportFromCycCarTypeList(c);
         carBodyType = new CycList();
         for ( Map.Entry<Object, Object> entry :  map.entrySet()){
             Object nameString = entry.getKey();
@@ -82,7 +84,7 @@ public class IndexPresenter implements Serializable {
                     modelL = new ArrayList<String>();
                     
                     if(inputBrand != null) {
-                        HashMap<Object, Object> map = issue.getModelByBrand(c, inputBrand);
+                        HashMap<Object, Object> map = cycService.getModelByBrand(c, inputBrand);
                         for (Map.Entry<Object, Object> entry :  map.entrySet()){
                             Object nameString = entry.getKey();
                             modelL.add(String.valueOf(nameString));
