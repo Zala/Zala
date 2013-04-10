@@ -1,0 +1,1 @@
+mvn install:install-file -DgroupId=org.opencyc -DartifactId=OpenCyc -Dversion=1.0 -Dfile=OpenCyc.jar -Dpackaging=jar -DgeneratePom=true

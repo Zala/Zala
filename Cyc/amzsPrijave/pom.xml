@@ -22,9 +22,9 @@
             <version>3.5</version>  
         </dependency>
         <dependency>
-            <groupId>Cyc</groupId>
-            <artifactId>Cyc</artifactId>
-            <version>Cyc</version>
+            <groupId>org.opencyc</groupId>
+            <artifactId>OpenCyc</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

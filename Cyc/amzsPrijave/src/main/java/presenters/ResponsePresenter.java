@@ -4,10 +4,9 @@
  */
 package presenters;
 
-import com.mycompany.amzsprijave.ErrorFacade;
+import com.mycompany.amzsprijave.AmzsIssue;
 import com.mycompany.amzsprijave.Prijave;
 import com.mycompany.amzsprijave.PrijaveFacade;
-import com.mycompany.amzsprijave.amzsIssue;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -47,23 +46,23 @@ public class ResponsePresenter {
     private List<String> parent2_malfL;
     private List<Prijave> podatki;
 
-    private CycList carBodyType;
-    private CycList carBrand;
-    private CycList carModel;
+//    private CycList carBodyType;
+//    private CycList carBrand;
+//    private CycList carModel;
 
     
     int n;
     
     @Inject private PrijaveFacade facade;
-    private Prijave prijava = new Prijave();
-    @Inject private ErrorFacade errorFacade;
-    @Inject private amzsIssue issue;
+//    private Prijave prijava = new Prijave();
+    @Inject private IndexPresenter indexPres;
+    @Inject private AmzsIssue issue;
     
     
     @PostConstruct
     public void postconstruct() throws ParseException, UnknownHostException, IOException, JSONException{
           
-        parent2_malfL = errorFacade.getByParent2();
+        parent2_malfL = indexPres.getByParent2();
         
         podatki = facade.getPrijave();
         n = podatki.size()-1; 
@@ -85,23 +84,23 @@ public class ResponsePresenter {
         parent_malf = podatki.get(0).getParent_malf();
         malfunction = podatki.get(0).getMalfunction();
         
-        
-        CycAccess c = new CycAccess("aidemo", 3600);
-        carBrand = issue.exportFromCycCarBrandList(c);
+//        
+//        CycAccess c = new CycAccess("aidemo", 3600);
+//        carBrand = issue.exportFromCycCarBrandList(c);
         
     }
     
     
-    public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
-        CycAccess c = new CycAccess("aidemo", 3600);
-        HashMap<Object, Object> map = issue.exportFromCycCarTypeList(c);
-        carBodyType = new CycList();
-        for ( Map.Entry<Object, Object> entry :  map.entrySet()){
-            Object nameString = entry.getKey();
-            carBodyType.add(nameString);
-        }
-        return carBodyType;
-    }
+//    public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
+//        CycAccess c = new CycAccess("aidemo", 3600);
+//        HashMap<Object, Object> map = issue.exportFromCycCarTypeList(c);
+//        carBodyType = new CycList();
+//        for ( Map.Entry<Object, Object> entry :  map.entrySet()){
+//            Object nameString = entry.getKey();
+//            carBodyType.add(nameString);
+//        }
+//        return carBodyType;
+//    }
     
 //    Zakaj to ne dela???
 //    public String asserting() {
@@ -221,39 +220,31 @@ public class ResponsePresenter {
         this.malfunction = malfunction;
     }
 
-    public CycList getCarBodyType() {
-        return carBodyType;
-    }
+//    public CycList getCarBodyType() {
+//        return carBodyType;
+//    }
+//
+//    public void setCarBodyType(CycList carBodyType) {
+//        this.carBodyType = carBodyType;
+//    }
+//
+//    public CycList getCarBrand() {
+//        return carBrand;
+//    }
+//
+//    public void setCarBrand(CycList carBrand) {
+//        this.carBrand = carBrand;
+//    }
+//
+//    public CycList getCarModel() {
+//        return carModel;
+//    }
+//
+//    public void setCarModel(CycList carModel) {
+//        this.carModel = carModel;
+//    }
 
-    public void setCarBodyType(CycList carBodyType) {
-        this.carBodyType = carBodyType;
-    }
-
-    public CycList getCarBrand() {
-        return carBrand;
-    }
-
-    public void setCarBrand(CycList carBrand) {
-        this.carBrand = carBrand;
-    }
-
-    public CycList getCarModel() {
-        return carModel;
-    }
-
-    public void setCarModel(CycList carModel) {
-        this.carModel = carModel;
-    }
-
-    
-    public ErrorFacade getErrorFacade() {
-        return errorFacade;
-    }
-
-    public void setErrorFacade(ErrorFacade errorFacade) {
-        this.errorFacade = errorFacade;
-    }
-           
+         
 
        
 

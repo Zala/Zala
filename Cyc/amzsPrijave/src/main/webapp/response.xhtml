@@ -20,7 +20,6 @@
         </div>
 
         <div id="content" class="center_content">
-            <ui:insert name="content">   
                 <h:form>
                     <table class="table">
                         <tr>
@@ -47,15 +46,15 @@
                         <tr>
                             <th class="fc"> Znamka in model avtomobila: </th>
                             <th>    
-                                <p:selectOneMenu id="brand" value="#{amzsIssue.inputBrand}">
+                                <p:selectOneMenu id="brand" value="#{indexPresenter.inputBrand}">
                                     <f:selectItem itemLabel="Izberi znamko avtomobila" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.carBrand}" />
-                                    <p:ajax update="model" listener="#{amzsIssue.handleBrandChange()}"/>
+                                    <f:selectItems value="#{indexPresenter.carBrand}" />
+                                    <p:ajax update="model" listener="#{indexPresenter.handleBrandChange()}"/>
                                 </p:selectOneMenu>
                                 
                                 <p:selectOneMenu id="model" value="#{indexPresenter.prijava.znamka}">
                                     <f:selectItem itemLabel="Izberi model avtomobila" itemValue="" /> 
-                                    <f:selectItems value="#{amzsIssue.modelL}"/>
+                                    <f:selectItems value="#{indexPresenter.modelL}"/>
                                 </p:selectOneMenu>
                             </th>
                         </tr>
@@ -64,7 +63,7 @@
                             <th>    
                                 <p:selectOneMenu id="type" value="#{indexPresenter.prijava.tip}">
                                     <f:selectItem itemLabel="Izberi tip avtomobila" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.carBodyTypeStrings()}"/>
+                                    <f:selectItems value="#{indexPresenter.carBodyTypeStrings()}"/>
                                 </p:selectOneMenu>
                             </th>
                         </tr>
@@ -76,21 +75,21 @@
                         <tr>
                             <th class="fc"> Okvara: </th>
                             <th>
-                                <p:selectOneMenu id="grandparent" value="#{errorFacade.grandparent}">
+                                <p:selectOneMenu id="grandparent" value="#{indexPresenter.grandparent}">
                                     <f:selectItem itemLabel="Izberi dogodek" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
-                                    <p:ajax update="parent_malf" listener="#{errorFacade.handleGrandparentChange}"/>
+                                    <f:selectItems value="#{indexPresenter.parent2_malfL}"/>
+                                    <p:ajax update="parent_malf" listener="#{indexPresenter.handleGrandparentChange}"/>
                                 </p:selectOneMenu>
                                 
-                                <p:selectOneMenu id="parent_malf" value="#{errorFacade.parent}">
+                                <p:selectOneMenu id="parent_malf" value="#{indexPresenter.parent}">
                                     <f:selectItem itemLabel="Izberi dogodek" itemValue="" /> 
-                                    <f:selectItems value="#{errorFacade.parent_malfL}"/>
-                                    <p:ajax update="malfunction" listener="#{errorFacade.handleParentChange}"/>
+                                    <f:selectItems value="#{indexPresenter.parent_malfL}"/>
+                                    <p:ajax update="malfunction" listener="#{indexPresenter.handleParentChange}"/>
                                 </p:selectOneMenu>
                                 
-                                <p:selectOneMenu id="malfunction" value="#{errorFacade.malfunction}">
+                                <p:selectOneMenu id="malfunction" value="#{indexPresenter.malfunction}">
                                     <f:selectItem itemLabel="Izberi dogodek" itemValue="" /> 
-                                    <f:selectItems value="#{errorFacade.malfunctionL}"/>
+                                    <f:selectItems value="#{indexPresenter.malfunctionL}"/>
                                 </p:selectOneMenu>
                             </th>
                         </tr>
@@ -101,7 +100,6 @@
                         </tr>
                     </table>
                 </h:form>
-            </ui:insert>
         </div>
     </h:body>
 </html>

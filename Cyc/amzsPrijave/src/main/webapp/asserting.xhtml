@@ -18,42 +18,42 @@
                 <table class="tableAss">
                     <tr>
                         <td class="fc"> <b> AMZS clan: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.assertionMember}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.member}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Clanska stevilka: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printMemberNo}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printMemberNo()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Ime: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printName}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printName()}" /> </td> 
                     </tr> 
                     <tr> 
                         <td class="fc"> <b> Priimek: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printSurname}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printSurname()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Znamka: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{amzsIssue.inputBrand}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.model}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Tip: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.exportStringType}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.type}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Registrska stevilka: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printRegistration}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printRegistration()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b>  DOGODEK: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printGrandparent}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printGrandparent()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b>   </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printParent}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printParent()}" /> </td> 
                     </tr><tr> 
                         <td class="fc"> <b>   </b> </td> 
-                        <td> <h:outputText escape="false" value="#{assertingPresenter.printMalfunction}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printMalfunction()}" /> </td> 
                     </tr>
                 </table>
             </ui:insert>
@@ -65,15 +65,15 @@
                     <table class="table">
                         <tr> 
                             <td class="fc"> Asserted: </td>
-                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionIssue}" /> </td> 
+                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycIssue()}" /> </td> 
                         </tr>
                         <tr>
                             <td> </td>
-                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionSender}" /> </td> 
+                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycSender()}" /> </td> 
                         </tr>
                         <tr>
                             <td> </td>
-                            <td> <h:outputText escape="false" value="#{assertingPresenter.printEvent}" /> </td> 
+                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycEvent()}" /> </td> 
                         </tr>
                         <tr>
                             <td> </td>
@@ -82,20 +82,12 @@
 
                         <tr>
                             <td> </td>
-                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionTopic}" /> </td> 
+                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycTopic()}" /> </td> 
                         </tr>
-<!--                                                <tr>
-                                                    <td> </td>
-                                                    <td> <h:outputText escape="false" value="#{assertingPresenter.assertionOccursAt}" /> </td> 
-                                                </tr>
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{assertingPresenter.assertionDate}" /> </td> 
-                        </tr>-->
                     </table>
                 </ui:insert>
                 <div id="wrap" class="center_content"> 
-                    <iframe id="cureFrame" name="cureFrame" frameborder="0" scrolling="auto" width="100%" height="500" src="#{assertingPresenter.cure()}">
+                    <iframe id="cureFrame" name="cureFrame" frameborder="0" scrolling="auto" width="100%" height="500" src="#{amzsIssue.cure()}">
                         <p>Your browser does not support iframes.</p>
                     </iframe>
                 </div>
