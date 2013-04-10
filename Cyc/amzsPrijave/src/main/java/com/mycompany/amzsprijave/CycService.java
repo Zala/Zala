@@ -26,49 +26,55 @@ public class CycService{
     @Inject private PrijaveFacade facade;
    
     
+    enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
+    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
+    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
+    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
+    
+    
     public String getIssue(){
                 String amzsIssue = "AMZSIssue"+ facade.getPrijave().get(0).getId();
                 return amzsIssue;
         }
     
     
-    enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
-    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
     public String getEvent(){
-                EventType e = EventType.valueOf(toEnumCase(facade.getPrijave().get(0).getParent2_malf()));
                 String event = "";
-                switch(e)
-                {
-                    case NESRECA: 
-                        event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
-                        break;
-                    case RESEVANJE_VOZILA:
-                        String pm = facade.getPrijave().get(0).getParent_malf();
-                        StuckIn s = StuckIn.valueOf(toEnumCase(pm));
-                        switch(s)
-                        {
-                            case OSTAL_V_BLATU:
-                                event = "AMZSStuckInMud"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_NA_KOLICKU:
-                                event = "AMZSStuckOnAPole"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_V_SNEGU:
-                                event = "AMZSStuckInSnow"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_NA_PREVISU:
-                                event = "AMZSStuckOnACliff"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_NA_ZIDU_SKARPI:
-                                event = "AMZSStuckOnAWall"+facade.getPrijave().get(0).getId();
-                                break;
-                            default: 
-                                event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
-                                break;                                
-                        }
-                        break;
-                    default: 
-                        event = "AMZSVehicleMalfunction" +facade.getPrijave().get(0).getId();
+                if (facade.getPrijave().get(0).getParent2_malf() != null){
+                    EventType e = EventType.valueOf(toEnumCase(facade.getPrijave().get(0).getParent2_malf()));
+                    switch(e)
+                    {
+                        case NESRECA: 
+                            event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
+                            break;
+                        case RESEVANJE_VOZILA:
+                            String pm = facade.getPrijave().get(0).getParent_malf();
+                            StuckIn s = StuckIn.valueOf(toEnumCase(pm));
+                            switch(s)
+                            {
+                                case OSTAL_V_BLATU:
+                                    event = "AMZSStuckInMud"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_NA_KOLICKU:
+                                    event = "AMZSStuckOnAPole"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_V_SNEGU:
+                                    event = "AMZSStuckInSnow"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_NA_PREVISU:
+                                    event = "AMZSStuckOnACliff"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_NA_ZIDU_SKARPI:
+                                    event = "AMZSStuckOnAWall"+facade.getPrijave().get(0).getId();
+                                    break;
+                                default: 
+                                    event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
+                                    break;                                
+                            }
+                            break;
+                        default: 
+                            event = "AMZSVehicleMalfunction" +facade.getPrijave().get(0).getId();
+                    }
                 }
                 return event;
     }
@@ -106,8 +112,6 @@ public class CycService{
                         }
                 return String.valueOf(StuckOrConfinedVehicleSituation);
     }
-    
-    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
     
     public String accident() throws UnknownHostException, IOException{
         
@@ -152,12 +156,7 @@ public class CycService{
                 
                 return assertionEvent;
     }
-    
-    
-    
-    
-    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
-    
+      
     public String orientation() throws UnknownHostException, IOException{
                 CycAccess _c = new CycAccess("aidemo", 3600);
                 CycObject Mt = _c.getConstantByName("BaseKB");
@@ -194,7 +193,6 @@ public class CycService{
                 return assertionEvent;
                 }
     
-    
     public HashMap exportFromCycCarBrandList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycFort fort = _c.getKnownFortByName("AutomobileTypeByBrand");
                     CycList instances = _c.getAllInstances(fort);
@@ -214,8 +212,7 @@ public class CycService{
                     return mapBr;
         }
     
-    
-        public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException{
+    public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException{
                     CycAccess c = new CycAccess("aidemo", 3600);
                     HashMap<Object, Object> map = exportFromCycCarBrandList(c);
                     CycList carBrands = new CycList();
@@ -225,11 +222,8 @@ public class CycService{
                     }
         return carBrands;
     }
-        
-        
-        
-        
-        public HashMap getModelByBrand(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+
+    public HashMap getModelByBrand(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
                     
                     CycObject English = _c.getConstantByName("EnglishMt");
                     CycList specializations = new CycList();
@@ -255,7 +249,7 @@ public class CycService{
                     return mapMod;
                 }
         
-        public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+    public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
                     
                     CycObject English = _c.getConstantByName("EnglishMt");
                     CycList specializations = new CycList();
@@ -284,7 +278,7 @@ public class CycService{
                     return mapMod;
                 }
         
-        public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException{
+    public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException{
                     CycAccess c = new CycAccess("aidemo", 3600);
                     HashMap<Object, Object> mapBr = getModelByBrand(c, _inputBrand);
                     CycList carModels = new CycList();
@@ -295,9 +289,7 @@ public class CycService{
         return carModels;
         }
         
-        
-        
-        public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+    public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
                     CycList instances = _c.getAllInstances(fort);
                     CycObject English = _c.getConstantByName("EnglishMt");
@@ -316,7 +308,7 @@ public class CycService{
                     return mapTy;
         }
         
-        public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException{
+    public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException{
                     CycAccess c = new CycAccess("aidemo", 3600);
                     HashMap<Object, Object> mapTy = exportFromCycCarTypeList(c);
                     CycList carTypes = new CycList();
@@ -327,10 +319,7 @@ public class CycService{
         return carTypes;
         }
         
-        
-        
-        
-        static String toEnumCase(String s){
+    static String toEnumCase(String s){
                     String[] parts = s.split(" ");
                     String enumCaseString = "";
                     for (String part : parts){
