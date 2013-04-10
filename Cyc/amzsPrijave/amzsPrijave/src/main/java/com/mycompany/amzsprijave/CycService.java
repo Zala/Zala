@@ -32,12 +32,82 @@ public class CycService{
         }
     
     
-    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
-    
+    enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
+    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
     public String getEvent(){
-                String event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
+                EventType e = EventType.valueOf(toEnumCase(facade.getPrijave().get(0).getParent2_malf()));
+                String event = "";
+                switch(e)
+                {
+                    case NESRECA: 
+                        event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
+                        break;
+                    case RESEVANJE_VOZILA:
+                        String pm = facade.getPrijave().get(0).getParent_malf();
+                        StuckIn s = StuckIn.valueOf(toEnumCase(pm));
+                        switch(s)
+                        {
+                            case OSTAL_V_BLATU:
+                                event = "AMZSStuckInMud"+facade.getPrijave().get(0).getId();
+                                break;
+                            case OSTAL_NA_KOLICKU:
+                                event = "AMZSStuckOnAPole"+facade.getPrijave().get(0).getId();
+                                break;
+                            case OSTAL_V_SNEGU:
+                                event = "AMZSStuckInSnow"+facade.getPrijave().get(0).getId();
+                                break;
+                            case OSTAL_NA_PREVISU:
+                                event = "AMZSStuckOnACliff"+facade.getPrijave().get(0).getId();
+                                break;
+                            case OSTAL_NA_ZIDU_SKARPI:
+                                event = "AMZSStuckOnAWall"+facade.getPrijave().get(0).getId();
+                                break;
+                            default: 
+                                event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
+                                break;                                
+                        }
+                        break;
+                    default: 
+                        event = "AMZSVehicleMalfunction" +facade.getPrijave().get(0).getId();
+                }
                 return event;
     }
+    
+    public String rescuing() throws UnknownHostException, IOException{
+                CycAccess _c = new CycAccess("aidemo", 3600);
+                CycObject Mt = _c.getConstantByName("BaseKB");
+                
+                StuckIn s = StuckIn.valueOf(toEnumCase(facade.getPrijave().get(0).getParent_malf()));
+                CycConstant StuckOrConfinedVehicleSituation = null;
+                CycConstant AMZSStuckSituation = _c.makeCycConstant(getEvent());
+                        switch(s)
+                        {
+                            case OSTAL_V_BLATU: 
+                                StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInMudSituation");
+                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                break;
+                            case OSTAL_NA_KOLICKU: 
+                                StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnAPoleSituation");
+                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                break;
+                            case OSTAL_V_SNEGU: 
+                                StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInSnowSituation");
+                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                break;
+                            case OSTAL_NA_PREVISU: 
+                                StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnACliffSituation");
+                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                break;
+                            case OSTAL_NA_ZIDU_SKARPI:
+                                StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnAWallSituation");
+                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                break;
+                            default: break;                                
+                        }
+                return String.valueOf(StuckOrConfinedVehicleSituation);
+    }
+    
+    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
     
     public String accident() throws UnknownHostException, IOException{
         

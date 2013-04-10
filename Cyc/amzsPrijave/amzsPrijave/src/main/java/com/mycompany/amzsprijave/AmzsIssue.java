@@ -138,7 +138,6 @@ public class AmzsIssue {
                 _c = new CycAccess("aidemo", 3600);
 //                mapBr = new HashMap<Object,Object>();
                 amzsIssue = cycService.getIssue();
-                amzsEvent = cycService.getEvent();
                 event = 0;
             }
             
@@ -173,17 +172,19 @@ public class AmzsIssue {
         
          
         public String printName(){
+                    String n = name;
                     if (name.isEmpty()){
-                        name = " / ";
+                        n = " / ";
                     }
-                    return name;
+                    return n;
          }
          
         public String printSurname(){
+                    String s = surname;
                     if (surname.isEmpty()){
-                        surname = " / ";
+                        s = " / ";
                     }
-                    return surname;
+                    return s;
          }
           
         public String importIntoCycMember() throws JSONException, UnknownHostException, CycApiException, IOException {
@@ -203,10 +204,11 @@ public class AmzsIssue {
         }
              
         public String printMemberNo(){
+                    String m = member_no;
                     if (member_no.isEmpty()){
-                        member_no = " / ";
+                        m = " / ";
                     }
-                    return member_no;
+                    return m;
          }
         
         
@@ -231,45 +233,9 @@ public class AmzsIssue {
                         else if("resevanje vozila".equals(parent2_malf)){
                             CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
                             _c.assertGaf(issueEventType, Mt);
-                                
-                            if("ostal v blatu".equals(parent_malf)){ 
-                                CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInMudSituation");
-                                CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckInMud"+id);
-                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
-                                amzsEvent = AMZSStuckSituation.toString();
-                            }
-                            else if("ostal v snegu".equals(parent_malf)){ 
-                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInSnowSituation");
-                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckInSnow"+id);
-                                    _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
-                                    amzsEvent = AMZSStuckSituation.toString();
-                            }
-                            else if("ostal na kolicku".equals(parent_malf)){ 
-                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnAPoleSituation");
-                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckOnAPole"+id);
-                                    _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
-                                    amzsEvent = AMZSStuckSituation.toString();
-                            }
-                            else if("ostal na previsu".equals(parent_malf)){ 
-                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnACliffSituation");
-                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckOnACliff"+id);
-                                    _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
-                                    amzsEvent = AMZSStuckSituation.toString();
-                            }
-                            else if("ostal na zidu/skarpi".equals(parent_malf)){ 
-                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnAWallSituation");
-                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckOnAWall"+id);
-                                    _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
-                                    amzsEvent = AMZSStuckSituation.toString();
-                            }
-                            else if("ostalo".equals(parent_malf) || parent_malf == null){ 
-//                                    CycConstant StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleSituation");
-//                                    CycConstant AMZSStuckSituation = _c.makeCycConstant("AMZSStuckSituation"+id);
-                                    CycList AMZSStuckSituation = _c.makeCycList("(#$StuckOrConfinedVehicleSituationFn #$" + amzsIssue +")");
-//                                    _c.assertGaf(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
-                                    amzsEvent = "Constant: (StuckOrConfinedVehicleSituationFn " + amzsIssue +")";
-                                    event = 1;
-                            }
+                            
+                            assertionEvent = cycService.rescuing();
+                            amzsEvent = cycService.getEvent();
                         }
                         
                         else if(parent2_malf == null){
@@ -283,7 +249,6 @@ public class AmzsIssue {
                             CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                             CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
                             _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
-                            amzsEvent = AMZSVehicleMalfunction.toString();
                         }
                         
                         return amzsEvent;			
@@ -404,7 +369,7 @@ public class AmzsIssue {
                                 break;
                             default: 
                                 CycConstant Event = _c.getConstantByName(amzsEvent);
-                                CycConstant Issue = _c.getConstantByName("AMZSIssue"+id);
+                                CycConstant Issue = _c.getConstantByName(amzsIssue);
                                 CycConstant Predicate = _c.getConstantByName("topicOfInfoTransfer");
                                 _c.assertGaf(Mt, Predicate, Issue, Event);
                                 assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
@@ -414,21 +379,7 @@ public class AmzsIssue {
                     return assertionTopic; 				
 	}
 
-        
-        public String importIntoCycOccursAt() throws JSONException, UnknownHostException, CycApiException, IOException {
-			CycConstant Event = _c.getConstantByName(amzsEvent);
-                        CycConstant LocationFn = _c.getConstantByName("StreetNamedFn");
-                        String Street = "\"Trzaska cesta\"";
-                        String City = "CityOfLjubljanaSlovenia";
-                        
-                        String Place = "(#$" +LocationFn +" " +Street +" #$" +City +")";
-                        CycObject Mt = _c.getConstantByName("AMZSMt");
-                        String StringEvent = "(#$eventOccursAt #$" +Event +" " +Place +")";
-                        CycList EventL = _c.makeCycList(StringEvent);
-                        _c.assertGaf(EventL, Mt);
-//			assertionOccursAt = EventL;
-                        return StringEvent; 				
-	}
+
         
         public String importIntoCycDate() throws JSONException, UnknownHostException, CycApiException, IOException {
                         CycConstant Event = _c.getConstantByName(amzsEvent);
@@ -466,6 +417,10 @@ public class AmzsIssue {
                     String Hlid = importIntoCycHlid(_c);
                     return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
         }
+        
+        
+        
+        
         
 		private static void queryCyc(CycAccess ca,	DefaultInferenceParameters _inferenceParameters)
 				throws CycApiException, IOException {
