@@ -59,9 +59,9 @@ public class AssertingPresenter {
     @PostConstruct
     private void postconstruct() throws UnknownHostException, IOException, JSONException {
         
-        if (log.isLoggable(Level.FINE))
-            log.fine("initializing assertingPresenter");
-        
+//        if (log.isLoggable(Level.FINE))
+//            log.fine("initializing assertingPresenter");
+//        
         
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         Map<String, String> parameterMap = (Map<String, String>) context.getRequestParameterMap();

@@ -43,35 +43,24 @@ public class ResponsePresenter {
     private String malfunction;
     private Date date;
     
-    private List<String> parent2_malfL;
     private List<Prijave> podatki;
-
-//    private CycList carBodyType;
-//    private CycList carBrand;
-//    private CycList carModel;
 
     
     int n;
     
     @Inject private PrijaveFacade facade;
-//    private Prijave prijava = new Prijave();
-    @Inject private IndexPresenter indexPres;
-    @Inject private AmzsIssue issue;
     
     
     @PostConstruct
     public void postconstruct() throws ParseException, UnknownHostException, IOException, JSONException{
-          
-        parent2_malfL = indexPres.getByParent2();
-        
+                  
         podatki = facade.getPrijave();
         n = podatki.size()-1; 
         
          if (podatki.isEmpty()){
             return;
         }
-         
-      
+               
         name = podatki.get(0).getIme();
         surname = podatki.get(0).getPriimek();
         model = podatki.get(0).getZnamka();
@@ -83,37 +72,13 @@ public class ResponsePresenter {
         parent2_malf = podatki.get(0).getParent2_malf();
         parent_malf = podatki.get(0).getParent_malf();
         malfunction = podatki.get(0).getMalfunction();
-        
-//        
-//        CycAccess c = new CycAccess("aidemo", 3600);
-//        carBrand = issue.exportFromCycCarBrandList(c);
-        
+                
     }
     
     
-//    public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
-//        CycAccess c = new CycAccess("aidemo", 3600);
-//        HashMap<Object, Object> map = issue.exportFromCycCarTypeList(c);
-//        carBodyType = new CycList();
-//        for ( Map.Entry<Object, Object> entry :  map.entrySet()){
-//            Object nameString = entry.getKey();
-//            carBodyType.add(nameString);
-//        }
-//        return carBodyType;
-//    }
-    
-//    Zakaj to ne dela???
-//    public String asserting() {
-//        prijava.setParent2_malf(errorFacade.getGrandparent());
-//        prijava.setParent_malf(errorFacade.getParent());
-//        prijava.setMalfunction(errorFacade.getMalfunction());
-//        facade.shraniPrijavo(prijava);
-//        return "asserting.xhtml?faces-redirect=true";
-//    }
-
-    
-    
-    
+    public String response() {
+        return "response.xhtml?faces-redirect=true";
+    }
     
     
     public String getName() {
@@ -188,14 +153,6 @@ public class ResponsePresenter {
         this.podatki = podatki;
     }
 
-    public List<String> getParent2_malfL() {
-        return parent2_malfL;
-    }
-
-    public void setParent2_malfL(List<String> parent2_malfL) {
-        this.parent2_malfL = parent2_malfL;
-    }
-
     public String getParent2_malf() {
         return parent2_malf;
     }
@@ -220,32 +177,5 @@ public class ResponsePresenter {
         this.malfunction = malfunction;
     }
 
-//    public CycList getCarBodyType() {
-//        return carBodyType;
-//    }
-//
-//    public void setCarBodyType(CycList carBodyType) {
-//        this.carBodyType = carBodyType;
-//    }
-//
-//    public CycList getCarBrand() {
-//        return carBrand;
-//    }
-//
-//    public void setCarBrand(CycList carBrand) {
-//        this.carBrand = carBrand;
-//    }
-//
-//    public CycList getCarModel() {
-//        return carModel;
-//    }
-//
-//    public void setCarModel(CycList carModel) {
-//        this.carModel = carModel;
-//    }
-
-         
-
-       
 
 }

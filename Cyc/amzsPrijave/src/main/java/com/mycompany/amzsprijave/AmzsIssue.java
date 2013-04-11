@@ -4,8 +4,6 @@
 */
 package com.mycompany.amzsprijave;
 
-import com.mycompany.amzsprijave.Prijave;
-import com.mycompany.amzsprijave.PrijaveFacade;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.DateFormatSymbols;
@@ -13,20 +11,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
 import org.opencyc.cycobject.CycConstant;
-import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
 import org.opencyc.cycobject.CycObject;
 import org.opencyc.cycobject.ELMt;
@@ -34,7 +33,6 @@ import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
 import org.opencyc.inference.InferenceResultSet;
 import org.opencyc.inference.InferenceWorkerSynch;
-import presenters.IndexPresenter;
 
 
 @ManagedBean
@@ -64,13 +62,10 @@ public class AmzsIssue {
         private Integer event;
         private String amzsIssue;
         private String assertType;
+        private String inputBrand;
         private String assertModel;
-        private String _inputBrand;
         private HashMap<Object, Object> mapTy;
         private HashMap<Object, Object> mapMod;
-        private CycList nameStringsTy;
-        private CycList nameStringsBr;
-        private CycList nameStringsMod;
         private ArrayList<String> modelL;
         private String assertionEvent;
         private String assertionVehicle;
@@ -79,36 +74,7 @@ public class AmzsIssue {
 // private String assertionObject;
 // private String assertionDate;
         
-// public static void main(String[] args) {
-// try {
-// //set Cyc Connection
-// //CycAccess c = new CycAccess("localhost", 3600);
-// CycAccess c = new CycAccess("aidemo", 3600);
-//
-// //Set inference parameters
-// DefaultInferenceParameters defaultP = new DefaultInferenceParameters(
-// c);
-// defaultP.put(new CycSymbol(":NEW-TERMS-ALLOWED?"), CycObjectFactory.nil);
-// defaultP.put(new CycSymbol(":INFERENCE-MODE"), new CycSymbol(":SHALLOW"));
-//
-// //importIntoCyc(c);
-// queryCyc(c, defaultP);
-//
-// } catch (UnknownHostException e) {
-// // TODO Auto-generated catch block
-// e.printStackTrace();
-// } catch (CycApiException e) {
-// // TODO Auto-generated catch block
-// e.printStackTrace();
-// } catch (IOException e) {
-// // TODO Auto-generated catch block
-// e.printStackTrace();
-// } //*catch (JSONException e) {
-// // TODO Auto-generated catch block
-// //e.printStackTrace();
-// //}
-//
-// }
+ 
         
             
             @PostConstruct
@@ -131,9 +97,19 @@ public class AmzsIssue {
                 parent_malf = podatki.get(0).getParent_malf();
                 malfunction = podatki.get(0).getMalfunction();
                 
+//                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+//                Map<String, String> parameterMap = (Map<String, String>) context.getRequestParameterMap();
+//                if (!parameterMap.containsKey("ib")) {
+//                    if (log.isLoggable(Level.WARNING))
+//                        {log.warning("Parameter ib missing!");}
+//                    throw new IllegalArgumentException("Parameter ib missing!");
+//                }
+
+//                inputBrand = parameterMap.get("ib");
                 _c = new CycAccess("aidemo", 3600);
                 amzsIssue = cycService.getIssue();
                 event = 0;
+                               
             }
            
         
@@ -312,9 +288,9 @@ public class AmzsIssue {
                     return assertType;
         }
         
-        public String importIntoCycModel(String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException{
+        public String importIntoCycModel(String inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException{
                     CycObject Mt = _c.getConstantByName("BaseKB");
-                    mapMod = cycService.getModelByBrandAllNameStrings(_c, _inputBrand);
+                    mapMod = cycService.getModelByBrandAllNameStrings(_c, inputBrand);
                     String modelConst = String.valueOf(mapMod.get(model));
                     
                     if (!"null".equals(modelConst)){
@@ -582,6 +558,14 @@ public class AmzsIssue {
 
     public void setMapTy(HashMap<Object, Object> mapTy) {
         this.mapTy = mapTy;
+    }
+
+    public String getInputBrand() {
+        return inputBrand;
+    }
+
+    public void setInputBrand(String inputBrand) {
+        this.inputBrand = inputBrand;
     }
 
 // public HashMap<Object, Object> getMapBr() {

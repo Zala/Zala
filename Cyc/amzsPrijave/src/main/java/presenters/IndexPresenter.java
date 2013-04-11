@@ -4,7 +4,6 @@ package presenters;
 import com.mycompany.amzsprijave.Error;
 import com.mycompany.amzsprijave.Prijave;
 import com.mycompany.amzsprijave.PrijaveFacade;
-import com.mycompany.amzsprijave.AmzsIssue;
 import com.mycompany.amzsprijave.CycService;
 import java.io.IOException;
 import java.io.Serializable;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
@@ -50,14 +48,15 @@ public class IndexPresenter implements Serializable {
     private CycList carModel;
     private ArrayList<String> modelL;
     
+    private CycAccess c;
+    
     @Inject private PrijaveFacade facade;
     private Prijave prijava = new Prijave();
-    @Inject private AmzsIssue issue;
     @Inject private CycService cycService;
     
     @PostConstruct
    public void postconstruct() throws UnknownHostException, IOException, JSONException{
-        CycAccess c = new CycAccess("aidemo", 3600);
+        c = new CycAccess("aidemo", 3600);
         carBrand = cycService.carBrandStrings();
         
         
@@ -69,7 +68,6 @@ public class IndexPresenter implements Serializable {
     
     
     public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
-        CycAccess c = new CycAccess("aidemo", 3600);
         HashMap<Object, Object> map = cycService.exportFromCycCarTypeList(c);
         carBodyType = new CycList();
         for ( Map.Entry<Object, Object> entry :  map.entrySet()){
@@ -80,7 +78,6 @@ public class IndexPresenter implements Serializable {
     }
     
     public ArrayList<String> handleBrandChange() throws JSONException, UnknownHostException, CycApiException, IOException {  
-                    CycAccess c = new CycAccess("aidemo", 3600);
                     modelL = new ArrayList<String>();
                     
                     if(inputBrand != null) {
@@ -152,10 +149,6 @@ public class IndexPresenter implements Serializable {
     
     
     
-    
-    public String response() {
-        return "response.xhtml?faces-redirect=true";
-    }
     
     public Prijave getPrijava() {
         return prijava;
