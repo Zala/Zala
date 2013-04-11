@@ -80,7 +80,7 @@ public class AssertingPresenter {
 //        printMalfunction = issue.printMalfunction();
 //        printParent = issue.printParent();        
 //        printGrandparent = issue.printGrandparent();
-        assertionVehicle = issue.importIntoCycModel(inputBrand);
+        assertionVehicle = issue.importIntoCycVehicle(inputBrand);
 //        printModel = issue.getModel();
 //                String.valueOf(cycService.getModelByBrand(c, inputBrand).get(inputBrand));
 //        printRegistration = issue.printRegistration();
