@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.amzsprijave;
+package si.ijs.mobis.service;
 
 import java.io.Serializable;
 import javax.persistence.Column;

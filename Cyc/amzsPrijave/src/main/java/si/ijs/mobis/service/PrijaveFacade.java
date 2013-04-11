@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.amzsprijave;
+package si.ijs.mobis.service;
 
 import java.util.Date;
 import java.util.List;
@@ -17,7 +17,7 @@ import javax.persistence.Query;
 @Stateless
 public class PrijaveFacade {
     
-    @PersistenceContext(unitName="com.mycompany_amzsPrijave_war_1.0-SNAPSHOTPU")
+    @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
     private EntityManager entityManager;
     
     public void shraniPrijavo(Prijave pr) {

@@ -2,26 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package presenters;
+package si.ijs.mobis.presenters;
 
-import com.mycompany.amzsprijave.AmzsIssue;
-import com.mycompany.amzsprijave.Prijave;
-import com.mycompany.amzsprijave.PrijaveFacade;
+import si.ijs.mobis.service.Prijave;
+import si.ijs.mobis.service.PrijaveFacade;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.json.JSONException;
-import org.opencyc.api.CycAccess;
-import org.opencyc.cycobject.CycList;
+import si.ijs.mobis.org.json.JSONException;
 
 /**
  *

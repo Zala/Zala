@@ -1,5 +1,5 @@
 
-package com.mycompany.amzsprijave;
+package si.ijs.mobis.service;
 
 import java.util.List;
 import javax.ejb.Stateless;
@@ -10,7 +10,7 @@ import javax.persistence.Query;
 @Stateless
 public class BaseService{
         
-        @PersistenceContext(unitName="com.mycompany_amzsPrijave_war_1.0-SNAPSHOTPU")
+        @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
         private EntityManager entityManager;
         
         

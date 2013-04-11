@@ -1,5 +1,5 @@
 
-package com.mycompany.amzsprijave;
+package si.ijs.mobis.presenters;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -19,7 +19,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import org.json.JSONException;
+import si.ijs.mobis.org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
 import org.opencyc.cycobject.CycConstant;
@@ -30,6 +30,9 @@ import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
 import org.opencyc.inference.InferenceResultSet;
 import org.opencyc.inference.InferenceWorkerSynch;
+import si.ijs.mobis.service.CycService;
+import si.ijs.mobis.service.Prijave;
+import si.ijs.mobis.service.PrijaveFacade;
 
 
 @ManagedBean

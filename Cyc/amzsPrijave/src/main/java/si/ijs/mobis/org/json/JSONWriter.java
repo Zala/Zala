@@ -1,4 +1,4 @@
-package org.json;
+package si.ijs.mobis.org.json;
 
 import java.io.IOException;
 import java.io.Writer;

@@ -1,6 +1,5 @@
 
-package com.mycompany.amzsprijave;
-
+package si.ijs.mobis.service;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -10,7 +9,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.json.JSONException;
+import si.ijs.mobis.org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
 import org.opencyc.cycobject.CycConstant;

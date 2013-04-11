@@ -1,11 +1,10 @@
-package presenters;
+package si.ijs.mobis.presenters;
 
 
-import com.mycompany.amzsprijave.BaseService;
-import com.mycompany.amzsprijave.Error;
-import com.mycompany.amzsprijave.Prijave;
-import com.mycompany.amzsprijave.PrijaveFacade;
-import com.mycompany.amzsprijave.CycService;
+import si.ijs.mobis.service.BaseService;
+import si.ijs.mobis.service.Error;
+import si.ijs.mobis.service.Prijave;
+import si.ijs.mobis.service.PrijaveFacade;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
@@ -20,10 +19,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.json.JSONException;
+import si.ijs.mobis.org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
 import org.opencyc.cycobject.CycList;
+import si.ijs.mobis.service.CycService;
 
 /**
  *
@@ -33,7 +33,7 @@ import org.opencyc.cycobject.CycList;
 @ViewScoped
 public class IndexPresenter implements Serializable {
     
-    @PersistenceContext(unitName="com.mycompany_amzsPrijave_war_1.0-SNAPSHOTPU")
+    @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
     private EntityManager entityManager;
     
     private String grandparent;
@@ -130,7 +130,7 @@ public class IndexPresenter implements Serializable {
     
     
     public List<String> getByParent(String par) {
-        Query q = entityManager.createQuery("SELECT DISTINCT malfunction FROM "+ com.mycompany.amzsprijave.Error.class.getName()
+        Query q = entityManager.createQuery("SELECT DISTINCT malfunction FROM "+ si.ijs.mobis.service.Error.class.getName()
                 + " WHERE parent_malf = :par").setParameter("par", par);
         List<String> list = q.getResultList();
         return list;
