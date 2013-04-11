@@ -316,17 +316,12 @@ public class CycService{
                 }
     return carTypes;
     }
-
-    static String toEnumCase(String s){
-                String[] parts = s.split(" ");
-                String enumCaseString = "";
-                for (String part : parts){
-                    enumCaseString = enumCaseString + part.toUpperCase()+"_" ;
-                }
-                int n = enumCaseString.length();
-                enumCaseString = enumCaseString.substring(0,n-1);
-                return enumCaseString;
-            }
-
+    
+    public static String toEnumCase(String s){
+		String string = s;
+		string = string.toUpperCase().replaceAll("\\s+", "_");    // zamenjaj enega ali vec preslednov z _
+		string = string.toUpperCase().replaceAll("/", "_");
+		return string;
+	}
 
 }
