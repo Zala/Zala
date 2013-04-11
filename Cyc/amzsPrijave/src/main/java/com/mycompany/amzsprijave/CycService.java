@@ -25,50 +25,54 @@ public class CycService{
     private static final Logger log = Logger.getLogger(CycService.class.getName());
     @Inject private PrijaveFacade facade;
    
-    
+    enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
+    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
+    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
+    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
+
     public String getIssue(){
                 String amzsIssue = "AMZSIssue"+ facade.getPrijave().get(0).getId();
                 return amzsIssue;
         }
     
-    
-    enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
-    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
     public String getEvent(){
-                EventType e = EventType.valueOf(toEnumCase(facade.getPrijave().get(0).getParent2_malf()));
                 String event = "";
-                switch(e)
-                {
-                    case NESRECA: 
-                        event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
-                        break;
-                    case RESEVANJE_VOZILA:
-                        String pm = facade.getPrijave().get(0).getParent_malf();
-                        StuckIn s = StuckIn.valueOf(toEnumCase(pm));
-                        switch(s)
-                        {
-                            case OSTAL_V_BLATU:
-                                event = "AMZSStuckInMud"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_NA_KOLICKU:
-                                event = "AMZSStuckOnAPole"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_V_SNEGU:
-                                event = "AMZSStuckInSnow"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_NA_PREVISU:
-                                event = "AMZSStuckOnACliff"+facade.getPrijave().get(0).getId();
-                                break;
-                            case OSTAL_NA_ZIDU_SKARPI:
-                                event = "AMZSStuckOnAWall"+facade.getPrijave().get(0).getId();
-                                break;
-                            default: 
-                                event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
-                                break;                                
-                        }
-                        break;
-                    default: 
-                        event = "AMZSVehicleMalfunction" +facade.getPrijave().get(0).getId();
+                
+                if(facade.getPrijave().get(0).getParent2_malf() != null){
+                    EventType e = EventType.valueOf(toEnumCase(facade.getPrijave().get(0).getParent2_malf()));
+                    switch(e)
+                    {
+                        case NESRECA: 
+                            event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
+                            break;
+                        case RESEVANJE_VOZILA:
+                            String pm = facade.getPrijave().get(0).getParent_malf();
+                            StuckIn s = StuckIn.valueOf(toEnumCase(pm));
+                            switch(s)
+                            {
+                                case OSTAL_V_BLATU:
+                                    event = "AMZSStuckInMud"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_NA_KOLICKU:
+                                    event = "AMZSStuckOnAPole"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_V_SNEGU:
+                                    event = "AMZSStuckInSnow"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_NA_PREVISU:
+                                    event = "AMZSStuckOnACliff"+facade.getPrijave().get(0).getId();
+                                    break;
+                                case OSTAL_NA_ZIDU_SKARPI:
+                                    event = "AMZSStuckOnAWall"+facade.getPrijave().get(0).getId();
+                                    break;
+                                default: 
+                                    event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
+                                    break;                                
+                            }
+                            break;
+                        default: 
+                            event = "AMZSVehicleMalfunction" +facade.getPrijave().get(0).getId();
+                    }
                 }
                 return event;
     }
@@ -106,8 +110,6 @@ public class CycService{
                         }
                 return String.valueOf(StuckOrConfinedVehicleSituation);
     }
-    
-    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
     
     public String accident() throws UnknownHostException, IOException{
         
@@ -152,12 +154,7 @@ public class CycService{
                 
                 return assertionEvent;
     }
-    
-    
-    
-    
-    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
-    
+        
     public String orientation() throws UnknownHostException, IOException{
                 CycAccess _c = new CycAccess("aidemo", 3600);
                 CycObject Mt = _c.getConstantByName("BaseKB");
@@ -194,7 +191,6 @@ public class CycService{
                 return assertionEvent;
                 }
     
-    
     public HashMap exportFromCycCarBrandList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycFort fort = _c.getKnownFortByName("AutomobileTypeByBrand");
                     CycList instances = _c.getAllInstances(fort);
@@ -214,130 +210,123 @@ public class CycService{
                     return mapBr;
         }
     
-    
-        public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException{
-                    CycAccess c = new CycAccess("aidemo", 3600);
-                    HashMap<Object, Object> map = exportFromCycCarBrandList(c);
-                    CycList carBrands = new CycList();
-                    for ( Map.Entry<Object, Object> entry :  map.entrySet()){
-                        Object nameString = entry.getKey();
-                        carBrands.add(nameString);
-                    }
-        return carBrands;
-    }
-        
-        
-        
-        
-        public HashMap getModelByBrand(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    CycList specializations = new CycList();
-                    HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
-                    HashMap<Object, Object> mapBr = exportFromCycCarBrandList(_c);
-                    
-//                    ne razumem. zakaj zasteka, kadar ne izberem nic???
-                    Object mapBrand = mapBr.get(_inputBrand);
-                    if(mapBrand != null){
-                        String constantBr = String.valueOf(mapBrand);
-                        CycFort fort = _c.getKnownFortByName(constantBr);
-                        specializations = _c.getAllSpecs(fort, English);
-
-                        for (Iterator it = specializations.iterator(); it.hasNext();) {
-                            Object constantMod = it.next();
-                            CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
-                            CycList nameStr = _c.getNameStrings(nameStrMod, English);
-                            if (!nameStr.isEmpty()){
-                                mapMod.put(nameStr.get(0), constantMod);
-                            }
-                        }
-                    }
-                    return mapMod;
+    public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException{
+                CycAccess c = new CycAccess("aidemo", 3600);
+                HashMap<Object, Object> map = exportFromCycCarBrandList(c);
+                CycList carBrands = new CycList();
+                for ( Map.Entry<Object, Object> entry :  map.entrySet()){
+                    Object nameString = entry.getKey();
+                    carBrands.add(nameString);
                 }
-        
-        public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    CycList specializations = new CycList();
-                    HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
-                    HashMap<Object, Object> mapBr = exportFromCycCarBrandList(_c);
-                    
-//                    ne razumem. zakaj zasteka, kadar ne izberem nic???
-                    Object mapBrand = mapBr.get(_inputBrand);
-                    if(mapBrand != null){
-                        String constantBr = String.valueOf(mapBrand);
-                        CycFort fort = _c.getKnownFortByName(constantBr);
-                        specializations = _c.getAllSpecs(fort, English);
+    return carBrands;
+}
 
-                        for (Iterator it = specializations.iterator(); it.hasNext();) {
-                            Object constantMod = it.next();
-                            CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
-                            CycList nameStr = _c.getNameStrings(nameStrMod, English);
-                            if (!nameStr.isEmpty()){
-                                for (Iterator str = nameStr.iterator(); str.hasNext();){
-                                    Object strNext = str.next();
-                                    mapMod.put(strNext, constantMod);
-                                }
-                            }
-                        }
-                    }
-                    return mapMod;
-                }
-        
-        public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException{
-                    CycAccess c = new CycAccess("aidemo", 3600);
-                    HashMap<Object, Object> mapBr = getModelByBrand(c, _inputBrand);
-                    CycList carModels = new CycList();
-                    for ( Map.Entry<Object, Object> entry :  mapBr.entrySet()){
-                        Object nameString = entry.getKey();
-                        carModels.add(nameString);
-                    }
-        return carModels;
-        }
-        
-        
-        
-        public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
-                    CycList instances = _c.getAllInstances(fort);
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    
-                    HashMap<Object, Object> mapTy = new HashMap<Object, Object>();
-                    
-                    for (Iterator it = instances.iterator(); it.hasNext();) {
-                        Object constantTy = it.next();
-                        CycFort nameStrTy = _c.getKnownFortByName(String.valueOf(constantTy));
-                        CycList nameStr = _c.getNameStrings(nameStrTy, English);
+    public HashMap getModelByBrand(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+
+                CycObject English = _c.getConstantByName("EnglishMt");
+                CycList specializations = new CycList();
+                HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
+                HashMap<Object, Object> mapBr = exportFromCycCarBrandList(_c);
+
+//                    ne razumem. zakaj zasteka, kadar ne izberem nic???
+                Object mapBrand = mapBr.get(_inputBrand);
+                if(mapBrand != null){
+                    String constantBr = String.valueOf(mapBrand);
+                    CycFort fort = _c.getKnownFortByName(constantBr);
+                    specializations = _c.getAllSpecs(fort, English);
+
+                    for (Iterator it = specializations.iterator(); it.hasNext();) {
+                        Object constantMod = it.next();
+                        CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
+                        CycList nameStr = _c.getNameStrings(nameStrMod, English);
                         if (!nameStr.isEmpty()){
-                            mapTy.put(nameStr.get(0), constantTy);
+                            mapMod.put(nameStr.get(0), constantMod);
                         }
                     }
-                                        
-                    return mapTy;
-        }
-        
-        public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException{
-                    CycAccess c = new CycAccess("aidemo", 3600);
-                    HashMap<Object, Object> mapTy = exportFromCycCarTypeList(c);
-                    CycList carTypes = new CycList();
-                    for ( Map.Entry<Object, Object> entry :  mapTy.entrySet()){
-                        Object nameString = entry.getKey();
-                        carTypes.add(nameString);
-                    }
-        return carTypes;
-        }
-        
-        
-        
-        
-        static String toEnumCase(String s){
-                    String[] parts = s.split(" ");
-                    String enumCaseString = "";
-                    for (String part : parts){
-                        enumCaseString = enumCaseString + part.toUpperCase()+"_" ;
-                    }
-                    int n = enumCaseString.length();
-                    enumCaseString = enumCaseString.substring(0,n-1);
-                    return enumCaseString;
                 }
+                return mapMod;
+            }
+
+    public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+
+                CycObject English = _c.getConstantByName("EnglishMt");
+                CycList specializations = new CycList();
+                HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
+                HashMap<Object, Object> mapBr = exportFromCycCarBrandList(_c);
+
+//                    ne razumem. zakaj zasteka, kadar ne izberem nic???
+                Object mapBrand = mapBr.get(_inputBrand);
+                if(mapBrand != null){
+                    String constantBr = String.valueOf(mapBrand);
+                    CycFort fort = _c.getKnownFortByName(constantBr);
+                    specializations = _c.getAllSpecs(fort, English);
+
+                    for (Iterator it = specializations.iterator(); it.hasNext();) {
+                        Object constantMod = it.next();
+                        CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
+                        CycList nameStr = _c.getNameStrings(nameStrMod, English);
+                        if (!nameStr.isEmpty()){
+                            for (Iterator str = nameStr.iterator(); str.hasNext();){
+                                Object strNext = str.next();
+                                mapMod.put(strNext, constantMod);
+                            }
+                        }
+                    }
+                }
+                return mapMod;
+            }
+
+    public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException{
+                CycAccess c = new CycAccess("aidemo", 3600);
+                HashMap<Object, Object> mapBr = getModelByBrand(c, _inputBrand);
+                CycList carModels = new CycList();
+                for ( Map.Entry<Object, Object> entry :  mapBr.entrySet()){
+                    Object nameString = entry.getKey();
+                    carModels.add(nameString);
+                }
+    return carModels;
+    }
+
+    public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+                CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
+                CycList instances = _c.getAllInstances(fort);
+                CycObject English = _c.getConstantByName("EnglishMt");
+
+                HashMap<Object, Object> mapTy = new HashMap<Object, Object>();
+
+                for (Iterator it = instances.iterator(); it.hasNext();) {
+                    Object constantTy = it.next();
+                    CycFort nameStrTy = _c.getKnownFortByName(String.valueOf(constantTy));
+                    CycList nameStr = _c.getNameStrings(nameStrTy, English);
+                    if (!nameStr.isEmpty()){
+                        mapTy.put(nameStr.get(0), constantTy);
+                    }
+                }
+
+                return mapTy;
+    }
+
+    public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException{
+                CycAccess c = new CycAccess("aidemo", 3600);
+                HashMap<Object, Object> mapTy = exportFromCycCarTypeList(c);
+                CycList carTypes = new CycList();
+                for ( Map.Entry<Object, Object> entry :  mapTy.entrySet()){
+                    Object nameString = entry.getKey();
+                    carTypes.add(nameString);
+                }
+    return carTypes;
+    }
+
+    static String toEnumCase(String s){
+                String[] parts = s.split(" ");
+                String enumCaseString = "";
+                for (String part : parts){
+                    enumCaseString = enumCaseString + part.toUpperCase()+"_" ;
+                }
+                int n = enumCaseString.length();
+                enumCaseString = enumCaseString.substring(0,n-1);
+                return enumCaseString;
+            }
+
+
 }
