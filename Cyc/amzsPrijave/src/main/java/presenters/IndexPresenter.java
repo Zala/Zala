@@ -1,6 +1,7 @@
 package presenters;
 
 
+//import com.mycompany.amzsprijave.BaseService;
 import com.mycompany.amzsprijave.Error;
 import com.mycompany.amzsprijave.Prijave;
 import com.mycompany.amzsprijave.PrijaveFacade;
@@ -53,6 +54,7 @@ public class IndexPresenter implements Serializable {
     @Inject private PrijaveFacade facade;
     private Prijave prijava = new Prijave();
     @Inject private CycService cycService;
+//    @Inject private BaseService baseService;
     
     @PostConstruct
    public void postconstruct() throws UnknownHostException, IOException, JSONException{
@@ -61,6 +63,7 @@ public class IndexPresenter implements Serializable {
         
         
         Query q = entityManager.createQuery("SELECT DISTINCT parent2_malf FROM "+ Error.class.getName());
+//        parent2_malfL = baseService.getGPList().getResultList();
         parent2_malfL = q.getResultList();
         
         inputBrand = "";

@@ -78,7 +78,7 @@ public class AmzsIssue {
         
             
             @PostConstruct
-            private void postconstruct() throws UnknownHostException, IOException{
+            private void postconstruct() throws UnknownHostException, IOException {
                 if (log.isLoggable(Level.FINE))
                     {log.fine("initiaizing AmzsIssue");}
                 
@@ -97,15 +97,15 @@ public class AmzsIssue {
                 parent_malf = podatki.get(0).getParent_malf();
                 malfunction = podatki.get(0).getMalfunction();
                 
-//                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-//                Map<String, String> parameterMap = (Map<String, String>) context.getRequestParameterMap();
-//                if (!parameterMap.containsKey("ib")) {
-//                    if (log.isLoggable(Level.WARNING))
-//                        {log.warning("Parameter ib missing!");}
-//                    throw new IllegalArgumentException("Parameter ib missing!");
-//                }
+                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                Map<String, String> parameterMap = (Map<String, String>) context.getRequestParameterMap();
+                if (!parameterMap.containsKey("ib")) {
+                    if (log.isLoggable(Level.WARNING))
+                        {log.warning("Parameter ib missing!");}
+                    throw new IllegalArgumentException("Parameter ib missing!");
+                }
 
-//                inputBrand = parameterMap.get("ib");
+                inputBrand = parameterMap.get("ib");
                 _c = new CycAccess("aidemo", 3600);
                 amzsIssue = cycService.getIssue();
                 event = 0;
@@ -113,9 +113,9 @@ public class AmzsIssue {
             }
            
         
-        public String printName(){
+        public String printName() {
                     String n = name;
-                    if (name.isEmpty()){
+                    if (name.isEmpty()) {
                         n = " / ";
                     }
                     return n;
@@ -171,7 +171,7 @@ public class AmzsIssue {
         
         public String printRegistration(){
                     String reg = registration;
-                    if (registration.isEmpty()){
+                    if (registration.isEmpty()) {
                         reg = " / ";
                     }
                     return reg;
@@ -288,7 +288,7 @@ public class AmzsIssue {
                     return assertType;
         }
         
-        public String importIntoCycModel(String inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException{
+        public String importIntoCycModel() throws JSONException, UnknownHostException, CycApiException, IOException{
                     CycObject Mt = _c.getConstantByName("BaseKB");
                     mapMod = cycService.getModelByBrandAllNameStrings(_c, inputBrand);
                     String modelConst = String.valueOf(mapMod.get(model));
