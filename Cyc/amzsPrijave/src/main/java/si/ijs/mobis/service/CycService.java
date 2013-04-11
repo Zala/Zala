@@ -22,7 +22,7 @@ import org.opencyc.cycobject.CycObject;
 public class CycService{
     
     private static final Logger log = Logger.getLogger(CycService.class.getName());
-    @Inject private PrijaveFacade facade;
+    @Inject private BaseService baseService;
    
     enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
     enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
@@ -30,39 +30,40 @@ public class CycService{
     enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
 
     public String getIssue(){
-                String amzsIssue = "AMZSIssue"+ facade.getPrijave().get(0).getId();
+                String amzsIssue = "AMZSIssue"+ baseService.getData().get(0).getId();
                 return amzsIssue;
         }
     
     public String getEvent(){
                 String event = "";
-                
-                if(facade.getPrijave().get(0).getParent2_malf() != null){
-                    EventType e = EventType.valueOf(toEnumCase(facade.getPrijave().get(0).getParent2_malf()));
+                String pm2 = baseService.getData().get(0).getParent2_malf();
+                Integer id = baseService.getData().get(0).getId();
+                if(pm2 != null){
+                    EventType e = EventType.valueOf(toEnumCase(pm2));
                     switch(e)
                     {
                         case NESRECA: 
-                            event = "AMZSVehicleAccident"+facade.getPrijave().get(0).getId();
+                            event = "AMZSVehicleAccident"+baseService.getData().get(0).getId();
                             break;
                         case RESEVANJE_VOZILA:
-                            String pm = facade.getPrijave().get(0).getParent_malf();
+                            String pm = baseService.getData().get(0).getParent_malf();
                             StuckIn s = StuckIn.valueOf(toEnumCase(pm));
                             switch(s)
                             {
                                 case OSTAL_V_BLATU:
-                                    event = "AMZSStuckInMud"+facade.getPrijave().get(0).getId();
+                                    event = "AMZSStuckInMud"+id;
                                     break;
                                 case OSTAL_NA_KOLICKU:
-                                    event = "AMZSStuckOnAPole"+facade.getPrijave().get(0).getId();
+                                    event = "AMZSStuckOnAPole"+id;
                                     break;
                                 case OSTAL_V_SNEGU:
-                                    event = "AMZSStuckInSnow"+facade.getPrijave().get(0).getId();
+                                    event = "AMZSStuckInSnow"+id;
                                     break;
                                 case OSTAL_NA_PREVISU:
-                                    event = "AMZSStuckOnACliff"+facade.getPrijave().get(0).getId();
+                                    event = "AMZSStuckOnACliff"+id;
                                     break;
                                 case OSTAL_NA_ZIDU_SKARPI:
-                                    event = "AMZSStuckOnAWall"+facade.getPrijave().get(0).getId();
+                                    event = "AMZSStuckOnAWall"+id;
                                     break;
                                 default: 
                                     event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
@@ -70,7 +71,7 @@ public class CycService{
                             }
                             break;
                         default: 
-                            event = "AMZSVehicleMalfunction" +facade.getPrijave().get(0).getId();
+                            event = "AMZSVehicleMalfunction" +id;
                     }
                 }
                 return event;
@@ -80,7 +81,7 @@ public class CycService{
                 CycAccess _c = new CycAccess("aidemo", 3600);
                 CycObject Mt = _c.getConstantByName("BaseKB");
                 
-                StuckIn s = StuckIn.valueOf(toEnumCase(facade.getPrijave().get(0).getParent_malf()));
+                StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
                 CycConstant StuckOrConfinedVehicleSituation = null;
                 CycConstant AMZSStuckSituation = _c.makeCycConstant(getEvent());
                         switch(s)
@@ -122,7 +123,7 @@ public class CycService{
                 CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$VehicleAccident)");
                 _c.assertGaf(issueEventType, Mt);
 
-                Position pos = Position.valueOf(toEnumCase(facade.getPrijave().get(0).getParent_malf()));
+                Position pos = Position.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
                 CycConstant position;
                 CycList posL = new CycList(); 
                 switch(pos)
@@ -160,8 +161,8 @@ public class CycService{
                 CycConstant orientation;
                 CycList orientL = new CycList(); 
                 
-                String id = String.valueOf(facade.getPrijave().get(0).getId());
-                Orientation orient = Orientation.valueOf(toEnumCase(facade.getPrijave().get(0).getMalfunction()));
+                String id = String.valueOf(baseService.getData().get(0).getId());
+                Orientation orient = Orientation.valueOf(toEnumCase(baseService.getData().get(0).getMalfunction()));
                 String assertionEvent = accident();
                 
                 switch(orient)

@@ -30,9 +30,9 @@ import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
 import org.opencyc.inference.InferenceResultSet;
 import org.opencyc.inference.InferenceWorkerSynch;
+import si.ijs.mobis.service.BaseService;
 import si.ijs.mobis.service.CycService;
 import si.ijs.mobis.service.Prijave;
-import si.ijs.mobis.service.PrijaveFacade;
 
 
 @ManagedBean
@@ -40,7 +40,7 @@ import si.ijs.mobis.service.PrijaveFacade;
 public class AmzsIssue {
         
         private static final Logger log = Logger.getLogger(AmzsIssue.class.getName());
-        @Inject private PrijaveFacade facade;
+        @Inject private BaseService baseService;
         @Inject private CycService cycService;
         
         private Integer id;
@@ -82,7 +82,7 @@ public class AmzsIssue {
                 if (log.isLoggable(Level.FINE))
                     {log.fine("initiaizing AmzsIssue");}
                 
-                podatki = facade.getPrijave();
+                podatki = baseService.getData();
                                 
                 id = podatki.get(0).getId();
                 name = podatki.get(0).getIme();

@@ -4,7 +4,6 @@ package si.ijs.mobis.presenters;
 import si.ijs.mobis.service.BaseService;
 import si.ijs.mobis.service.Error;
 import si.ijs.mobis.service.Prijave;
-import si.ijs.mobis.service.PrijaveFacade;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
@@ -16,9 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import si.ijs.mobis.org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
@@ -32,10 +28,7 @@ import si.ijs.mobis.service.CycService;
 @ManagedBean
 @ViewScoped
 public class IndexPresenter implements Serializable {
-    
-    @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
-    private EntityManager entityManager;
-    
+        
     private String grandparent;
     private String parent;
     private String malfunction;
@@ -51,100 +44,92 @@ public class IndexPresenter implements Serializable {
     
     private CycAccess c;
     
-    @Inject private PrijaveFacade facade;
+//    @Inject private PrijaveFacade facade;
     private Prijave prijava = new Prijave();
     @Inject private CycService cycService;
     @Inject private BaseService baseService;
     
     @PostConstruct
    public void postconstruct() throws UnknownHostException, IOException, JSONException{
-        c = new CycAccess("aidemo", 3600);
-        carBrand = cycService.carBrandStrings();
-        
-        
-//        Query q = entityManager.createQuery("SELECT DISTINCT parent2_malf FROM "+ Error.class.getName());
-        parent2_malfL = baseService.getGPList();
-//        parent2_malfL = q.getResultList();
-        
-        inputBrand = "";
+            c = new CycAccess("aidemo", 3600);
+            carBrand = cycService.carBrandStrings();
+
+            parent2_malfL = baseService.getGPList();
+
+            inputBrand = "";
     }    
     
     
     public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
-        HashMap<Object, Object> map = cycService.exportFromCycCarTypeList(c);
-        carBodyType = new CycList();
-        for ( Map.Entry<Object, Object> entry :  map.entrySet()){
-            Object nameString = entry.getKey();
-            carBodyType.add(nameString);
-        }
-        return carBodyType;
+            HashMap<Object, Object> map = cycService.exportFromCycCarTypeList(c);
+            carBodyType = new CycList();
+            for ( Map.Entry<Object, Object> entry :  map.entrySet()){
+                Object nameString = entry.getKey();
+                carBodyType.add(nameString);
+            }
+            return carBodyType;
     }
     
     public ArrayList<String> handleBrandChange() throws JSONException, UnknownHostException, CycApiException, IOException {  
-                    modelL = new ArrayList<String>();
-                    
-                    if(inputBrand != null) {
-                        HashMap<Object, Object> map = cycService.getModelByBrand(c, inputBrand);
-                        for (Map.Entry<Object, Object> entry :  map.entrySet()){
-                            Object nameString = entry.getKey();
-                            modelL.add(String.valueOf(nameString));
-                        }
-                    }  
-                    return modelL;
+            modelL = new ArrayList<String>();
+
+            if(inputBrand != null) {
+                HashMap<Object, Object> map = cycService.getModelByBrand(c, inputBrand);
+                for (Map.Entry<Object, Object> entry :  map.entrySet()){
+                    Object nameString = entry.getKey();
+                    modelL.add(String.valueOf(nameString));
+                }
+            }  
+            return modelL;
     }
     
     
     
     public void saveError(Error error) {
-        entityManager.persist(error);
+            baseService.save(error);
     }
     
     
     public List<String> getByParent2() {
-        return parent2_malfL;
+            return parent2_malfL;
     }
 
     
     
     public void handleGrandparentChange() {  
         
-        if(grandparent != null && !grandparent.isEmpty()) {
-            parent_malfL = getByGrandparent(grandparent);
-        }  
+            if(grandparent != null && !grandparent.isEmpty()) {
+                parent_malfL = getByGrandparent(grandparent);
+            }  
     }
     
     
     public List<String> getByGrandparent(String grandp) {
-        Query q = entityManager.createQuery("SELECT DISTINCT parent_malf FROM "+ Error.class.getName()
-                + " WHERE parent2_malf = :grandp").setParameter("grandp", grandp);
-        List<String> list = q.getResultList();
-        return list;
+            return baseService.getByGPList(grandp); 
+         
     }
     
     
     public void handleParentChange() {  
-        if(parent !=null && !parent.equals("")) {
-            malfunctionL = getByParent(parent);
-        }  
+            if(parent !=null && !parent.equals("")) {
+                malfunctionL = getByParent(parent);
+            }  
     }
     
     
     public List<String> getByParent(String par) {
-        Query q = entityManager.createQuery("SELECT DISTINCT malfunction FROM "+ si.ijs.mobis.service.Error.class.getName()
-                + " WHERE parent_malf = :par").setParameter("par", par);
-        List<String> list = q.getResultList();
-        return list;
+            return baseService.getByPList(par);
     }
     
     
     
     
     public String asserting() {
-        prijava.setParent2_malf(getGrandparent());
-        prijava.setParent_malf(getParent());
-        prijava.setMalfunction(getMalfunction());
-        facade.shraniPrijavo(prijava);
-        return "asserting.xhtml?ib=" + inputBrand + "&faces-redirect=true";
+            prijava.setParent2_malf(getGrandparent());
+            prijava.setParent_malf(getParent());
+            prijava.setMalfunction(getMalfunction());
+            baseService.saveData(prijava);
+            return "asserting.xhtml?ib=" + inputBrand + "&faces-redirect=true";
     }
                  
     

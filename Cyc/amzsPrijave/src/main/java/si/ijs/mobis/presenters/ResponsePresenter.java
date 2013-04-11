@@ -5,7 +5,6 @@
 package si.ijs.mobis.presenters;
 
 import si.ijs.mobis.service.Prijave;
-import si.ijs.mobis.service.PrijaveFacade;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -17,6 +16,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import si.ijs.mobis.org.json.JSONException;
+import si.ijs.mobis.service.BaseService;
 
 /**
  *
@@ -43,13 +43,13 @@ public class ResponsePresenter {
     
     int n;
     
-    @Inject private PrijaveFacade facade;
+    @Inject private BaseService baseService;
     
     
     @PostConstruct
     public void postconstruct() throws ParseException, UnknownHostException, IOException, JSONException{
                   
-        podatki = facade.getPrijave();
+        podatki = baseService.getData();
         n = podatki.size()-1; 
         
          if (podatki.isEmpty()){
