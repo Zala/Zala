@@ -152,7 +152,15 @@ public class AmzsIssue {
                     }
                     return s;
          }    
-             
+           
+        public String printMember(){
+                  String m = member;
+                  if (member == null){
+                      m = " / ";
+                  }
+                  return m;
+        }
+          
         public String printMemberNo(){
                     String m = member_no;
                     if (member_no.isEmpty()){
@@ -193,6 +201,21 @@ public class AmzsIssue {
                     return reg;
          }
         
+        public String printModel(){
+                    String m = model;
+                    if (model == null){
+                        m = " / ";
+                    }
+                    return m;
+        }
+        
+        public String printType(){
+                    String t = type;
+                    if (type == null){
+                        t = " / ";
+                    }
+                    return t;
+        }
         
         public String importIntoCycIssue() throws JSONException, UnknownHostException, CycApiException, IOException {
                         CycConstant AMZSReport = _c.getConstantByName("AMZSReport");
@@ -220,16 +243,18 @@ public class AmzsIssue {
                     
                     _c = new CycAccess("aidemo", 3600);
                     CycObject Mt = _c.getConstantByName("AMZSMt");
+                    
+                    CycList Member = new CycList();
                     if ("Da".equals(member) && !member_no.isEmpty()){
-                        CycList Member = _c.makeCycList("(#$groupMemberWithMembershipID (#$AMZSUserFn \"" +id +"\") #$AMZSKlub \""+member_no +"\")");
+                        Member = _c.makeCycList("(#$groupMemberWithMembershipID (#$AMZSUserFn \"" +id +"\") #$AMZSKlub \""+member_no +"\")");
                         _c.assertGaf(Member, Mt);
                     }
 
-                    else if (member == null){
-                        member = " / ";
-                    }
+//                    else if (member == null){
+//                        member = " / ";
+//                    }
 
-                    return member;
+                    return String.valueOf(Member);
         }
         
         public String importIntoCycEvent() throws JSONException, UnknownHostException, CycApiException, IOException {
@@ -312,6 +337,7 @@ public class AmzsIssue {
                     CycList Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
                     _c.assertGaf(Registrska, English);
                     
+                    
                     if(!"".equals(amzsEvent) ){
                         CycList ObjectActedOn = new CycList();
                         switch (event){
@@ -329,7 +355,7 @@ public class AmzsIssue {
                             CycList Overheated = _c.makeCycList("(#$stateOfDevice (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$VehicleDevice-Overheated)");
                             _c.assertGaf(Overheated, Mt);
                         }
-                        assertionVehicle = ObjectActedOn +", " +Registrska +", ";
+                        assertionVehicle = ObjectActedOn +", " +Registrska;
                     }
                     
                     else {assertionVehicle = "";}
@@ -375,7 +401,7 @@ public class AmzsIssue {
                         CycList EventL = _c.makeCycList(StringDate);
                         _c.assertGaf(EventL, Mt);
                         
-// assertionDate = "Date: " +Year + "-" + Month +"-" +Day;
+                        // assertionDate = "Date: " +Year + "-" + Month +"-" +Day;
                                               
                         return StringDate;
                         

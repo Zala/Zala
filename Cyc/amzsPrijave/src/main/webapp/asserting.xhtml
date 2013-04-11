@@ -18,7 +18,7 @@
                 <table class="tableAss">
                     <tr>
                         <td class="fc"> <b> AMZS clan: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{amzsIssue.member}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printMember()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Clanska stevilka: </b> </td> 
@@ -34,11 +34,11 @@
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Znamka: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{amzsIssue.model}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printModel()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Tip: </b> </td> 
-                        <td> <h:outputText escape="false" value="#{amzsIssue.type}" /> </td> 
+                        <td> <h:outputText escape="false" value="#{amzsIssue.printType()}" /> </td> 
                     </tr>
                     <tr> 
                         <td class="fc"> <b> Registrska stevilka: </b> </td> 
@@ -70,6 +70,10 @@
                         <tr>
                             <td> </td>
                             <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycSender()}" /> </td> 
+                        </tr>
+                        <tr>
+                            <td> </td>
+                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycMember()}" /> </td> 
                         </tr>
                         <tr>
                             <td> </td>
