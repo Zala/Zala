@@ -3,9 +3,12 @@ package si.ijs.mobis.service;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -17,12 +20,17 @@ import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
 import org.opencyc.cycobject.CycObject;
+import org.opencyc.inference.DefaultInferenceParameters;
+import org.opencyc.inference.DefaultInferenceWorkerSynch;
+import org.opencyc.inference.InferenceResultSet;
+import org.opencyc.inference.InferenceWorkerSynch;
 
 
 @Stateless
 public class CycService{
     
-    private static final Logger log = Logger.getLogger(CycService.class.getName());
+    private static final Logger LOGGER  = Logger.getLogger(CycService.class.getName());
+    
     @Inject private BaseService baseService;
    
     enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
@@ -194,24 +202,48 @@ public class CycService{
                 return assertionEvent;
                 }
     
+    
+    /**
+     * Accesses Cyc and returns hashmap of car brand names and appropriate Cyc 
+     * Constants
+     * 
+     * @param _c
+     * @return
+     * @throws JSONException
+     * @throws UnknownHostException
+     * @throws CycApiException
+     * @throws IOException 
+     */
     public HashMap exportFromCycCarBrandList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBrand");
-                    CycList instances = _c.getAllInstances(fort);
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    
-                    HashMap<Object, Object> mapBr = new HashMap<Object, Object>();
-                    
-                    for (Iterator it = instances.iterator(); it.hasNext();) {
-                        Object constantBr = it.next();
-                        CycFort nameStrBr = _c.getKnownFortByName(String.valueOf(constantBr));
-                        CycList nameStr = _c.getNameStrings(nameStrBr, English);
-                        if (!nameStr.isEmpty()){
-                            mapBr.put(nameStr.get(0), constantBr);
-                        }
-                    }
-                    
-                    return mapBr;
-        }
+        DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
+        InferenceWorkerSynch worker;
+        InferenceResultSet rs;
+        String query =  "(#$and \n" +
+                        "  (#$isa ?X #$AutomobileTypeByBrand) \n" +
+                        "  (#$nameString ?X ?NAME))";
+        
+        worker = new DefaultInferenceWorkerSynch(query, 
+                                            _c.makeELMt(CycAccess.inferencePSC),
+                                            defaultP, _c, 500000);
+        HashMap<String, CycConstant> mapBrandNames = new HashMap<String, CycConstant>();
+        
+        long startTime = System.nanoTime();
+        LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
+         
+        rs = worker.executeQuery();
+        while (rs.next())
+        {
+            CycConstant carBrand = rs.getConstant("?X");
+            String carBrandName = rs.getString("?NAME");
+            mapBrandNames.put(carBrandName, carBrand);
+	}
+        rs.close();
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
+        
+        return mapBrandNames;
+    }
     
     public Set<Object> carBrandStrings(HashMap hm) throws UnknownHostException, IOException, JSONException {
                 Set<Object> carBrands = hm.keySet();
