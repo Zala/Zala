@@ -3,6 +3,8 @@ package si.ijs.mobis.service;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,7 +27,8 @@ import org.opencyc.inference.InferenceWorkerSynch;
 @Stateless
 public class CycService{
     
-    private static final Logger log = Logger.getLogger(CycService.class.getName());
+    private static final Logger LOGGER  = Logger.getLogger(CycService.class.getName());
+    
     @Inject private BaseService baseService;
    
     enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
@@ -222,6 +225,10 @@ public class CycService{
                                             _c.makeELMt(CycAccess.inferencePSC),
                                             defaultP, _c, 500000);
         HashMap<String, CycConstant> mapBrandNames = new HashMap<String, CycConstant>();
+        
+        long startTime = System.nanoTime();
+        LOGGER.info("Calling cyc with query: "+query);
+         
         rs = worker.executeQuery();
         while (rs.next())
         {
@@ -230,6 +237,10 @@ public class CycService{
             mapBrandNames.put(carBrandName, carBrand);
 	}
         rs.close();
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        LOGGER.info("Call took: " + new Date(duration).toString());
+        
         return mapBrandNames;
     }
     
