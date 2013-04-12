@@ -27,7 +27,7 @@ import org.opencyc.inference.InferenceWorkerSynch;
 
 
 @Stateless
-public class CycService{
+public class CycService {
     
     private static final Logger LOGGER  = Logger.getLogger(CycService.class.getName());
     
