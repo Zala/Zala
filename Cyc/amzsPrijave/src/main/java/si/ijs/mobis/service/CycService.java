@@ -16,6 +16,10 @@ import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
 import org.opencyc.cycobject.CycObject;
+import org.opencyc.inference.DefaultInferenceParameters;
+import org.opencyc.inference.DefaultInferenceWorkerSynch;
+import org.opencyc.inference.InferenceResultSet;
+import org.opencyc.inference.InferenceWorkerSynch;
 
 
 @Stateless
@@ -194,24 +198,40 @@ public class CycService{
                 return assertionEvent;
                 }
     
+    
+    /**
+     * Accesses Cyc and returns hashmap of car brand names and appropriate Cyc 
+     * Constants
+     * 
+     * @param _c
+     * @return
+     * @throws JSONException
+     * @throws UnknownHostException
+     * @throws CycApiException
+     * @throws IOException 
+     */
     public HashMap exportFromCycCarBrandList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycFort fort = _c.getKnownFortByName("AutomobileTypeByBrand");
-                    CycList instances = _c.getAllInstances(fort);
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                    
-                    HashMap<Object, Object> mapBr = new HashMap<Object, Object>();
-                    
-                    for (Iterator it = instances.iterator(); it.hasNext();) {
-                        Object constantBr = it.next();
-                        CycFort nameStrBr = _c.getKnownFortByName(String.valueOf(constantBr));
-                        CycList nameStr = _c.getNameStrings(nameStrBr, English);
-                        if (!nameStr.isEmpty()){
-                            mapBr.put(nameStr.get(0), constantBr);
-                        }
-                    }
-                    
-                    return mapBr;
-        }
+        DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
+        InferenceWorkerSynch worker;
+        InferenceResultSet rs;
+        String query =  "(#$and \n" +
+                        "  (#$isa ?X #$AutomobileTypeByBrand) \n" +
+                        "  (#$nameString ?X ?NAME))";
+        
+        worker = new DefaultInferenceWorkerSynch(query, 
+                                            _c.makeELMt(CycAccess.inferencePSC),
+                                            defaultP, _c, 500000);
+        HashMap<String, CycConstant> mapBrandNames = new HashMap<String, CycConstant>();
+        rs = worker.executeQuery();
+        while (rs.next())
+        {
+            CycConstant carBrand = rs.getConstant("?X");
+            String carBrandName = rs.getString("?NAME");
+            mapBrandNames.put(carBrandName, carBrand);
+	}
+        rs.close();
+        return mapBrandNames;
+    }
     
     public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException {
                 CycAccess c = new CycAccess("aidemo", 3600);
