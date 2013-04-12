@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -38,9 +39,10 @@ public class ResponsePresenter implements Serializable {
     private List<String> malfunctionL;
         
     private CycList carBodyType;
-    private CycList carBrand;
+    private Set<Object> carBrand;
     private CycList carModel;
     private ArrayList<String> modelL;
+    private HashMap hmBrands;
     
     private CycAccess c;
     
@@ -52,7 +54,8 @@ public class ResponsePresenter implements Serializable {
     @PostConstruct
    public void postconstruct() throws UnknownHostException, IOException, JSONException{
             c = new CycAccess("aidemo", 3600);
-            carBrand = cycService.carBrandStrings();
+            hmBrands = cycService.exportFromCycCarBrandList(c);
+            carBrand = cycService.carBrandStrings(hmBrands);
 
             parent2_malfL = baseService.getGPList();
 
@@ -74,7 +77,7 @@ public class ResponsePresenter implements Serializable {
             modelL = new ArrayList<String>();
 
             if(inputBrand != null) {
-                HashMap<Object, Object> map = cycService.getModelByBrand(c, inputBrand);
+                HashMap<Object, Object> map = cycService.getModelByBrand(c, inputBrand, hmBrands);
                 for (Map.Entry<Object, Object> entry :  map.entrySet()){
                     Object nameString = entry.getKey();
                     modelL.add(String.valueOf(nameString));
@@ -211,11 +214,11 @@ public class ResponsePresenter implements Serializable {
         this.carBodyType = carBodyType;
     }
 
-    public CycList getCarBrand() {
+    public Set<Object> getCarBrand() {
         return carBrand;
     }
 
-    public void setCarBrand(CycList carBrand) {
+    public void setCarBrand(Set<Object> carBrand) {
         this.carBrand = carBrand;
     }
 

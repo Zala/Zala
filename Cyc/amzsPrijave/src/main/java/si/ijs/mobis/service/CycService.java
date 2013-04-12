@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -77,13 +78,11 @@ public class CycService{
                 return event;
     }
     
-    public String rescuing() throws UnknownHostException, IOException {
-                CycAccess _c = new CycAccess("aidemo", 3600);
+    public String rescuing(CycAccess _c) throws UnknownHostException, IOException {
                 CycObject Mt = _c.getConstantByName("BaseKB");
                 
                 StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
                 CycConstant StuckOrConfinedVehicleSituation = null;
-                CycConstant AMZSStuckSituation = _c.makeCycConstant(getEvent());
                 CycConstant iet = _c.getConstantByName("issueEventType");
                 CycList issueET = new CycList();
                         switch(s)
@@ -118,9 +117,7 @@ public class CycService{
                 return String.valueOf(StuckOrConfinedVehicleSituation);
     }
     
-    public String accident() throws UnknownHostException, IOException {
-        
-                CycAccess _c = new CycAccess("aidemo", 3600);
+    public String accident(CycAccess _c) throws UnknownHostException, IOException {
                 CycObject Mt = _c.getConstantByName("BaseKB");
                 CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
                 CycConstant CycAccident = _c.makeCycConstant(getEvent());
@@ -162,15 +159,14 @@ public class CycService{
                 return assertionEvent;
     }
         
-    public String orientation() throws UnknownHostException, IOException {
-                CycAccess _c = new CycAccess("aidemo", 3600);
+    public String orientation(CycAccess _c) throws UnknownHostException, IOException {
                 CycObject Mt = _c.getConstantByName("BaseKB");
                 CycConstant orientation;
                 CycList orientL = new CycList(); 
                 
                 String id = String.valueOf(baseService.getData().get(0).getId());
                 Orientation orient = Orientation.valueOf(toEnumCase(baseService.getData().get(0).getMalfunction()));
-                String assertionEvent = accident();
+                String assertionEvent = accident(_c);
                 
                 switch(orient)
                 {
@@ -217,23 +213,17 @@ public class CycService{
                     return mapBr;
         }
     
-    public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException {
-                CycAccess c = new CycAccess("aidemo", 3600);
-                HashMap<Object, Object> map = exportFromCycCarBrandList(c);
-                CycList carBrands = new CycList();
-                for ( Map.Entry<Object, Object> entry :  map.entrySet()){
-                    Object nameString = entry.getKey();
-                    carBrands.add(nameString);
-                }
-    return carBrands;
-}
+    public Set<Object> carBrandStrings(HashMap hm) throws UnknownHostException, IOException, JSONException {
+                Set<Object> carBrands = hm.keySet();
+                return carBrands;
+    }
 
-    public HashMap getModelByBrand(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+    public HashMap getModelByBrand(CycAccess _c, String _inputBrand, HashMap<Object,Object> hm) throws JSONException, UnknownHostException, CycApiException, IOException {
 
                 CycObject English = _c.getConstantByName("EnglishMt");
                 CycList specializations = new CycList();
                 HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
-                HashMap<Object, Object> mapBr = exportFromCycCarBrandList(_c);
+                HashMap<Object, Object> mapBr = hm;
 
 //                    ne razumem. zakaj zasteka, kadar ne izberem nic???
                 Object mapBrand = mapBr.get(_inputBrand);
@@ -254,12 +244,12 @@ public class CycService{
                 return mapMod;
             }
 
-    public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand) throws JSONException, UnknownHostException, CycApiException, IOException {
+    public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand, HashMap<Object,Object> hm) throws JSONException, UnknownHostException, CycApiException, IOException {
 
                 CycObject English = _c.getConstantByName("EnglishMt");
                 CycList specializations = new CycList();
                 HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
-                HashMap<Object, Object> mapBr = exportFromCycCarBrandList(_c);
+                HashMap<Object, Object> mapBr = hm;
 
 //                    ne razumem. zakaj zasteka, kadar ne izberem nic???
                 Object mapBrand = mapBr.get(_inputBrand);
@@ -283,17 +273,6 @@ public class CycService{
                 return mapMod;
             }
 
-    public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException {
-                CycAccess c = new CycAccess("aidemo", 3600);
-                HashMap<Object, Object> mapBr = getModelByBrand(c, _inputBrand);
-                CycList carModels = new CycList();
-                for ( Map.Entry<Object, Object> entry :  mapBr.entrySet()){
-                    Object nameString = entry.getKey();
-                    carModels.add(nameString);
-                }
-    return carModels;
-    }
-
     public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                 CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
                 CycList instances = _c.getAllInstances(fort);
@@ -311,17 +290,6 @@ public class CycService{
                 }
 
                 return mapTy;
-    }
-
-    public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException {
-                CycAccess c = new CycAccess("aidemo", 3600);
-                HashMap<Object, Object> mapTy = exportFromCycCarTypeList(c);
-                CycList carTypes = new CycList();
-                for ( Map.Entry<Object, Object> entry :  mapTy.entrySet()){
-                    Object nameString = entry.getKey();
-                    carTypes.add(nameString);
-                }
-    return carTypes;
     }
     
     public static String toEnumCase(String s) {

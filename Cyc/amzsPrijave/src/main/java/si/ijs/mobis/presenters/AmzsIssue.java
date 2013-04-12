@@ -65,6 +65,7 @@ public class AmzsIssue {
         private String inputBrand;
         private String assertModel;
         private HashMap<Object, Object> mapTy;
+        private HashMap<Object, Object> mapBr;
         private HashMap<Object, Object> mapMod;
         private ArrayList<String> modelL;
         private String assertionEvent;
@@ -78,7 +79,7 @@ public class AmzsIssue {
         
             
             @PostConstruct
-            private void postconstruct() throws UnknownHostException, IOException {
+            private void postconstruct() throws UnknownHostException, IOException, JSONException {
                 if (log.isLoggable(Level.FINE))
                     {log.fine("initiaizing AmzsIssue");}
                 
@@ -109,6 +110,7 @@ public class AmzsIssue {
                 _c = new CycAccess("aidemo", 3600);
                 amzsIssue = cycService.getIssue();
                 event = 0;
+                mapBr = cycService.exportFromCycCarBrandList(_c);
                                
             }
            
@@ -241,11 +243,11 @@ public class AmzsIssue {
                         amzsEvent = "";
                         
                         if("nesreca".equals(parent2_malf)){
-                            assertionEvent = cycService.accident();
+                            assertionEvent = cycService.accident(_c);
                             amzsEvent = cycService.getEvent();
 
                             if(malfunction != null){
-                                assertionEvent = assertionEvent + cycService.orientation();
+                                assertionEvent = assertionEvent + cycService.orientation(_c);
                             }
                         }
                                                 
@@ -253,7 +255,7 @@ public class AmzsIssue {
                             CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
                             _c.assertGaf(issueEventType, Mt);
                             
-                            assertionEvent = cycService.rescuing();
+                            assertionEvent = cycService.rescuing(_c);
                             amzsEvent = cycService.getEvent();
                         }
                         
@@ -290,7 +292,7 @@ public class AmzsIssue {
         
         public String importIntoCycModel() throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycObject Mt = _c.getConstantByName("BaseKB");
-                    mapMod = cycService.getModelByBrandAllNameStrings(_c, inputBrand);
+                    mapMod = cycService.getModelByBrandAllNameStrings(_c, inputBrand, mapBr);
                     String modelConst = String.valueOf(mapMod.get(model));
                     
                     if (!"null".equals(modelConst)){
