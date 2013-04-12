@@ -101,6 +101,7 @@ public class ResponsePresenter implements Serializable {
             if(grandparent != null && !grandparent.isEmpty()) {
                 parent_malfL = getByGrandparent(grandparent);
             }  
+            else{}
     }
     
     

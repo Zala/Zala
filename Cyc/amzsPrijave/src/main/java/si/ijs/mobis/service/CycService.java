@@ -97,11 +97,13 @@ public class CycService{
                         {
                             case OSTAL_V_BLATU: 
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInMudSituation");
-                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                issueET = _c.makeCycList("(#$"+ iet +" #$"+ getIssue() +" #$" +StuckOrConfinedVehicleSituation  +")");
+                                _c.assertGaf(issueET, Mt);
                                 break;
                             case OSTAL_NA_KOLICKU: 
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnAPoleSituation");
-                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                issueET = _c.makeCycList("(#$"+ iet +" #$"+ getIssue() +" #$" +StuckOrConfinedVehicleSituation  +")");
+                                _c.assertGaf(issueET, Mt);
                                 break;
                             case OSTAL_V_SNEGU: 
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInSnowSituation");
@@ -110,11 +112,13 @@ public class CycService{
                                 break;
                             case OSTAL_NA_PREVISU: 
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnACliffSituation");
-                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                issueET = _c.makeCycList("(#$"+ iet +" #$"+ getIssue() +" #$" +StuckOrConfinedVehicleSituation  +")");
+                                _c.assertGaf(issueET, Mt);
                                 break;
                             case OSTAL_NA_ZIDU_SKARPI:
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnAWallSituation");
-                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                issueET = _c.makeCycList("(#$"+ iet +" #$"+ getIssue() +" #$" +StuckOrConfinedVehicleSituation  +")");
+                                _c.assertGaf(issueET, Mt);
                                 break;
                             default: break;                                
                         }
