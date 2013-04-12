@@ -121,7 +121,7 @@ public class AmzsIssue {
                     return n;
          }
          
-        public String printSurname(){
+        public String printSurname() {
                     String s = surname;
                     if (surname.isEmpty()){
                         s = " / ";
@@ -129,7 +129,7 @@ public class AmzsIssue {
                     return s;
          }    
            
-        public String printMember(){
+        public String printMember() {
                   String m = member;
                   if (member == null){
                       m = " / ";
@@ -137,7 +137,7 @@ public class AmzsIssue {
                   return m;
         }
           
-        public String printMemberNo(){
+        public String printMemberNo() {
                     String m = member_no;
                     if (member_no.isEmpty()){
                         m = " / ";
@@ -145,7 +145,7 @@ public class AmzsIssue {
                     return m;
          }
         
-        public String printMalfunction(){
+        public String printMalfunction() {
                     String malf = malfunction;
                     if (malfunction == null){
                         malf = " / ";
@@ -153,7 +153,7 @@ public class AmzsIssue {
                     return malf;
          }
         
-        public String printGrandparent(){
+        public String printGrandparent() {
                     String par2 = parent2_malf;
                     if (parent2_malf == null){
                         par2 = " / ";
@@ -161,7 +161,7 @@ public class AmzsIssue {
                     return par2;
          }
         
-        public String printParent(){
+        public String printParent() {
                     String par = parent_malf;
                     if (parent_malf == null){
                         par = " / ";
@@ -169,7 +169,7 @@ public class AmzsIssue {
                     return par;
          }
         
-        public String printRegistration(){
+        public String printRegistration() {
                     String reg = registration;
                     if (registration.isEmpty()) {
                         reg = " / ";
@@ -177,7 +177,7 @@ public class AmzsIssue {
                     return reg;
          }
         
-        public String printModel(){
+        public String printModel() {
                     String m = model;
                     if (model == null){
                         m = " / ";
@@ -185,7 +185,7 @@ public class AmzsIssue {
                     return m;
         }
         
-        public String printType(){
+        public String printType() {
                     String t = type;
                     if (type == null){
                         t = " / ";
@@ -288,7 +288,7 @@ public class AmzsIssue {
                     return assertType;
         }
         
-        public String importIntoCycModel() throws JSONException, UnknownHostException, CycApiException, IOException{
+        public String importIntoCycModel() throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycObject Mt = _c.getConstantByName("BaseKB");
                     mapMod = cycService.getModelByBrandAllNameStrings(_c, inputBrand);
                     String modelConst = String.valueOf(mapMod.get(model));

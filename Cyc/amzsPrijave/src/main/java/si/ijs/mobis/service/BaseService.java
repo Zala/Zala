@@ -15,7 +15,7 @@ public class BaseService{
         private EntityManager entityManager;
         
         
-        public List<String> getGPList(){
+        public List<String> getGPList() {
                 Query q = entityManager.createQuery("SELECT DISTINCT parent2_malf FROM "+ Error.class.getName());
                 List<String> gpList = q.getResultList();
                 return gpList;

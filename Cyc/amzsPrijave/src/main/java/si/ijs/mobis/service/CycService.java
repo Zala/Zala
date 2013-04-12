@@ -29,12 +29,12 @@ public class CycService{
     enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
     enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
 
-    public String getIssue(){
+    public String getIssue() {
                 String amzsIssue = "AMZSIssue"+ baseService.getData().get(0).getId();
                 return amzsIssue;
         }
     
-    public String getEvent(){
+    public String getEvent() {
                 String event = "";
                 String pm2 = baseService.getData().get(0).getParent2_malf();
                 Integer id = baseService.getData().get(0).getId();
@@ -77,13 +77,15 @@ public class CycService{
                 return event;
     }
     
-    public String rescuing() throws UnknownHostException, IOException{
+    public String rescuing() throws UnknownHostException, IOException {
                 CycAccess _c = new CycAccess("aidemo", 3600);
                 CycObject Mt = _c.getConstantByName("BaseKB");
                 
                 StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
                 CycConstant StuckOrConfinedVehicleSituation = null;
                 CycConstant AMZSStuckSituation = _c.makeCycConstant(getEvent());
+                CycConstant iet = _c.getConstantByName("issueEventType");
+                CycList issueET = new CycList();
                         switch(s)
                         {
                             case OSTAL_V_BLATU: 
@@ -96,7 +98,8 @@ public class CycService{
                                 break;
                             case OSTAL_V_SNEGU: 
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleInSnowSituation");
-                                _c.assertIsa(AMZSStuckSituation, StuckOrConfinedVehicleSituation, Mt);
+                                issueET = _c.makeCycList("(#$"+ iet +" #$"+ getIssue() +" #$" +StuckOrConfinedVehicleSituation  +")");
+                                _c.assertGaf(issueET, Mt);
                                 break;
                             case OSTAL_NA_PREVISU: 
                                 StuckOrConfinedVehicleSituation = _c.getConstantByName("StuckOrConfinedVehicleOnACliffSituation");
@@ -111,7 +114,7 @@ public class CycService{
                 return String.valueOf(StuckOrConfinedVehicleSituation);
     }
     
-    public String accident() throws UnknownHostException, IOException{
+    public String accident() throws UnknownHostException, IOException {
         
                 CycAccess _c = new CycAccess("aidemo", 3600);
                 CycObject Mt = _c.getConstantByName("BaseKB");
@@ -155,7 +158,7 @@ public class CycService{
                 return assertionEvent;
     }
         
-    public String orientation() throws UnknownHostException, IOException{
+    public String orientation() throws UnknownHostException, IOException {
                 CycAccess _c = new CycAccess("aidemo", 3600);
                 CycObject Mt = _c.getConstantByName("BaseKB");
                 CycConstant orientation;
@@ -210,7 +213,7 @@ public class CycService{
                     return mapBr;
         }
     
-    public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException{
+    public CycList carBrandStrings() throws UnknownHostException, IOException, JSONException {
                 CycAccess c = new CycAccess("aidemo", 3600);
                 HashMap<Object, Object> map = exportFromCycCarBrandList(c);
                 CycList carBrands = new CycList();
@@ -276,7 +279,7 @@ public class CycService{
                 return mapMod;
             }
 
-    public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException{
+    public CycList carModelStrings(String _inputBrand) throws UnknownHostException, IOException, JSONException {
                 CycAccess c = new CycAccess("aidemo", 3600);
                 HashMap<Object, Object> mapBr = getModelByBrand(c, _inputBrand);
                 CycList carModels = new CycList();
@@ -306,7 +309,7 @@ public class CycService{
                 return mapTy;
     }
 
-    public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException{
+    public CycList carTypeStrings() throws UnknownHostException, IOException, JSONException {
                 CycAccess c = new CycAccess("aidemo", 3600);
                 HashMap<Object, Object> mapTy = exportFromCycCarTypeList(c);
                 CycList carTypes = new CycList();
@@ -317,7 +320,7 @@ public class CycService{
     return carTypes;
     }
     
-    public static String toEnumCase(String s){
+    public static String toEnumCase(String s) {
 		String string = s;
 		string = string.toUpperCase().replaceAll("\\s+", "_");    // zamenjaj enega ali vec preslednov z _
 		string = string.toUpperCase().replaceAll("/", "_");

@@ -17,7 +17,7 @@
         <div id="top">
             <ui:insert name="top">
                 <h:form>
-                    <h:commandButton value="Nov vnos" action="#{responsePresenter.response()}"  />
+                    <h:commandButton value="Nov vnos" action="#{indexPresenter.response()}"  />
                 </h:form>   
             </ui:insert>
         </div>
@@ -40,7 +40,7 @@
                             <th>  </th>
                             <th>  </th>
                         </tr>
-                        <ui:repeat value="#{responsePresenter.podatki}" var="item">
+                        <ui:repeat value="#{indexPresenter.podatki}" var="item">
                             <tr>
                                 <td> <h:outputText value="#{item.datum}">
                                         <f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm"/>
