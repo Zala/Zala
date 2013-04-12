@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -231,7 +232,7 @@ public class CycService{
         HashMap<String, CycConstant> mapBrandNames = new HashMap<String, CycConstant>();
         
         long startTime = System.nanoTime();
-        LOGGER.info("Calling cyc with query: "+query);
+        LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
          
         rs = worker.executeQuery();
         while (rs.next())
@@ -243,7 +244,7 @@ public class CycService{
         rs.close();
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
-        LOGGER.info("Call took: " + new Date(duration).toString());
+        LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
         
         return mapBrandNames;
     }
