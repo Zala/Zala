@@ -10,7 +10,7 @@ import javax.persistence.Query;
 
 @Stateless
 public class BaseService{
-        
+    
         @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
         private EntityManager entityManager;
         

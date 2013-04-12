@@ -39,7 +39,7 @@ public class IndexPresenter {
     private Date date;
     
     private List<Prijave> podatki;
-
+    
     
     int n;
     
@@ -67,9 +67,9 @@ public class IndexPresenter {
         parent2_malf = podatki.get(0).getParent2_malf();
         parent_malf = podatki.get(0).getParent_malf();
         malfunction = podatki.get(0).getMalfunction();
-                
+        
     }
-    
+        
     
     public String response() {
         return "response.xhtml?faces-redirect=true";
