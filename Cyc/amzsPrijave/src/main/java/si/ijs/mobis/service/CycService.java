@@ -3,6 +3,7 @@ package si.ijs.mobis.service;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -60,20 +64,20 @@ public class CycService {
                             switch(s)
                             {
                                 case OSTAL_V_BLATU:
-                                    event = "AMZSStuckInMud"+id;
-                                    break;
+//                                    event = "AMZSStuckInMud"+id;
+//                                    break;
                                 case OSTAL_NA_KOLICKU:
-                                    event = "AMZSStuckOnAPole"+id;
-                                    break;
+//                                    event = "AMZSStuckOnAPole"+id;
+//                                    break;
                                 case OSTAL_V_SNEGU:
-                                    event = "AMZSStuckInSnow"+id;
-                                    break;
+//                                    event = "AMZSStuckInSnow"+id;
+//                                    break;
                                 case OSTAL_NA_PREVISU:
-                                    event = "AMZSStuckOnACliff"+id;
-                                    break;
+//                                    event = "AMZSStuckOnACliff"+id;
+//                                    break;
                                 case OSTAL_NA_ZIDU_SKARPI:
-                                    event = "AMZSStuckOnAWall"+id;
-                                    break;
+//                                    event = "AMZSStuckOnAWall"+id;
+//                                    break;
                                 default: 
                                     event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
                                     break;                                
@@ -245,8 +249,11 @@ public class CycService {
         return mapBrandNames;
     }
     
-    public Set<Object> carBrandStrings(HashMap hm) throws UnknownHostException, IOException, JSONException {
-                Set<Object> carBrands = hm.keySet();
+    public List<String> carBrandStrings(HashMap hm) throws UnknownHostException, IOException, JSONException {
+                Set<Object> carBr = hm.keySet();
+//                Set<Object> carBrands = hm.keySet();
+                List<String> carBrands = Arrays.asList(carBr.toArray( new String[0] ) );
+                Collections.sort(carBrands);
                 return carBrands;
     }
 

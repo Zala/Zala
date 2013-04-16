@@ -55,10 +55,10 @@ public class Prijave implements Serializable {
     @Column(name = "DATUM")
     @Temporal(TemporalType.TIMESTAMP)
     private Date datum;
-    @Size(max = 20)
+    @Size(max = 30)
     @Column(name = "ZNAMKA")
     private String znamka;
-    @Size(max = 20)
+    @Size(max = 30)
     @Column(name = "TIP")
     private String tip;
     @Size(max = 10)

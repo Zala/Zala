@@ -252,6 +252,7 @@ public class AmzsIssue {
                         }
                                                 
                         else if("resevanje vozila".equals(parent2_malf)){
+                            event = 1;
                             CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
                             _c.assertGaf(issueEventType, Mt);
                             
@@ -270,6 +271,7 @@ public class AmzsIssue {
                             CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                             CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
                             _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
+                            amzsEvent = cycService.getEvent();
                         }
                         
                         return amzsEvent;	
@@ -320,7 +322,7 @@ public class AmzsIssue {
                         CycList ObjectActedOn = new CycList();
                         switch (event){
                             case 1:
-                                ObjectActedOn = _c.makeCycList("(#$objectActedOn (#$StuckOrConfinedVehicleSituationFn #$" + amzsIssue +") (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
+                                ObjectActedOn = _c.makeCycList("(#$objectActedOn " + amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
                                 _c.assertGaf(ObjectActedOn, Mt);
                                 break;
                             default:

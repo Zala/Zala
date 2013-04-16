@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class ResponsePresenter implements Serializable {
     private List<String> malfunctionL;
         
     private CycList carBodyType;
-    private Set<Object> carBrand;
+    private List<String> carBrand;
     private CycList carModel;
     private ArrayList<String> modelL;
     private HashMap hmBrands;
@@ -70,6 +71,7 @@ public class ResponsePresenter implements Serializable {
                 Object nameString = entry.getKey();
                 carBodyType.add(nameString);
             }
+            Collections.sort(carBodyType);
             return carBodyType;
     }
     
@@ -83,6 +85,7 @@ public class ResponsePresenter implements Serializable {
                     modelL.add(String.valueOf(nameString));
                 }
             }  
+            Collections.sort(modelL);
             return modelL;
     }
     
@@ -214,11 +217,11 @@ public class ResponsePresenter implements Serializable {
         this.carBodyType = carBodyType;
     }
 
-    public Set<Object> getCarBrand() {
+    public List<String> getCarBrand() {
         return carBrand;
     }
 
-    public void setCarBrand(Set<Object> carBrand) {
+    public void setCarBrand(List<String> carBrand) {
         this.carBrand = carBrand;
     }
 
