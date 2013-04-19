@@ -294,7 +294,7 @@ public class AmzsIssue {
         
         public String importIntoCycModel() throws JSONException, UnknownHostException, CycApiException, IOException {
                     CycObject Mt = _c.getConstantByName("BaseKB");
-                    mapMod = cycService.getModelByBrandAllNameStrings(_c, inputBrand, mapBr);
+                    mapMod = cycService.getModelByBrand(_c, inputBrand, mapBr);
                     String modelConst = String.valueOf(mapMod.get(model));
                     
                     if (!"null".equals(modelConst)){

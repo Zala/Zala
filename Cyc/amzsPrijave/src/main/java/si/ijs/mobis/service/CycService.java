@@ -257,59 +257,36 @@ public class CycService {
     }
 
     public HashMap getModelByBrand(CycAccess _c, String _inputBrand, HashMap<Object,Object> hm) throws JSONException, UnknownHostException, CycApiException, IOException {
+                Object brand = hm.get(_inputBrand);
+                DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
+                InferenceWorkerSynch worker;
+                InferenceResultSet rs;
+                String query =  "(#$and \n" +
+                                "  (#$genls ?X #$"+ brand +") \n" +
+                                "  (#$preferredNameString ?X ?NAME))";
+                worker = new DefaultInferenceWorkerSynch(query, 
+                                                    _c.makeELMt(CycAccess.inferencePSC),
+                                                    defaultP, _c, 500000);
+                HashMap<String, CycConstant> mapModelNames = new HashMap<String, CycConstant>();
 
-                CycObject English = _c.getConstantByName("EnglishMt");
-                CycList specializations = new CycList();
-                HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
-                HashMap<Object, Object> mapBr = hm;
+                long startTime = System.nanoTime();
+                LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
 
-//                    ne razumem. zakaj zasteka, kadar ne izberem nic???
-                Object mapBrand = mapBr.get(_inputBrand);
-                if(mapBrand != null){
-                    String constantBr = String.valueOf(mapBrand);
-                    CycFort fort = _c.getKnownFortByName(constantBr);
-                    specializations = _c.getAllSpecs(fort, English);
 
-                    for (Iterator it = specializations.iterator(); it.hasNext();) {
-                        Object constantMod = it.next();
-                        CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
-                        CycList nameStr = _c.getNameStrings(nameStrMod, English);
-                        if (!nameStr.isEmpty()){
-                            mapMod.put(nameStr.get(0), constantMod);
-                        }
-                    }
+                rs = worker.executeQuery();
+                while (rs.next())
+                {
+                    CycConstant carModel = rs.getConstant("?X");
+                    String carModelName = rs.getString("?NAME");
+                    mapModelNames.put(carModelName, carModel);
                 }
-                return mapMod;
-            }
-
-    public HashMap getModelByBrandAllNameStrings(CycAccess _c, String _inputBrand, HashMap<Object,Object> hm) throws JSONException, UnknownHostException, CycApiException, IOException {
-
-                CycObject English = _c.getConstantByName("EnglishMt");
-                CycList specializations = new CycList();
-                HashMap<Object, Object> mapMod = new HashMap<Object, Object>();
-                HashMap<Object, Object> mapBr = hm;
-
-//                    ne razumem. zakaj zasteka, kadar ne izberem nic???
-                Object mapBrand = mapBr.get(_inputBrand);
-                if(mapBrand != null){
-                    String constantBr = String.valueOf(mapBrand);
-                    CycFort fort = _c.getKnownFortByName(constantBr);
-                    specializations = _c.getAllSpecs(fort, English);
-
-                    for (Iterator it = specializations.iterator(); it.hasNext();) {
-                        Object constantMod = it.next();
-                        CycFort nameStrMod = _c.getKnownFortByName(String.valueOf(constantMod));
-                        CycList nameStr = _c.getNameStrings(nameStrMod, English);
-                        if (!nameStr.isEmpty()){
-                            for (Iterator str = nameStr.iterator(); str.hasNext();){
-                                Object strNext = str.next();
-                                mapMod.put(strNext, constantMod);
-                            }
-                        }
-                    }
-                }
-                return mapMod;
-            }
+                rs.close();
+                long endTime = System.nanoTime();
+                long duration = endTime - startTime;
+                LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
+                
+                return mapModelNames;
+    } 
 
     public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                 CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
