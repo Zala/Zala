@@ -257,36 +257,39 @@ public class CycService {
     }
 
     public HashMap getModelByBrand(CycAccess _c, String _inputBrand, HashMap<Object,Object> hm) throws JSONException, UnknownHostException, CycApiException, IOException {
-                Object brand = hm.get(_inputBrand);
-                DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
-                InferenceWorkerSynch worker;
-                InferenceResultSet rs;
-                String query =  "(#$and \n" +
-                                "  (#$genls ?X #$"+ brand +") \n" +
-                                "  (#$preferredNameString ?X ?NAME))";
-                worker = new DefaultInferenceWorkerSynch(query, 
-                                                    _c.makeELMt(CycAccess.inferencePSC),
-                                                    defaultP, _c, 500000);
-                HashMap<String, CycConstant> mapModelNames = new HashMap<String, CycConstant>();
+                HashMap<String, CycConstant> mapModelNames = new HashMap<String, CycConstant>();    
+                if (!"null".equals(_inputBrand)) {
+                    Object brand = hm.get(_inputBrand);
+                    DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
+                    InferenceWorkerSynch worker;
+                    InferenceResultSet rs;
+                    String query =  "(#$and \n" +
+                                    "  (#$genls ?X #$"+ brand +") \n" +
+                                    "  (#$preferredNameString ?X ?NAME))";
+                    worker = new DefaultInferenceWorkerSynch(query, 
+                                                        _c.makeELMt(CycAccess.inferencePSC),
+                                                        defaultP, _c, 500000);
 
-                long startTime = System.nanoTime();
-                LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
+                    long startTime = System.nanoTime();
+                    LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
 
 
-                rs = worker.executeQuery();
-                while (rs.next())
-                {
-                    CycConstant carModel = rs.getConstant("?X");
-                    String carModelName = rs.getString("?NAME");
-                    mapModelNames.put(carModelName, carModel);
-                }
-                rs.close();
-                long endTime = System.nanoTime();
-                long duration = endTime - startTime;
-                LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
-                
+                    rs = worker.executeQuery();
+                    while (rs.next())
+                    {
+                        CycConstant carModel = rs.getConstant("?X");
+                        String carModelName = rs.getString("?NAME");
+                        mapModelNames.put(carModelName, carModel);
+                    }
+                    rs.close();
+                    long endTime = System.nanoTime();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
+                    }
                 return mapModelNames;
     } 
+    
+    
 
     public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                 CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
