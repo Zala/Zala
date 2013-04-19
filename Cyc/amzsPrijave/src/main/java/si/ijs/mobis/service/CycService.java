@@ -251,7 +251,6 @@ public class CycService {
     
     public List<String> carBrandStrings(HashMap hm) throws UnknownHostException, IOException, JSONException {
                 Set<Object> carBr = hm.keySet();
-//                Set<Object> carBrands = hm.keySet();
                 List<String> carBrands = Arrays.asList(carBr.toArray( new String[0] ) );
                 Collections.sort(carBrands);
                 return carBrands;
