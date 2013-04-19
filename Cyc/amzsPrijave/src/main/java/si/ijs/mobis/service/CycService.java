@@ -138,7 +138,7 @@ public class CycService {
 
                 CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$VehicleAccident)");
                 _c.assertGaf(issueEventType, Mt);
-
+                
                 Position pos = Position.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
                 CycConstant position;
                 CycList posL = new CycList(); 
@@ -316,5 +316,10 @@ public class CycService {
 		string = string.toUpperCase().replaceAll("/", "_");
 		return string;
 	}
-
+    
+    public static String toConstCase(String s) {
+		String string = s;
+		string = string.replaceAll("#\\$", ""); 
+		return string;
+	}
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
@@ -71,10 +72,7 @@ public class AmzsIssue {
         private String assertionEvent;
         private String assertionVehicle;
         private String assertionSender;
-        private String assertionTopic;
-// private String assertionObject;
-// private String assertionDate;
-        
+        private String assertionTopic;        
  
         
             
@@ -243,7 +241,10 @@ public class AmzsIssue {
                         amzsEvent = "";
                         
                         if("nesreca".equals(parent2_malf)){
-                            assertionEvent = cycService.accident(_c);
+                            try {assertionEvent = cycService.accident(_c);}
+                            catch(EJBException n) {
+                                System.out.println("You have to choose location of the object");
+                            }
                             amzsEvent = cycService.getEvent();
 
                             if(malfunction != null){
@@ -292,15 +293,29 @@ public class AmzsIssue {
                     return assertType;
         }
         
-        public String importIntoCycModel() throws JSONException, UnknownHostException, CycApiException, IOException {
-                    CycObject Mt = _c.getConstantByName("BaseKB");
-                    mapMod = cycService.getModelByBrand(_c, inputBrand, mapBr);
-                    String modelConst = String.valueOf(mapMod.get(model));
-                    
-                    if (!"null".equals(modelConst)){
-                        CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
-                        _c.assertGaf(Model, Mt);
-                        assertModel = String.valueOf(Model);
+        public String importIntoCycModel() {
+                    try {CycObject Mt = _c.getConstantByName("BaseKB");
+                        mapMod = cycService.getModelByBrand(_c, inputBrand, mapBr);
+                        String modelConst = String.valueOf(mapMod.get(model));
+
+                        if (!"null".equals(modelConst)){
+                            CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
+                            _c.assertGaf(Model, Mt);
+                            assertModel = String.valueOf(Model);
+                        }
+                    }
+                    catch (UnknownHostException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                    } catch (CycApiException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                    } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                    } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                     }
                     return assertModel;
         }
@@ -387,9 +402,22 @@ public class AmzsIssue {
                         
         }
         
-        public String importIntoCycHlid(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycHlidIssue(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
                         CycConstant Event = _c.getConstantByName(amzsIssue);
                         String Hlid = CycConstant.toCompactExternalId(Event, _c);
+                        return Hlid;
+        }
+        
+        public String importIntoCycHlidEvent(CycAccess _c) throws JSONException, UnknownHostException, IOException {
+                        String Hlid = "";            
+                        try{
+                            String e = CycService.toConstCase(amzsEvent);
+                            CycConstant Event = _c.getKnownConstantByName(e);
+                            Hlid = CycConstant.toCompactExternalId(Event, _c);
+                            }
+                        catch(CycApiException e){
+                            System.out.println("Doesn't work for StuckOrConfinedVehicleSituationFn yet");
+                        }
                         return Hlid;
         }
         
@@ -399,11 +427,20 @@ public class AmzsIssue {
         
         
         public String cure() throws JSONException, UnknownHostException, CycApiException, IOException {
-                    String Hlid = importIntoCycHlid(_c);
+                    String Hlid = importIntoCycHlidIssue(_c);
                     return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
         }
         
-        
+        public String cureSecond() throws JSONException, CycApiException, UnknownHostException {
+            String Hlid = new String();
+            try {
+                Hlid = importIntoCycHlidEvent(_c);
+            } catch (IOException ex) {
+                Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
+        }
         
         
         
@@ -571,14 +608,6 @@ public class AmzsIssue {
     public void setInputBrand(String inputBrand) {
         this.inputBrand = inputBrand;
     }
-
-// public HashMap<Object, Object> getMapBr() {
-// return mapBr;
-// }
-//
-// public void setMapBr(HashMap<Object, Object> mapBr) {
-// this.mapBr = mapBr;
-// }
 
     public HashMap<Object, Object> getMapMod() {
         return mapMod;
