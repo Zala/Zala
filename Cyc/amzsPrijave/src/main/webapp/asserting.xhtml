@@ -59,9 +59,10 @@
             </ui:insert>
         </div>
 
-        <div id="content" class="center_content">
+        <div class="center_content">
             <h:form>
                 <ui:insert name="content">    
+                    <div>
                     <table class="table">
                         <tr> 
                             <td class="fc"> Asserted: </td>
@@ -97,12 +98,13 @@
                             <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycTopic()}" /> </td> 
                         </tr>
                     </table>
+                    </div>
                 </ui:insert>
-                <div id="wrap" class="center_content"> 
-                    <iframe id="cureFrame" name="cureFrame" frameborder="0" scrolling="auto" width="50%" height="500" src="#{amzsIssue.cure()}">
+                <div>
+                    <iframe name="cureFrame" frameborder="0" scrolling="auto" width="50%" height="500" align="left" src="#{amzsIssue.cure()}">
                         <p>Your browser does not support iframes.</p>
                     </iframe>
-                    <iframe id="cureFrame2" name="cureFrame2" frameborder="0" scrolling="auto" width="50%" height="500" src="#{amzsIssue.cureSecond()}">
+                    <iframe name="cureFrame2" frameborder="0" scrolling="auto" width="50%" height="500" align="right" src="#{amzsIssue.cureSecond()}">
                         <p>Your browser does not support iframes.</p>
                     </iframe>
                 </div>

@@ -91,7 +91,7 @@ public class CycService {
     }
     
     public String rescuing(CycAccess _c) throws UnknownHostException, IOException {
-                CycObject Mt = _c.getConstantByName("BaseKB");
+                CycObject Mt = _c.getConstantByName("AMZSMt");
                 
                 StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
                 CycConstant StuckOrConfinedVehicleSituation = null;
@@ -130,7 +130,7 @@ public class CycService {
     }
     
     public String accident(CycAccess _c) throws UnknownHostException, IOException {
-                CycObject Mt = _c.getConstantByName("BaseKB");
+                CycObject Mt = _c.getConstantByName("AMZSMt");
                 CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
                 CycConstant CycAccident = _c.makeCycConstant(getEvent());
                 _c.assertIsa(CycAccident, VehicleAccident, Mt);
@@ -172,7 +172,7 @@ public class CycService {
     }
         
     public String orientation(CycAccess _c) throws UnknownHostException, IOException {
-                CycObject Mt = _c.getConstantByName("BaseKB");
+                CycObject Mt = _c.getConstantByName("AMZSMt");
                 CycConstant orientation;
                 CycList orientL = new CycList(); 
                 

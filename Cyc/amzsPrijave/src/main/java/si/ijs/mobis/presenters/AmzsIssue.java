@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
+import javax.el.ELException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
@@ -23,9 +24,13 @@ import javax.inject.Inject;
 import si.ijs.mobis.org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
+import org.opencyc.api.CycObjectFactory;
 import org.opencyc.cycobject.CycConstant;
+import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycNart;
 import org.opencyc.cycobject.CycObject;
+import org.opencyc.cycobject.CycSymbol;
 import org.opencyc.cycobject.ELMt;
 import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
@@ -40,7 +45,7 @@ import si.ijs.mobis.service.Prijave;
 @ViewScoped
 public class AmzsIssue {
         
-        private static final Logger log = Logger.getLogger(AmzsIssue.class.getName());
+        private static final Logger LOGGER = Logger.getLogger(AmzsIssue.class.getName());
         @Inject private BaseService baseService;
         @Inject private CycService cycService;
         
@@ -78,8 +83,8 @@ public class AmzsIssue {
             
             @PostConstruct
             private void postconstruct() throws UnknownHostException, IOException, JSONException {
-                if (log.isLoggable(Level.FINE))
-                    {log.fine("initiaizing AmzsIssue");}
+                if (LOGGER.isLoggable(Level.FINE))
+                    {LOGGER.fine("initiaizing AmzsIssue");}
                 
                 podatki = baseService.getData();
                                 
@@ -99,8 +104,8 @@ public class AmzsIssue {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 Map<String, String> parameterMap = (Map<String, String>) context.getRequestParameterMap();
                 if (!parameterMap.containsKey("ib")) {
-                    if (log.isLoggable(Level.WARNING))
-                        {log.warning("Parameter ib missing!");}
+                    if (LOGGER.isLoggable(Level.WARNING))
+                        {LOGGER.warning("Parameter ib missing!");}
                     throw new IllegalArgumentException("Parameter ib missing!");
                 }
 
@@ -234,10 +239,10 @@ public class AmzsIssue {
         }
         
         public String importIntoCycEvent() throws JSONException, UnknownHostException, CycApiException, IOException {
-                        if (log.isLoggable(Level.FINE))
-                            {log.fine("Importing itno cyc event");}
+                        if (LOGGER.isLoggable(Level.FINE))
+                            {LOGGER.fine("Importing itno cyc event");}
                         
-                        CycObject Mt = _c.getConstantByName("BaseKB");
+                        CycObject Mt = _c.getConstantByName("AMZSMt");
                         amzsEvent = "";
                         
                         if("nesreca".equals(parent2_malf)){
@@ -280,7 +285,7 @@ public class AmzsIssue {
        
         public String importIntoCycType() throws JSONException, UnknownHostException, CycApiException, IOException {
                     amzsEvent = cycService.getEvent();
-                    CycObject Mt = _c.getConstantByName("BaseKB");
+                    CycObject Mt = _c.getConstantByName("AMZSMt");
                     assertType = "";
                     
                     mapTy = cycService.exportFromCycCarTypeList(_c);
@@ -294,7 +299,7 @@ public class AmzsIssue {
         }
         
         public String importIntoCycModel() {
-                    try {CycObject Mt = _c.getConstantByName("BaseKB");
+                    try {CycObject Mt = _c.getConstantByName("AMZSMt");
                         mapMod = cycService.getModelByBrand(_c, inputBrand, mapBr);
                         String modelConst = String.valueOf(mapMod.get(model));
 
@@ -322,10 +327,10 @@ public class AmzsIssue {
         
         public String importIntoCycVehicle() throws JSONException, UnknownHostException, CycApiException, IOException {
                     amzsEvent = importIntoCycEvent();
-                    if (log.isLoggable(Level.FINE))
-                        {log.fine("asserting vehicle");}
+                    if (LOGGER.isLoggable(Level.FINE))
+                        {LOGGER.fine("asserting vehicle");}
                 
-                    CycObject Mt = _c.getConstantByName("BaseKB");
+                    CycObject Mt = _c.getConstantByName("AMZSMt");
                     CycObject English = _c.getConstantByName("EnglishMt");
                                         
                     
@@ -361,7 +366,7 @@ public class AmzsIssue {
         
         public String importIntoCycTopic() throws JSONException, UnknownHostException, CycApiException, IOException {
                     amzsEvent = cycService.getEvent();
-                    CycObject Mt = _c.getConstantByName("BaseKB");
+                    CycObject Mt = _c.getConstantByName("AMZSMt");
                     if(!"".equals(amzsEvent)){
                         switch(event){
                             case 1:
@@ -408,15 +413,60 @@ public class AmzsIssue {
                         return Hlid;
         }
         
-        public String importIntoCycHlidEvent(CycAccess _c) throws JSONException, UnknownHostException, IOException {
+        public String importIntoCycHlidEvent(CycAccess _c) throws JSONException {
                         String Hlid = "";            
                         try{
                             String e = CycService.toConstCase(amzsEvent);
-                            CycConstant Event = _c.getKnownConstantByName(e);
-                            Hlid = CycConstant.toCompactExternalId(Event, _c);
+                            CycFort Event = _c.getConstantByName(e);
+                            switch(event){
+                                case 1:
+//                                    DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
+//                                    InferenceWorkerSynch worker;
+//                                    InferenceResultSet rs = null;
+//                                    String query =  "(#$topicOfInfoTransfer #$" +amzsIssue +" ?X)";
+//
+//                                    defaultP.put(new CycSymbol(":NEW-TERMS-ALLOWED?"), CycObjectFactory.nil);
+//                                    worker = new DefaultInferenceWorkerSynch(query, _c.makeELMt(CycAccess.inferencePSC), defaultP, _c, 500000);
+//
+//                                    long startTime = System.nanoTime();
+//                                    LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
+//
+//                                    rs = worker.executeQuery();
+//                                    ArrayList<CycObject> returned = new ArrayList<CycObject>();
+//                                    while (rs.next()){
+//                                        CycObject ev = rs.getCycObject("?X");
+//                                        returned.add(ev);
+//                                    }
+//                                    rs.close();
+//                                    
+//                                    long endTime = System.nanoTime();
+//                                    long duration = endTime - startTime;
+//                                    LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
+//                                    
+//                                    
+//                                    Hlid = CycFort.toCompactExternalId(returned.get(0), _c);
+//                                    Hlid = CycConstant.toCompactExternalId(_c.makeCycList(amzsEvent), _c);
+                                    Hlid = CycConstant.toCompactExternalId(_c.getHLCycTerm(amzsEvent), _c);
+                                    break;
+                                    
+                                default:
+                                    Hlid = CycConstant.toCompactExternalId(Event, _c);
+                                    break;
                             }
-                        catch(CycApiException e){
-                            System.out.println("Doesn't work for StuckOrConfinedVehicleSituationFn yet");
+                        }
+                        catch(CycApiException e) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "Doesn't work for StuckOrConfinedVehicleSituationFn yet. Else, event not found in Cyc.", e);
+//                            System.out.println("Doesn't work for StuckOrConfinedVehicleSituationFn yet. Else, event not found in Cyc.");
+                        }
+                        catch(ELException e) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "Doesn't work for StuckOrConfinedVehicleSituationFn yet.", e);
+//                            System.out.println("Doesn't work for StuckOrConfinedVehicleSituationFn yet.");
+                        }
+                        catch(UnknownHostException e) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
+                        }
+                        catch(IOException e) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
                         }
                         return Hlid;
         }
@@ -431,12 +481,12 @@ public class AmzsIssue {
                     return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
         }
         
-        public String cureSecond() throws JSONException, CycApiException, UnknownHostException {
+        public String cureSecond() throws JSONException, UnknownHostException {
             String Hlid = new String();
             try {
                 Hlid = importIntoCycHlidEvent(_c);
-            } catch (IOException ex) {
-                Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+            } catch(CycApiException e){
+                Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
             }
             
             return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
