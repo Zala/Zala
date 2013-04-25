@@ -43,23 +43,23 @@ public class CycService {
     enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
 
     public String getIssue() {
-                String amzsIssue = "AMZSIssue"+ baseService.getData().get(0).getId();
+                String amzsIssue = "AMZSIssue"+ baseService.getLastEntry().getId();
                 return amzsIssue;
         }
     
     public String getEvent() {
                 String event = "";
-                String pm2 = baseService.getData().get(0).getParent2_malf();
-                Integer id = baseService.getData().get(0).getId();
+                String pm2 = baseService.getLastEntry().getParent2_malf();
+                Integer id = baseService.getLastEntry().getId();
                 if(pm2 != null){
                     EventType e = EventType.valueOf(toEnumCase(pm2));
                     switch(e)
                     {
                         case NESRECA: 
-                            event = "AMZSVehicleAccident"+baseService.getData().get(0).getId();
+                            event = "AMZSVehicleAccident"+baseService.getLastEntry().getId();
                             break;
                         case RESEVANJE_VOZILA:
-                            String pm = baseService.getData().get(0).getParent_malf();
+                            String pm = baseService.getLastEntry().getParent_malf();
                             StuckIn s = StuckIn.valueOf(toEnumCase(pm));
                             switch(s)
                             {
@@ -93,7 +93,7 @@ public class CycService {
     public String rescuing(CycAccess _c) throws UnknownHostException, IOException {
                 CycObject Mt = _c.getConstantByName("AMZSMt");
                 
-                StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
+                StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
                 CycConstant StuckOrConfinedVehicleSituation = null;
                 CycConstant iet = _c.getConstantByName("issueEventType");
                 CycList issueET = new CycList();
@@ -139,7 +139,7 @@ public class CycService {
                 CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$VehicleAccident)");
                 _c.assertGaf(issueEventType, Mt);
                 
-                Position pos = Position.valueOf(toEnumCase(baseService.getData().get(0).getParent_malf()));
+                Position pos = Position.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
                 CycConstant position;
                 CycList posL = new CycList(); 
                 switch(pos)
@@ -176,8 +176,8 @@ public class CycService {
                 CycConstant orientation;
                 CycList orientL = new CycList(); 
                 
-                String id = String.valueOf(baseService.getData().get(0).getId());
-                Orientation orient = Orientation.valueOf(toEnumCase(baseService.getData().get(0).getMalfunction()));
+                String id = String.valueOf(baseService.getLastEntry().getId());
+                Orientation orient = Orientation.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
                 String assertionEvent = accident(_c);
                 
                 switch(orient)

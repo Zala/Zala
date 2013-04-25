@@ -26,6 +26,7 @@ import si.ijs.mobis.service.BaseService;
 @Named
 @RequestScoped
 public class IndexPresenter {
+    private Integer id;
     private String name;
     private String surname;
     private String model;
@@ -55,7 +56,8 @@ public class IndexPresenter {
          if (podatki.isEmpty()){
             return;
         }
-               
+        
+        id = podatki.get(0).getId();
         name = podatki.get(0).getIme();
         surname = podatki.get(0).getPriimek();
         model = podatki.get(0).getZnamka();
@@ -74,7 +76,17 @@ public class IndexPresenter {
     public String response() {
         return "response.xhtml?faces-redirect=true";
     }
+
     
+    
+    
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
     
     public String getName() {
         return name;

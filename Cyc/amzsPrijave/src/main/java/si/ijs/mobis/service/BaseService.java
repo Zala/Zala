@@ -1,6 +1,10 @@
 
 package si.ijs.mobis.service;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -43,12 +47,33 @@ public class BaseService{
             java.util.Date date = new Date();
             pr.setDatum(date);
             save(pr);
-    }
+        }
         
+        public Prijave updateEntry(Prijave pr) {
+           try{
+                Query q = entityManager.createNativeQuery("DELETE FROM prijave ORDER BY ID DESC LIMIT 1");
+                q.executeUpdate();
+//                pr = entityManager.merge(pr);
+//                saveData(pr);
+                }
+            
+            catch (Exception e) {
+                System.out.println(e);
+            }
+            return pr;
+        }
+                
         public List<Prijave> getData() {
                 Query q = entityManager.createQuery("FROM " + Prijave.class.getName() +" ORDER BY ID DESC");
                 List<Prijave> list = q.getResultList();
                 return list;
+        }
+        
+        public Prijave getLastEntry() {
+                Query q = entityManager.createQuery("FROM " + Prijave.class.getName() +" ORDER BY ID DESC LIMIT 1");
+                List<Prijave> list = q.getResultList();
+                Prijave last = list.get(0);
+                return last;
         }
         
 }

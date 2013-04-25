@@ -416,51 +416,23 @@ public class AmzsIssue {
         public String importIntoCycHlidEvent(CycAccess _c) throws JSONException {
                         String Hlid = "";            
                         try{
-                            String e = CycService.toConstCase(amzsEvent);
-                            CycFort Event = _c.getConstantByName(e);
                             switch(event){
                                 case 1:
-//                                    DefaultInferenceParameters defaultP = new DefaultInferenceParameters(_c);
-//                                    InferenceWorkerSynch worker;
-//                                    InferenceResultSet rs = null;
-//                                    String query =  "(#$topicOfInfoTransfer #$" +amzsIssue +" ?X)";
-//
-//                                    defaultP.put(new CycSymbol(":NEW-TERMS-ALLOWED?"), CycObjectFactory.nil);
-//                                    worker = new DefaultInferenceWorkerSynch(query, _c.makeELMt(CycAccess.inferencePSC), defaultP, _c, 500000);
-//
-//                                    long startTime = System.nanoTime();
-//                                    LOGGER.log(Level.INFO, "Calling cyc with query: {0}", query);
-//
-//                                    rs = worker.executeQuery();
-//                                    ArrayList<CycObject> returned = new ArrayList<CycObject>();
-//                                    while (rs.next()){
-//                                        CycObject ev = rs.getCycObject("?X");
-//                                        returned.add(ev);
-//                                    }
-//                                    rs.close();
-//                                    
-//                                    long endTime = System.nanoTime();
-//                                    long duration = endTime - startTime;
-//                                    LOGGER.log(Level.INFO, "Call took: {0}", new Date(duration).toString());
-//                                    
-//                                    
-//                                    Hlid = CycFort.toCompactExternalId(returned.get(0), _c);
-//                                    Hlid = CycConstant.toCompactExternalId(_c.makeCycList(amzsEvent), _c);
                                     Hlid = CycConstant.toCompactExternalId(_c.getHLCycTerm(amzsEvent), _c);
                                     break;
                                     
                                 default:
-                                    Hlid = CycConstant.toCompactExternalId(Event, _c);
+                                    if (!"".equals(amzsEvent)) {
+                                        Hlid = CycConstant.toCompactExternalId(_c.getConstantByName(amzsEvent), _c);
+                                    }
                                     break;
                             }
                         }
                         catch(CycApiException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "Doesn't work for StuckOrConfinedVehicleSituationFn yet. Else, event not found in Cyc.", e);
-//                            System.out.println("Doesn't work for StuckOrConfinedVehicleSituationFn yet. Else, event not found in Cyc.");
                         }
                         catch(ELException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "Doesn't work for StuckOrConfinedVehicleSituationFn yet.", e);
-//                            System.out.println("Doesn't work for StuckOrConfinedVehicleSituationFn yet.");
                         }
                         catch(UnknownHostException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
@@ -493,6 +465,16 @@ public class AmzsIssue {
         }
         
         
+        public String edit() throws UnknownHostException, IOException {
+            CycConstant issue = _c.getConstantByName(amzsIssue);
+            _c.kill(issue);
+            baseService.updateEntry(baseService.getLastEntry());
+            return "response.xhtml?faces-redirect=true";
+        }
+        
+        public String newApp() {
+            return "response.xhtml?faces-redirect=true";
+        }
         
         private static void queryCyc(CycAccess ca, DefaultInferenceParameters _inferenceParameters) throws CycApiException, IOException {
 
