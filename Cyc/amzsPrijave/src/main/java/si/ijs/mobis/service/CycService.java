@@ -53,6 +53,7 @@ public class CycService {
                 Integer id = baseService.getLastEntry().getId();
                 if(pm2 != null){
                     EventType e = EventType.valueOf(toEnumCase(pm2));
+                    StuckIn s = StuckIn.valueOf("OSTALO");
                     switch(e)
                     {
                         case NESRECA: 
@@ -60,7 +61,11 @@ public class CycService {
                             break;
                         case RESEVANJE_VOZILA:
                             String pm = baseService.getLastEntry().getParent_malf();
-                            StuckIn s = StuckIn.valueOf(toEnumCase(pm));
+                            try {
+                                s = StuckIn.valueOf(toEnumCase(pm));
+                            } catch (NullPointerException n){
+                                System.out.println("You have to choose a value for a type of stuck situation"); 
+                            }
                             switch(s)
                             {
                                 case OSTAL_V_BLATU:
@@ -130,7 +135,7 @@ public class CycService {
     }
     
     public String accident(CycAccess _c) throws UnknownHostException, IOException {
-                CycObject Mt = _c.getConstantByName("AMZSMt");
+                CycObject Mt = _c.getConstantByName("BaseKB");
                 CycConstant VehicleAccident = _c.getConstantByName("VehicleAccident");
                 CycConstant CycAccident = _c.makeCycConstant(getEvent());
                 _c.assertIsa(CycAccident, VehicleAccident, Mt);

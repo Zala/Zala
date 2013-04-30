@@ -238,48 +238,51 @@ public class AmzsIssue {
                     return String.valueOf(Member);
         }
         
-        public String importIntoCycEvent() throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycEvent() {
                         if (LOGGER.isLoggable(Level.FINE))
                             {LOGGER.fine("Importing itno cyc event");}
                         
-                        CycObject Mt = _c.getConstantByName("AMZSMt");
-                        amzsEvent = "";
-                        
-                        if("nesreca".equals(parent2_malf)){
-                            try {assertionEvent = cycService.accident(_c);}
-                            catch(EJBException n) {
-                                System.out.println("You have to choose location of the object");
-                            }
-                            amzsEvent = cycService.getEvent();
-
-                            if(malfunction != null){
-                                assertionEvent = assertionEvent + cycService.orientation(_c);
-                            }
-                        }
-                                                
-                        else if("resevanje vozila".equals(parent2_malf)){
-                            event = 1;
-                            CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
-                            _c.assertGaf(issueEventType, Mt);
-                            
-                            assertionEvent = cycService.rescuing(_c);
-                            amzsEvent = cycService.getEvent();
-                        }
-                        
-                        else if(parent2_malf == null){
+                        try{
+                            CycObject Mt = _c.getConstantByName("BaseKB");
                             amzsEvent = "";
+
+                            if("nesreca".equals(parent2_malf)){
+                                try {assertionEvent = cycService.accident(_c);}
+                                catch(EJBException n) {
+                                    System.out.println("You have to choose location of the object");
+                                }
+                                amzsEvent = cycService.getEvent();
+
+                                if(malfunction != null){
+                                    assertionEvent = assertionEvent + cycService.orientation(_c);
+                                }
+                            }
+
+                            else if("resevanje vozila".equals(parent2_malf)){
+                                event = 1;
+                                CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
+                                _c.assertGaf(issueEventType, Mt);
+
+                                assertionEvent = cycService.rescuing(_c);
+                                amzsEvent = cycService.getEvent();
+                            }
+
+                            else if(parent2_malf == null){
+                                amzsEvent = "";
+                            }
+
+                            else{
+                                CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$TransportationDevice-VehicleMalfunction)");
+                                _c.assertGaf(issueEventType, Mt);
+
+                                CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
+                                CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
+                                _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
+                                amzsEvent = cycService.getEvent();
+                            }
+                        } catch(IOException e){
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);                        
                         }
-                                          
-                        else{
-                            CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$TransportationDevice-VehicleMalfunction)");
-                            _c.assertGaf(issueEventType, Mt);
-                            
-                            CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
-                            CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
-                            _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
-                            amzsEvent = cycService.getEvent();
-                        }
-                        
                         return amzsEvent;	
 }
        
@@ -332,9 +335,14 @@ public class AmzsIssue {
                 
                     CycObject Mt = _c.getConstantByName("AMZSMt");
                     CycObject English = _c.getConstantByName("EnglishMt");
-                                        
-                    
-                    CycList Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
+                     
+                    CycList Registrska = new CycList();
+                    if (!registration.equals("")) {
+                        Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
+                    }
+                    else {
+                        Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle involved\")");
+                    }
                     _c.assertGaf(Registrska, English);
                     
                     
@@ -366,7 +374,7 @@ public class AmzsIssue {
         
         public String importIntoCycTopic() throws JSONException, UnknownHostException, CycApiException, IOException {
                     amzsEvent = cycService.getEvent();
-                    CycObject Mt = _c.getConstantByName("AMZSMt");
+                    CycObject Mt = _c.getConstantByName("BaseKB");
                     if(!"".equals(amzsEvent)){
                         switch(event){
                             case 1:
