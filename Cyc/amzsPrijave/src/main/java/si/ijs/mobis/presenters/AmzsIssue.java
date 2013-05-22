@@ -240,7 +240,7 @@ public class AmzsIssue {
         
         public String importIntoCycEvent() {
                         if (LOGGER.isLoggable(Level.FINE))
-                            {LOGGER.fine("Importing itno cyc event");}
+                            {LOGGER.fine("Importing into cyc event");}
                         
                         try{
                             CycObject Mt = _c.getConstantByName("BaseKB");
@@ -278,6 +278,7 @@ public class AmzsIssue {
                                 CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                                 CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
                                 _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
+                                assertionEvent = cycService.malfunction(_c);
                                 amzsEvent = cycService.getEvent();
                             }
                         } catch(IOException e){

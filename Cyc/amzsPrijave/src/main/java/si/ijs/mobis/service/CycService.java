@@ -41,7 +41,11 @@ public class CycService {
     enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
     enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
     enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
-
+    enum Malfunction {VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
+    enum Ignition {VRTI, NE_VRTI, PRIZGAN_PORABNIK, OSTALO};
+    enum Turns {GORI_LUCKA_NA_ARMATURI, GORIJO_VSE_LUCKE_NA_ARMATURI};
+    
+    
     public String getIssue() {
                 String amzsIssue = "AMZSIssue"+ baseService.getLastEntry().getId();
                 return amzsIssue;
@@ -176,6 +180,70 @@ public class CycService {
                 return assertionEvent;
     }
         
+    
+    public String malfunction(CycAccess _c) throws UnknownHostException, IOException {
+        
+                Malfunction malf = Malfunction.valueOf(toEnumCase(baseService.getLastEntry().getParent2_malf()));
+                String assertionEvent = "";
+                
+                switch(malf)
+                {
+                    case VZIG: 
+                        assertionEvent = ignition(_c);
+                        break;
+                    default: break;
+                }
+                return assertionEvent;
+                }
+    
+    
+    public String ignition(CycAccess _c) throws UnknownHostException, IOException {
+                CycObject Mt = _c.getConstantByName("AMZSMt");
+                CycList malfL = new CycList(); 
+                
+//                String id = String.valueOf(baseService.getLastEntry().getId());
+                Ignition malf = Ignition.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
+                String assertionEvent = "";
+                
+                switch(malf)
+                {
+                    case VRTI: 
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$AutoEngineTurnOver)");
+                        assertionEvent = String.valueOf(malfL);
+                                                
+                        Turns turns = Turns.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
+                        _c.assertGaf(malfL, Mt);
+                        switch(turns)
+                        {
+                            case GORI_LUCKA_NA_ARMATURI:
+                                malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$PrototypicalIndicatorLight #$Device-On)");
+                                assertionEvent = assertionEvent + String.valueOf(malfL);  
+                                _c.assertGaf(malfL, Mt); 
+                                break;
+                            case GORIJO_VSE_LUCKE_NA_ARMATURI:
+                                malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$VehicleIndicatorLight #$Device-On)");
+                                assertionEvent = assertionEvent + String.valueOf(malfL);
+                                _c.assertGaf(malfL, Mt);     
+                                break;
+                        }
+                        break;
+                    case NE_VRTI: 
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$EngineDoesntTurnOver)");
+                        assertionEvent = String.valueOf(malfL);
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case PRIZGAN_PORABNIK: 
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$ConsumerElectronicDevice #$Device-On)");
+                        assertionEvent = String.valueOf(malfL);
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    default: break;
+                }
+                return assertionEvent;
+                }
+    
+    
+    
     public String orientation(CycAccess _c) throws UnknownHostException, IOException {
                 CycObject Mt = _c.getConstantByName("AMZSMt");
                 CycConstant orientation;
