@@ -246,16 +246,19 @@ public class AmzsIssue {
                             CycObject Mt = _c.getConstantByName("BaseKB");
                             amzsEvent = "";
 
-                            if("nesreca".equals(parent2_malf)){
-                                try {assertionEvent = cycService.accident(_c);}
-                                catch(EJBException n) {
-                                    System.out.println("You have to choose location of the object");
+                            if("nesreca".equals(parent2_malf)) {
+                                if(malfunction != null) {
+                                    assertionEvent = assertionEvent + cycService.orientation(_c);
+                                }
+                                else {
+                                    try {assertionEvent = cycService.accident(_c);}
+                                    catch(EJBException n) {
+                                        System.out.println("You have to choose location of the object");
+                                    }
                                 }
                                 amzsEvent = cycService.getEvent();
 
-                                if(malfunction != null){
-                                    assertionEvent = assertionEvent + cycService.orientation(_c);
-                                }
+                                
                             }
 
                             else if("resevanje vozila".equals(parent2_malf)){
