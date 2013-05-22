@@ -40,8 +40,7 @@ public class CycService {
     enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
     enum Malfunction {VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
     enum Ignition {VRTI, NE_VRTI, PRIZGAN_PORABNIK, OSTALO};
-    enum Turns {GORI_LUCKA_NA_ARMATURI, GORIJO_VSE_LUCKE_NA_ARMATURI};
-    enum NoTurn {LUCI_GORIJO, LUCI_NE_GORIJO, AKUMULATOR};
+    enum IgnitionMalf {GORI_LUCKA_NA_ARMATURI, GORIJO_VSE_LUCKE_NA_ARMATURI, LUCI_GORIJO, LUCI_NE_GORIJO, AKUMULATOR};
     enum Engine {UGASNIL_MED_VOZNJO, IZGUBLJA_MOC_NE_VLECE, PREGREVA, GLAVNI_JERMEN, OSTALO};
     enum EngineMalf {ROPOTA, BEL_DIM, CRN_DIM, LUC_ZA_OLJE_SVETI, UTRIPA_RUMENA_ZA_MOTOR, ZAKUHAL, BREZ_HLADILNE, SVETI_RDECA_ZA_HLADILNO_TEKOCINO, OSTALO};
     enum Transmission {MENJALNIK, SKLOPKA, KARDAN, PEDAL_ZA_PLIN, OSTALO};
@@ -235,7 +234,7 @@ public class CycService {
                             malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$AutoEngineTurnOver)");
                             assertionEvent = String.valueOf(malfL);
 
-                            Turns turns = Turns.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
+                            IgnitionMalf turns = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
                             _c.assertGaf(malfL, Mt);
                             switch(turns)
                             {
@@ -256,7 +255,7 @@ public class CycService {
                             malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$EngineDoesntTurnOver)");
                             assertionEvent = String.valueOf(malfL);
 
-                            NoTurn noTurn = NoTurn.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
+                            IgnitionMalf noTurn = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
                             _c.assertGaf(malfL, Mt);
                             switch(noTurn)
                             {
@@ -453,7 +452,7 @@ public class CycService {
             CycList malfL = new CycList(); 
             String assertionEvent = "";
             
-            TransmissionMalf trans = TransmissionMalf.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
+            TransmissionMalf trans = TransmissionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
             try{
                 switch(trans)
                 {
