@@ -213,6 +213,9 @@ public class AmzsIssue {
                         CycObject Mt = _c.getConstantByName("AMZSMt");
                         _c.assertGaf(SenderOfInfo, Mt);
                         
+                        if ("".equals(name) && "".equals(surname)) {
+                            name = "AMZS user";
+                        }
                         CycObject English = _c.getConstantByName("EnglishMt");
                         CycList NameString = _c.makeCycList("(#$nameString (#$AMZSUserFn \"" +id +"\") \"" +name +" " +surname +"\")");
                         _c.assertGaf(NameString, English);
@@ -281,13 +284,13 @@ public class AmzsIssue {
                                 CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                                 CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
                                 _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
-                                assertionEvent = cycService.malfunction(_c);
                                 amzsEvent = cycService.getEvent();
+                                assertionEvent = cycService.malfunction(_c);
                             }
                         } catch(IOException e){
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);                        
                         }
-                        return amzsEvent;	
+                        return assertionEvent;	
 }
        
         public String importIntoCycType() throws JSONException, UnknownHostException, CycApiException, IOException {
@@ -333,7 +336,7 @@ public class AmzsIssue {
         }
         
         public String importIntoCycVehicle() throws JSONException, UnknownHostException, CycApiException, IOException {
-                    amzsEvent = importIntoCycEvent();
+//                    importIntoCycEvent();
                     if (LOGGER.isLoggable(Level.FINE))
                         {LOGGER.fine("asserting vehicle");}
                 
