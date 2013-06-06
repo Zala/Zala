@@ -63,6 +63,9 @@ public class AmzsIssue {
         private String parent2_malf;
         private List<Prijave> podatki;
         private CycAccess _c;
+        private CycObject UniversalMt;
+        private CycObject AMZSMt;
+        private CycObject EnglishMt;
         private String assertionIssue;
         private String amzsEvent;
         private Integer event;
@@ -114,6 +117,9 @@ public class AmzsIssue {
                 amzsIssue = cycService.getIssue();
                 event = 0;
                 mapBr = cycService.exportFromCycCarBrandList(_c);
+                UniversalMt = _c.getConstantByName("UniversalVocabularyMt");
+                EnglishMt = _c.getConstantByName("EnglishMt");
+                AMZSMt = _c.getConstantByName("AMZSMt");
                                
             }
            
@@ -198,124 +204,139 @@ public class AmzsIssue {
                     return t;
         }
         
-        public String importIntoCycIssue() throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycIssue() {
+            
+                    try {
                         CycConstant AMZSReport = _c.getConstantByName("AMZSReport");
                         CycConstant CycIssue = _c.makeCycConstant(amzsIssue);
                         _c.assertIsa(CycIssue, AMZSReport);
-                        
+
                         assertionIssue = "(isa " +CycIssue +" " +AMZSReport + ")";
-                        return assertionIssue;
+                        
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    return assertionIssue;
         }
         
-        public String importIntoCycSender() throws JSONException, UnknownHostException, CycApiException, IOException {
-                                                
+        public String importIntoCycSender(){
+            
+                    try {
                         CycList SenderOfInfo = _c.makeCycList("(#$senderOfInfo #$"+amzsIssue +" (#$AMZSUserFn \"" +id +"\"))");
-                        CycObject Mt = _c.getConstantByName("AMZSMt");
-                        _c.assertGaf(SenderOfInfo, Mt);
-                        
+                        _c.assertGaf(SenderOfInfo, AMZSMt);
+
                         if ("".equals(name) && "".equals(surname)) {
                             name = "AMZS user";
                         }
-                        CycObject English = _c.getConstantByName("EnglishMt");
                         CycList NameString = _c.makeCycList("(#$nameString (#$AMZSUserFn \"" +id +"\") \"" +name +" " +surname +"\")");
-                        _c.assertGaf(NameString, English);
+                        _c.assertGaf(NameString, EnglishMt);
                         assertionSender = SenderOfInfo + ", " + NameString +".";
                         return assertionSender;
-}
-        
-        public String importIntoCycMember() throws JSONException, UnknownHostException, CycApiException, IOException {
-                    
-                    _c = new CycAccess("aidemo", 3600);
-                    CycObject Mt = _c.getConstantByName("AMZSMt");
-                    
-                    CycList Member = new CycList();
-                    if ("Da".equals(member) && !member_no.isEmpty()){
-                        Member = _c.makeCycList("(#$groupMemberWithMembershipID (#$AMZSUserFn \"" +id +"\") #$AMZSKlub \""+member_no +"\")");
-                        _c.assertGaf(Member, Mt);
+                        
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                        return assertionSender;
+                 }
+        
+        public String importIntoCycMember() {
+                        
+                        CycList Member = new CycList();
+                        
+                    try {
+                        if ("Da".equals(member) && !member_no.isEmpty()){
+                            Member = _c.makeCycList("(#$groupMemberWithMembershipID (#$AMZSUserFn \"" +id +"\") #$AMZSKlub \""+member_no +"\")");
+                            _c.assertGaf(Member, UniversalMt);
+                        }
 
-//                    else if (member == null){
-//                        member = " / ";
-//                    }
-
-                    return String.valueOf(Member);
-        }
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                        return String.valueOf(Member);
+                    }
         
         public String importIntoCycEvent() {
                         if (LOGGER.isLoggable(Level.FINE))
                             {LOGGER.fine("Importing into cyc event");}
                         
-                        try{
-                            CycObject Mt = _c.getConstantByName("BaseKB");
                             amzsEvent = "";
 
                             if("nesreca".equals(parent2_malf)) {
-                                if(malfunction != null) {
-                                    assertionEvent = assertionEvent + cycService.orientation(_c);
-                                }
-                                else {
-                                    try {assertionEvent = cycService.accident(_c);}
-                                    catch(EJBException n) {
-                                        System.out.println("You have to choose location of the object");
-                                    }
-                                }
-                                amzsEvent = cycService.getEvent();
-
                                 
+                                    assertionEvent = cycService.accident(_c);
+
+                                    if(malfunction != null) {
+                                        assertionEvent = assertionEvent +", " + cycService.orientation(_c);
+                                    }
+    //                                
+                                    amzsEvent = cycService.getEvent();                                
                             }
 
-                            else if("resevanje vozila".equals(parent2_malf)){
-                                event = 1;
-                                CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$StuckOrConfinedVehicleSituation)");
-                                _c.assertGaf(issueEventType, Mt);
-
-                                assertionEvent = cycService.rescuing(_c);
-                                amzsEvent = cycService.getEvent();
+                            else if("resevanje vozila".equals(parent2_malf)) {
+                                    event = 1;
+                                    assertionEvent = cycService.rescuing(_c);
+                                    amzsEvent = cycService.getEvent();
                             }
 
                             else if(parent2_malf == null){
-                                amzsEvent = "";
+                                    amzsEvent = "";
                             }
 
                             else{
-                                CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+amzsIssue +" #$TransportationDevice-VehicleMalfunction)");
-                                _c.assertGaf(issueEventType, Mt);
-
-                                CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
-                                CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+id);
-                                _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction);
-                                amzsEvent = cycService.getEvent();
-                                assertionEvent = cycService.malfunction(_c);
+                                    amzsEvent = cycService.getEvent();
+                                    assertionEvent = cycService.malfunction(_c);
                             }
-                        } catch(IOException e){
-                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);                        
-                        }
+                            
                         return assertionEvent;	
 }
        
-        public String importIntoCycType() throws JSONException, UnknownHostException, CycApiException, IOException {
-                    amzsEvent = cycService.getEvent();
-                    CycObject Mt = _c.getConstantByName("AMZSMt");
-                    assertType = "";
-                    
-                    mapTy = cycService.exportFromCycCarTypeList(_c);
-                    if (type != null){
-                        String typeConst = String.valueOf(mapTy.get(type));
-                        CycList Type = _c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+typeConst +")");
-                        _c.assertGaf(Type, Mt);
-                        assertType = String.valueOf(Type);
-                    }
-                    return assertType;
+        public String importIntoCycType() {
+                        try {
+                            amzsEvent = cycService.getEvent();
+                            assertType = "";
+
+                            mapTy = cycService.exportFromCycCarTypeList(_c);
+                            if (type != null){
+                                String typeConst = String.valueOf(mapTy.get(type));
+                                CycList Type = _c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+typeConst +")");
+                                _c.assertGaf(Type, UniversalMt);
+                                assertType = String.valueOf(Type);
+                            }
+                            
+                        } catch (JSONException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (UnknownHostException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (CycApiException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                        return assertType;
         }
         
         public String importIntoCycModel() {
-                    try {CycObject Mt = _c.getConstantByName("AMZSMt");
+                    try {
                         mapMod = cycService.getModelByBrand(_c, inputBrand, mapBr);
                         String modelConst = String.valueOf(mapMod.get(model));
 
                         if (!"null".equals(modelConst)){
                             CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
-                            _c.assertGaf(Model, Mt);
+                            _c.assertGaf(Model, UniversalMt);
                             assertModel = String.valueOf(Model);
                         }
                     }
@@ -335,100 +356,137 @@ public class AmzsIssue {
                     return assertModel;
         }
         
-        public String importIntoCycVehicle() throws JSONException, UnknownHostException, CycApiException, IOException {
-//                    importIntoCycEvent();
-                    if (LOGGER.isLoggable(Level.FINE))
-                        {LOGGER.fine("asserting vehicle");}
-                
-                    CycObject Mt = _c.getConstantByName("AMZSMt");
-                    CycObject English = _c.getConstantByName("EnglishMt");
-                     
-                    CycList Registrska = new CycList();
-                    if (!registration.equals("")) {
-                        Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
-                    }
-                    else {
-                        Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle involved\")");
-                    }
-                    _c.assertGaf(Registrska, English);
-                    
-                    
-                    if(!"".equals(amzsEvent) ){
-                        CycList ObjectActedOn = new CycList();
-                        switch (event){
-                            case 1:
-                                ObjectActedOn = _c.makeCycList("(#$objectActedOn " + amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
-                                _c.assertGaf(ObjectActedOn, Mt);
-                                break;
-                            default:
-                                ObjectActedOn = _c.makeCycList("(#$objectActedOn #$"+amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
-                                _c.assertGaf(ObjectActedOn, Mt);
-                                break;
-                        }
-                         // Ne dela v AMZSMt!
-                         if("zakuhal".equals(malfunction)){
-                            CycList Overheated = _c.makeCycList("(#$stateOfDevice (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$VehicleDevice-Overheated)");
-                            _c.assertGaf(Overheated, Mt);
-                        }
-                        assertionVehicle = ObjectActedOn +", " +Registrska;
-                    }
-                    
-                    else {assertionVehicle = "";}
-                    
-                    return assertionVehicle;
+        public String importIntoCycVehicle() {
+                            if (LOGGER.isLoggable(Level.FINE))
+                                {LOGGER.fine("asserting vehicle");}
+
+                            assertionVehicle = "";                 
+                            CycList Registrska = new CycList();
+                            
+                        try {
+                           
+                            if (!registration.equals("")) {
+                                    Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"" +registration +"\")");
+                            }
+                            else {
+                                    Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle involved\")");
+                            }
+                            _c.assertGaf(Registrska, EnglishMt);
+
+
+                            if(!"".equals(amzsEvent) ){
+                                    CycList ObjectActedOn = new CycList();
+                                    switch (event){
+                                            case 1:
+                                                ObjectActedOn = _c.makeCycList("(#$objectActedOn " + amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
+                                                _c.assertGaf(ObjectActedOn, UniversalMt);
+                                                break;
+                                            default:
+                                                ObjectActedOn = _c.makeCycList("(#$objectActedOn #$"+amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
+                                                _c.assertGaf(ObjectActedOn, UniversalMt);
+                                                break;
+                                    }
+                                    if("zakuhal".equals(malfunction)){
+                                            CycList Overheated = _c.makeCycList("(#$stateOfDevice (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$VehicleDevice-Overheated)");
+                                            _c.assertGaf(Overheated, UniversalMt);
+                                    }
+                                    assertionVehicle = ObjectActedOn +", " +Registrska;
+                            }
+
+                        } catch (UnknownHostException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (CycApiException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        }                        
                         
-}
+                        return assertionVehicle;
+
+        }
         
-        public String importIntoCycTopic() throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String importIntoCycTopic() {
                     amzsEvent = cycService.getEvent();
-                    CycObject Mt = _c.getConstantByName("BaseKB");
-                    if(!"".equals(amzsEvent)){
-                        switch(event){
-                            case 1:
-                                CycList Topic = _c.makeCycList("(#$topicOfInfoTransfer #$" +amzsIssue + " (#$StuckOrConfinedVehicleSituationFn #$"+amzsIssue +"))");
-                                _c.assertGaf(Topic, Mt);
-                                assertionTopic = String.valueOf(Topic);
-                                break;
-                            default:
-                                CycConstant Event = _c.getConstantByName(amzsEvent);
-                                CycConstant Issue = _c.getConstantByName(amzsIssue);
-                                CycConstant Predicate = _c.getConstantByName("topicOfInfoTransfer");
-                                _c.assertGaf(Mt, Predicate, Issue, Event);
-                                assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
-                                break;
+                    try {
+                        if(!"".equals(amzsEvent)){
+                            switch(event){
+                                case 1:
+                                    CycList Topic = _c.makeCycList("(#$topicOfInfoTransfer #$" +amzsIssue + " (#$StuckOrConfinedVehicleSituationFn #$"+amzsIssue +"))");
+
+                                _c.assertGaf(Topic, UniversalMt);
+
+                                    assertionTopic = String.valueOf(Topic);
+                                    break;
+                                default:
+                                    CycConstant Event = _c.getConstantByName(amzsEvent);
+                                    CycConstant Issue = _c.getConstantByName(amzsIssue);
+                                    CycConstant Predicate = _c.getConstantByName("topicOfInfoTransfer");
+                                    _c.assertGaf(UniversalMt, Predicate, Issue, Event);
+                                    assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
+                                    break;
+                            }
                         }
+                        
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    
                     return assertionTopic;
         }
 
-        public String importIntoCycDate() throws JSONException, UnknownHostException, CycApiException, IOException {
-                        CycConstant Event = _c.getConstantByName(amzsEvent);
-                        
-                        long timestamp = date.getTime();
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTimeInMillis(timestamp);
-                        String Year = String.valueOf(cal.get(Calendar.YEAR));
-                        String Month = getMonth(cal.get(Calendar.MONTH)+1);
-                        String Day = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-        
-                        CycObject Mt = _c.getConstantByName("AMZSMt");
-                        String StringDate = "(#$dateOfEvent #$" +Event +" (#$DayFn " +Day +" (#$MonthFn #$" +Month +" (#$YearFn " +Year +"))))";
-                        CycList EventL = _c.makeCycList(StringDate);
-                        _c.assertGaf(EventL, Mt);
-                        
-                        // assertionDate = "Date: " +Year + "-" + Month +"-" +Day;
-                                              
+        public String importIntoCycDate() {
+            
+                        String StringDate = "";
+                                
+                        try {
+                            CycConstant Event = _c.getConstantByName(amzsEvent);
+
+                            long timestamp = date.getTime();
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTimeInMillis(timestamp);
+                            String Year = String.valueOf(cal.get(Calendar.YEAR));
+                            String Month = getMonth(cal.get(Calendar.MONTH)+1);
+                            String Day = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+
+                            StringDate = "(#$dateOfEvent #$" +Event +" (#$DayFn " +Day +" (#$MonthFn #$" +Month +" (#$YearFn " +Year +"))))";
+                            CycList EventL = _c.makeCycList(StringDate);
+                            _c.assertGaf(EventL, UniversalMt);
+
+                        } catch (UnknownHostException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (CycApiException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
                         return StringDate;
                         
         }
         
-        public String importIntoCycHlidIssue(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                        CycConstant Event = _c.getConstantByName(amzsIssue);
-                        String Hlid = CycConstant.toCompactExternalId(Event, _c);
+        public String importIntoCycHlidIssue(CycAccess _c) {
+                        
+                        String Hlid = "";
+                        try {
+                            CycConstant Event = _c.getConstantByName(amzsIssue);
+                            Hlid = CycConstant.toCompactExternalId(Event, _c);
+                            
+                            
+                        } catch (UnknownHostException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (CycApiException ex) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         return Hlid;
         }
         
-        public String importIntoCycHlidEvent(CycAccess _c) throws JSONException {
+        public String importIntoCycHlidEvent(CycAccess _c) {
                         String Hlid = "";            
                         try{
                             switch(event){
@@ -442,17 +500,14 @@ public class AmzsIssue {
                                     }
                                     break;
                             }
-                        }
-                        catch(CycApiException e) {
+                            
+                        } catch(CycApiException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "Doesn't work for StuckOrConfinedVehicleSituationFn yet. Else, event not found in Cyc.", e);
-                        }
-                        catch(ELException e) {
+                        } catch(ELException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "Doesn't work for StuckOrConfinedVehicleSituationFn yet.", e);
-                        }
-                        catch(UnknownHostException e) {
+                        } catch(UnknownHostException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
-                        }
-                        catch(IOException e) {
+                        } catch(IOException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
                         }
                         return Hlid;
@@ -462,53 +517,56 @@ public class AmzsIssue {
                         return new DateFormatSymbols(Locale.ENGLISH).getMonths()[month-1];
         }
         
-        
-        public String cure() throws JSONException, UnknownHostException, CycApiException, IOException {
+        public String cure() {
                     String Hlid = importIntoCycHlidIssue(_c);
                     return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
         }
         
-        public String cureSecond() throws JSONException, UnknownHostException {
-            String Hlid = new String();
-            try {
-                Hlid = importIntoCycHlidEvent(_c);
-            } catch(CycApiException e){
-                Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
-            }
-            
-            return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
+        public String cureSecond() {
+                    String Hlid = importIntoCycHlidEvent(_c);
+                    return "http://aidemo:3603/cure/edit.jsp?conceptid=" +Hlid +"&cycHost=aidemo&cycPort=3600&userName=AMZSAdministrator";
         }
         
-        
-        public String edit() throws UnknownHostException, IOException {
-            CycConstant issue = _c.getConstantByName(amzsIssue);
-            _c.kill(issue);
-            baseService.updateEntry(baseService.getLastEntry());
-            return "response.xhtml?faces-redirect=true";
+        public String edit() {
+                    try {
+                        CycConstant issue = _c.getConstantByName(amzsIssue);
+                        _c.kill(issue);
+                        baseService.updateEntry(baseService.getLastEntry());
+                        
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    return "response.xhtml?faces-redirect=true";
         }
         
         public String newApp() {
-            return "response.xhtml?faces-redirect=true";
+                    if (LOGGER.isLoggable(Level.FINE))
+                        {LOGGER.fine("new app");}
+                    return "response.xhtml?faces-redirect=true";
         }
         
-        private static void queryCyc(CycAccess ca, DefaultInferenceParameters _inferenceParameters) throws CycApiException, IOException {
-
-            ELMt CCMt = ca.makeELMt(ca.makeCycConstant("#$InferencePSC"));
-
-            String OurQueryString = "(#$and (#$durationOfDelay ?EVENT ?TIME) (#$lengthOfQueue ?EVENT ?LENGTH) (#$isa ?EVENT #$TrafficIrregularEvent) (#$nearestIsa ?EVENT ?TYPE) (#$greaterThan ?LENGTH (#$Meter 200)))";
-
-            InferenceWorkerSynch cycWorker = new DefaultInferenceWorkerSynch(
-            OurQueryString, CCMt, _inferenceParameters, ca,
-            500000);
-
-            InferenceResultSet rs = cycWorker.executeQuery();
-            while (rs.next()) {
-            int index = rs.findColumn("?EVENT");
-            System.out.println(rs.getCycObject(index));
-
-            }
-            rs.close();
-        }
+//        private static void queryCyc(CycAccess ca, DefaultInferenceParameters _inferenceParameters) throws CycApiException, IOException {
+//
+//            ELMt CCMt = ca.makeELMt(ca.makeCycConstant("#$InferencePSC"));
+//
+//            String OurQueryString = "(#$and (#$durationOfDelay ?EVENT ?TIME) (#$lengthOfQueue ?EVENT ?LENGTH) (#$isa ?EVENT #$TrafficIrregularEvent) (#$nearestIsa ?EVENT ?TYPE) (#$greaterThan ?LENGTH (#$Meter 200)))";
+//
+//            InferenceWorkerSynch cycWorker = new DefaultInferenceWorkerSynch(
+//            OurQueryString, CCMt, _inferenceParameters, ca,
+//            500000);
+//
+//            InferenceResultSet rs = cycWorker.executeQuery();
+//            while (rs.next()) {
+//            int index = rs.findColumn("?EVENT");
+//            System.out.println(rs.getCycObject(index));
+//
+//            }
+//            rs.close();
+//        }
 
                 // /*static String toCamelCase(String s){
                 // String[] parts = s.split(" ");
