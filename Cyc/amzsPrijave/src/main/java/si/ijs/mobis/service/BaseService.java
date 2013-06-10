@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +17,7 @@ import javax.persistence.Query;
 @Stateless
 public class BaseService{
         
+        private static final Logger LOGGER = Logger.getLogger(BaseService.class.getName());
         @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
         private EntityManager entityManager;
         
@@ -33,7 +36,7 @@ public class BaseService{
         }
         
         public List<String> getByPList(String par) {
-                Query q = entityManager.createQuery("SELECT DISTINCT malfunction FROM "+ si.ijs.mobis.service.Error.class.getName()
+                Query q = entityManager.createQuery("SELECT DISTINCT malfunction FROM "+ Error.class.getName()
                         + " WHERE parent_malf = :par").setParameter("par", par);
                 List<String> list = q.getResultList();
                 return list;
@@ -49,18 +52,13 @@ public class BaseService{
             save(pr);
         }
         
-        public Prijave updateEntry(Prijave pr) {
-           try{
-                Query q = entityManager.createNativeQuery("DELETE FROM prijave ORDER BY ID DESC LIMIT 1");
-                q.executeUpdate();
-//                pr = entityManager.merge(pr);
-//                saveData(pr);
-                }
-            
-            catch (Exception e) {
-                System.out.println(e);
-            }
-            return pr;
+        public void updateEntry(Prijave pr) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    {LOGGER.fine("updating the report");}
+                java.util.Date date = new Date();
+                pr.setDatum(date);
+                pr.setId(getLastEntry().getId());
+                entityManager.merge(pr);
         }
                 
         public List<Prijave> getData() {

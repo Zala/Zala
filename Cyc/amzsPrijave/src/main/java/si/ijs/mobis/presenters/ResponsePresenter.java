@@ -139,11 +139,10 @@ public class ResponsePresenter implements Serializable {
             return "asserting.xhtml?ib=" + inputBrand + "&faces-redirect=true";
     }
                  
-    public String assertingCorr() {
+    public String assertingEdit() {
             prijava.setParent2_malf(getGrandparent());
             prijava.setParent_malf(getParent());
             prijava.setMalfunction(getMalfunction());
-//            baseService.saveData(prijava);
             baseService.updateEntry(prijava);
             return "asserting.xhtml?ib=" + inputBrand + "&faces-redirect=true";
     }

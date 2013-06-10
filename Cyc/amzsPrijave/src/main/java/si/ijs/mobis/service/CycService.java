@@ -35,11 +35,11 @@ public class CycService {
       
     enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
     enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
-    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI};
-    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU};
+    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI, OSTALO};
+    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU, OSTALO};
     enum Malfunction {VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
     enum Ignition {VRTI, NE_VRTI, PRIZGAN_PORABNIK, OSTALO};
-    enum IgnitionMalf {GORI_LUCKA_NA_ARMATURI, GORIJO_VSE_LUCKE_NA_ARMATURI, LUCI_GORIJO, LUCI_NE_GORIJO, AKUMULATOR};
+    enum IgnitionMalf {GORI_LUCKA_NA_ARMATURI, GORIJO_VSE_LUCKE_NA_ARMATURI, LUCI_GORIJO, LUCI_NE_GORIJO, AKUMULATOR, OSTALO};
     enum Engine {UGASNIL_MED_VOZNJO, IZGUBLJA_MOC_NE_VLECE, PREGREVA, GLAVNI_JERMEN, OSTALO};
     enum EngineMalf {ROPOTA, BEL_DIM, CRN_DIM, LUC_ZA_OLJE_SVETI, UTRIPA_RUMENA_ZA_MOTOR, ZAKUHAL, BREZ_HLADILNE, SVETI_RDECA_ZA_HLADILNO_TEKOCINO, OSTALO};
     enum Transmission {MENJALNIK, SKLOPKA, KARDAN, PEDAL_ZA_PLIN, OSTALO};
@@ -47,7 +47,7 @@ public class CycService {
     enum Electricity {OSTAL_BREZ_MED_VOZNJO, OSTAL_BREZ_NA_PARKIRISCU, LUCI, BRISALCI, SIPE_RAZBITE, SIPA_SE_NE_ZAPRE, OSTALO};
     enum ElectricityMalf {ALTERNATOR, AKUMULATOR, VAROVALKE, PREDNJE, ZADNJE, DOLGE, KRATKE, VEC_LUCI_NE_DELA, STOP_LUC, SMERNIKI, MOTORCEK, PREDNJA, ZADNJA, STRANSKA, VOZNIKOVA, SOVOZNIKOVA, STRANSKA_ZADAJ, OSTALO};
     enum Chassis {KRMILNI_MEHANIZEM, VZMETENJE, ZAVORE, HIDRAVLIKA, OSTALO};
-    enum ChassisMalf {VOLAN_TRD, ZGLOB, ROKA, KONCNIK, AMORTIZER, VZMET, ZABLOKIRANE, ODPOVEDALE, AVTO_NA_TLEH, AVTO_NI_NA_TLEH};    
+    enum ChassisMalf {VOLAN_TRD, ZGLOB, ROKA, KONCNIK, AMORTIZER, VZMET, ZABLOKIRANE, ODPOVEDALE, AVTO_NA_TLEH, AVTO_NI_NA_TLEH, OSTALO};    
     enum Tires{PRAZNA, PREDRTA, VEC_PRAZNIH, VEC_PREDRTIH, BREZ_1, BREZ_VEC, OSTALO};
     enum TiresMalf {IMA_REZERVO, NIMA_REZERVE, NI_KLJUCA, VARNOSTNI_VIJAK, NE_MORE_ODVITI_VIJAKA, UKRADENA, NI_UKRADENA, OSTALO};
     enum Fuel {BREZ, NAROBE_TOCIL, ZMRZNJENO, UMAZANO, OSTALO};
@@ -60,35 +60,42 @@ public class CycService {
                 return amzsIssue;
         }
     
+    public Integer getId() {
+                return baseService.getLastEntry().getId();
+        }
+    
     public String getEvent() {
                 String event = "";
                 String pm2 = baseService.getLastEntry().getParent2_malf();
-                Integer id = baseService.getLastEntry().getId();
-                if(pm2 != null){
-                    EventType e = EventType.valueOf(toEnumCase(pm2));
-                    switch(e)
-                    {
-                        case NESRECA: 
-                            event = "AMZSVehicleAccident"+id;
-                            break;
-                        case RESEVANJE_VOZILA:
-                            event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
-                            break;
-                        default: 
-                            event = "AMZSVehicleMalfunction" +id;
-                    }
+                EventType e = EventType.valueOf(toEnumCase(pm2));
+                switch(e)
+                {
+                    case NESRECA: 
+                        event = "AMZSVehicleAccident"+getId();
+                        break;
+                    case RESEVANJE_VOZILA:
+                        event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
+                        break;
+                    case OSTALO: 
+                        event = "InconvenientTrafficEvent" +getId();
+                        break;
+                    default: 
+                        event = "AMZSVehicleMalfunction" +getId();
+                        break;
                 }
                 return event;
     }
     
-    public String rescuing(CycAccess _c) {
+    public String rescuing(CycAccess _c, CycObject Mt) {
                     String assertionEvent = "";
                     CycList loc = new CycList();
                     
                     try {
-                        CycObject Mt = _c.getConstantByName("UniversalVocabularyMt");
                         CycList issueET = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$StuckOrConfinedVehicleSituation)");
                         _c.assertGaf(issueET, Mt);
+                        
+                        _c.assertGaf(_c.makeCycList("(#$nameString (#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +") \"Stuck situation "+baseService.getLastEntry().getId() +"\")"), _c.getConstantByName("EnglishMt"));
+                        
                         assertionEvent = String.valueOf(issueET);
                         
                         StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
@@ -130,15 +137,16 @@ public class CycService {
                     return assertionEvent;
                 }
     
-    public String accident(CycAccess _c) {
+    public String accident(CycAccess _c, CycObject Mt) {
                 String assertionEvent = "";
                 
                 try {
-                    CycObject Mt = _c.getConstantByName("UniversalVocabularyMt");
                     CycConstant CycAccident = _c.makeCycConstant(getEvent());
                     CycList event = _c.makeCycList("(#$isa #$"+CycAccident +" #$VehicleAccident)");
+//                    _c.assertGaf(event, _c.getConstantByName("UniversalVocabularyMt"));
                     assertionEvent = String.valueOf(event);
 
+                    _c.assertGaf(_c.makeCycList("(#$nameString #$"+CycAccident +" \"Vehicle accident "+baseService.getLastEntry().getId() +"\")"),Mt);
                     CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$VehicleAccident)");
                     _c.assertGaf(issueEventType, Mt);
                     assertionEvent = assertionEvent +", "+ String.valueOf(issueEventType);
@@ -160,6 +168,7 @@ public class CycService {
                         case IZVEN_CESTE_DO_20M: break;
                         case IZVEN_CESTE_NAD_20M: break;
                         case POD_CESTO: break;
+                        default: break;
                     }
                 
                     assertionEvent = assertionEvent + ", " + posL;
@@ -176,10 +185,9 @@ public class CycService {
                 return assertionEvent;
                 }
     
-    public String orientation(CycAccess _c) {
+    public String orientation(CycAccess _c, CycObject Mt) {
                 String assertionEvent = "";
                 try {
-                    CycObject Mt = _c.getConstantByName("UniversalVocabularyMt");
                     CycConstant orientation;
                     CycList orientL = new CycList(); 
 
@@ -216,18 +224,44 @@ public class CycService {
                 
                     return assertionEvent;
                 }
+    
+    public String unknown(CycAccess _c, CycObject Mt) {
+            String assertionEvent = "";
+        try {
+            
+                CycList issueET = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$InconvenientTrafficEventType)");
+                _c.assertGaf(issueET, Mt);
+                
+                CycConstant InconEvent = _c.makeCycConstant(getEvent());
+//                _c.assertGaf(_c.makeCycList("#$isa"), assertionEvent);
+                _c.assertGaf(_c.makeCycList("(#$nameString #$" + InconEvent +" \"Inconvenient traffic event "+getId() +"\")"), _c.getConstantByName("EnglishMt"));
+                
+                assertionEvent = String.valueOf(issueET); 
+                
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CycApiException ex) {
+            Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return assertionEvent;
+    
+    }    
         
-    public String malfunction(CycAccess _c) {
+    public String malfunction(CycAccess _c, CycObject Mt) {
             String assertionEvent = "";
             try {
-                CycObject Mt = _c.getConstantByName("UniversalVocabularyMt");
                 CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+getIssue() +" #$TransportationDevice-VehicleMalfunction)");
                 _c.assertGaf(issueEventType, Mt);
                 
                 
                 CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
                 CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+baseService.getLastEntry().getId());
-                _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction,Mt);
+                _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction,_c.getConstantByName("UniversalVocabularyMt"));
+                
+                _c.assertGaf(_c.makeCycList("(#$nameString #$"+AMZSVehicleMalfunction +" \"Vehicle malfunction of "+baseService.getLastEntry().getParent2_malf()
+                        +" " +baseService.getLastEntry().getId() +"\")"), _c.getConstantByName("EnglishMt"));
                 
                 CycService.Malfunction malf = CycService.Malfunction.valueOf(toEnumCase(baseService.getLastEntry().getParent2_malf()));
 
@@ -266,6 +300,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
 
             return assertionEvent;
@@ -299,6 +335,7 @@ public class CycService {
                                     assertionEvent = assertionEvent + String.valueOf(malfL);
                                     _c.assertGaf(malfL, Mt);     
                                     break;
+                                default: break;
                             }
                             break;
                             
@@ -322,6 +359,7 @@ public class CycService {
                                     break;
                                 case AKUMULATOR:
                                     break;
+                                default: break;
                             }
                             break;
                             
@@ -339,6 +377,8 @@ public class CycService {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
                 }
                 
                 return assertionEvent;
@@ -349,8 +389,8 @@ public class CycService {
             CycList malfL = new CycList(); 
             String assertionEvent = "";
             
-            Engine eng = Engine.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
             try{
+            Engine eng = Engine.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
                 
                 CycList engineMalf = _c.makeCycList("(#$isa #$" +getEvent() +" #$PerformanceDegradation-AutoEngine)");
                 _c.assertGaf(engineMalf, Mt); 
@@ -385,6 +425,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             return assertionEvent;
             }
@@ -487,6 +529,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             
             return assertionEvent;
@@ -591,6 +635,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             
             return assertionEvent;
@@ -677,6 +723,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             
             return assertionEvent;
@@ -717,6 +765,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             
             return assertionEvent;
@@ -773,6 +823,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             
             return assertionEvent;
@@ -786,7 +838,6 @@ public class CycService {
             
             Tires tires = Tires.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
             try{
-                Mt = _c.getKnownConstantByName("UniversalVocabularyMt");
                 switch(tires)
                 {
                     case PRAZNA: 
@@ -829,8 +880,10 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
-            
+        
             return assertionEvent;
             }
 
@@ -873,6 +926,8 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
             
             return assertionEvent;
@@ -967,6 +1022,8 @@ public class CycService {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
                 }
                 
                 return assertionEvent;
@@ -1078,6 +1135,8 @@ public class CycService {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
                 }
                 
                 return assertionEvent;
@@ -1185,16 +1244,21 @@ public class CycService {
     }
     
     public static String toEnumCase(String s) {
-		String string = s;
-		string = string.toUpperCase().replaceAll("\\s+", "_");    // zamenjaj enega ali vec preslednov z _
-		string = string.toUpperCase().replaceAll("/", "_");
-                string = string.toUpperCase().replaceAll("-", "_");
-		return string;
-	}
+                String string = s;
+                try{
+                        string = string.toUpperCase().replaceAll("\\s+", "_");    // zamenjaj enega ali vec preslednov z _
+                        string = string.toUpperCase().replaceAll("/", "_");
+                        string = string.toUpperCase().replaceAll("-", "_");
+
+                } catch (NullPointerException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
+                }
+                return string;
+    }
     
     public static String toConstCase(String s) {
 		String string = s;
 		string = string.replaceAll("#\\$", ""); 
 		return string;
 	}
-}
+    }

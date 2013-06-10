@@ -100,6 +100,13 @@
                     </table>
                     </div>
                 </ui:insert>
+                </h:form>
+             
+                <ui:insert name="top">
+                <h:form>
+                    <h:commandButton value="New" action="#{amzsIssue.newApp()}"  />
+                </h:form>   
+                </ui:insert>
                 <ui:insert name="top">
                 <h:form>
                     <h:commandButton value="Edit" action="#{amzsIssue.edit()}"  />
@@ -107,9 +114,10 @@
                 </ui:insert>
                 <ui:insert name="top">
                 <h:form>
-                    <h:commandButton value="New" action="#{amzsIssue.newApp()}"  />
+                    <h:commandButton value="Back to first page" action="index.xhtml?faces-redirect=true"  />
                 </h:form>   
                 </ui:insert>
+            
                 <div>
                     <iframe name="cureFrame" frameborder="0" scrolling="auto" width="50%" height="500" align="left" src="#{amzsIssue.cure()}">
                         <p>Your browser does not support iframes.</p>
@@ -118,7 +126,6 @@
                         <p>Your browser does not support iframes.</p>
                     </iframe>
                 </div>
-            </h:form>
         </div>
     </h:body>
 </html>

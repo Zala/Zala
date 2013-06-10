@@ -20,86 +20,86 @@
         </div>
 
         <div id="content" class="center_content">
-                <h:form>
-                    <table class="table">
-                        <tr>
-                            <th class="fc"> AMZS member: </th>
-                            <th>
-                                <h:selectOneRadio id="clan" value="#{responsePresenter.prijava.clan}">
-                                    <f:selectItem id="item1" itemLabel="Yes." itemValue="Da" />
-                                    <f:selectItem id="item2" itemLabel="No." itemValue="Ne" />
-                                </h:selectOneRadio>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="fc"> Member ID: </th>
-                            <th> <h:inputText value="#{responsePresenter.prijava.clanska_st}" /> </th>
-                        </tr>
-                        <tr>
-                            <th class="fc"> Name: </th>
-                            <th> <h:inputText value="#{responsePresenter.prijava.ime}" /> </th>
-                        </tr>
-                        <tr>
-                            <th class="fc"> Surname: </th>
-                            <th> <h:inputText value="#{responsePresenter.prijava.priimek}" /> </th>
-                        </tr>
-                        <tr>
-                            <th class="fc"> Car brand and model: </th>
-                            <th>    
-                                <p:selectOneMenu id="brand" value="#{responsePresenter.inputBrand}">
-                                    <f:selectItem itemLabel="Choose brand" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.carBrand}" />
-                                    <p:ajax update="model" listener="#{responsePresenter.handleBrandChange()}"/>
-                                </p:selectOneMenu>
-                                
-                                <p:selectOneMenu id="model" value="#{responsePresenter.prijava.znamka}">
-                                    <f:selectItem itemLabel="Choose model" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.modelL}"/>
-                                </p:selectOneMenu>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="fc"> Car type: </th>
-                            <th>    
-                                <p:selectOneMenu id="type" value="#{responsePresenter.prijava.tip}">
-                                    <f:selectItem itemLabel="Choose type" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.carBodyTypeStrings()}"/>
-                                </p:selectOneMenu>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="fc"> Registration number: </th>
-                            <th> <h:inputText value="#{responsePresenter.prijava.registrska}" /> </th>
-                        </tr>
-                        
-                        <tr>
-                            <th class="fc"> Event: </th>
-                            <th>
-                                <p:selectOneMenu id="grandparent" value="#{responsePresenter.grandparent}">
-                                    <f:selectItem itemLabel="Choose event" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
-                                    <p:ajax update="parent_malf" listener="#{responsePresenter.handleGrandparentChange}"/>
-                                </p:selectOneMenu>
-                                
-                                <p:selectOneMenu id="parent_malf" value="#{responsePresenter.parent}">
-                                    <f:selectItem itemLabel="Choose event" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.parent_malfL}"/>
-                                    <p:ajax update="malfunction" listener="#{responsePresenter.handleParentChange}"/>
-                                </p:selectOneMenu>
-                                
-                                <p:selectOneMenu id="malfunction" value="#{responsePresenter.malfunction}">
-                                    <f:selectItem itemLabel="Choose event" itemValue="" /> 
-                                    <f:selectItems value="#{responsePresenter.malfunctionL}"/>
-                                </p:selectOneMenu>
-                            </th>
-                        </tr>
-                        
-                        <tr>
-                            <th> </th>
-                            <th class="fc"> <h:commandButton value="Vnesi" action="#{responsePresenter.asserting()}" /> </th> 
-                        </tr>
-                    </table>
-                </h:form>
+            <h:form>
+                <table class="table">
+                    <tr>
+                        <th class="fc"> AMZS member: </th>
+                        <th>
+                            <h:selectOneRadio id="clan" value="#{responsePresenter.prijava.clan}">
+                                <f:selectItem id="item1" itemLabel="Yes." itemValue="Da" />
+                                <f:selectItem id="item2" itemLabel="No." itemValue="Ne" />
+                            </h:selectOneRadio>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Member ID: </th>
+                        <th> <h:inputText value="#{responsePresenter.prijava.clanska_st}" /> </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Name: </th>
+                        <th> <h:inputText value="#{responsePresenter.prijava.ime}" /> </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Surname: </th>
+                        <th> <h:inputText value="#{responsePresenter.prijava.priimek}" /> </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Car brand and model: </th>
+                        <th>    
+                            <p:selectOneMenu id="brand" value="#{responsePresenter.inputBrand}">
+                                <f:selectItem itemLabel="Choose brand" itemValue="" /> 
+                                <f:selectItems value="#{responsePresenter.carBrand}" />
+                                <p:ajax update="model" listener="#{responsePresenter.handleBrandChange()}"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu id="model" value="#{responsePresenter.prijava.znamka}">
+                                <f:selectItem itemLabel="Choose model" itemValue="" /> 
+                                <f:selectItems value="#{responsePresenter.modelL}"/>
+                            </p:selectOneMenu>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Car type: </th>
+                        <th>    
+                            <p:selectOneMenu id="type" value="#{responsePresenter.prijava.tip}">
+                                <f:selectItem itemLabel="Choose type" itemValue="" /> 
+                                <f:selectItems value="#{responsePresenter.carBodyTypeStrings()}"/>
+                            </p:selectOneMenu>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Registration number: </th>
+                        <th> <h:inputText value="#{responsePresenter.prijava.registrska}" /> </th>
+                    </tr>
+
+                    <tr>
+                        <th class="fc"> Event: </th>
+                        <th>
+                            <p:selectOneMenu id="grandparent" value="#{responsePresenter.grandparent}">
+                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
+                                <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
+                                <p:ajax update="parent_malf" listener="#{responsePresenter.handleGrandparentChange}"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu id="parent_malf" value="#{responsePresenter.parent}">
+                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
+                                <f:selectItems value="#{responsePresenter.parent_malfL}"/>
+                                <p:ajax update="malfunction" listener="#{responsePresenter.handleParentChange}"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu id="malfunction" value="#{responsePresenter.malfunction}">
+                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
+                                <f:selectItems value="#{responsePresenter.malfunctionL}"/>
+                            </p:selectOneMenu>
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <th> </th>
+                        <th class="fc"> <h:commandButton value="Entry" action="#{responsePresenter.asserting()}" /> </th> 
+                    </tr>
+                </table>
+            </h:form>
         </div>
     </h:body>
 </html>
