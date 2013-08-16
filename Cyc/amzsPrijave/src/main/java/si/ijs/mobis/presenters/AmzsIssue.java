@@ -271,8 +271,11 @@ public class AmzsIssue {
                     }
         
         public String importIntoCycEvent() {
+            
                         if (LOGGER.isLoggable(Level.FINE))
                             {LOGGER.fine("Importing into cyc event");}
+                        
+                        long startTime = System.currentTimeMillis();
                         
                             amzsEvent = "";
 
@@ -302,6 +305,9 @@ public class AmzsIssue {
                                     amzsEvent = cycService.getEvent();
                                     assertionEvent = cycService.malfunction(_c, AMZSMt);
                             }
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Importing into Cyc EVENT took: {0}", duration);
                             
                         return assertionEvent;	
 }
@@ -334,15 +340,27 @@ public class AmzsIssue {
         
         public String importIntoCycModel() {
                     try {
+                            long startTime = System.currentTimeMillis();
+                            
                             mapMod = cycService.getModelByBrand(_c, inputBrand, mapBr);
                             String modelConst = String.valueOf(mapMod.get(model));
 
-                            if (!"null".equals(modelConst)){
-                                CycList Model = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
-                                _c.assertGaf(Model, AMZSMt);
-                                assertModel = String.valueOf(Model);
+                            if (!"null".equals(inputBrand)){
+                                CycList Brand = _c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+ mapBr.get(inputBrand) +")");
+                                _c.assertGaf(Brand, AMZSMt);
+                                assertModel = String.valueOf(Brand);
                             }
                             
+                            if (!"null".equals(modelConst)){
+                                CycList Model = _c.makeCycList("(#$roadVehicleModel (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
+                                _c.assertGaf(Model, AMZSMt);
+                                assertModel = assertModel + ", " + String.valueOf(Model);
+                            }
+                            
+                            long endTime = System.currentTimeMillis();
+                            long duration = endTime - startTime;
+                            LOGGER.log(Level.INFO, "Importing into Cyc MODEL took: {0}", duration);
+                    
                     } catch (JSONException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
                     } catch (UnknownHostException ex) {
@@ -364,7 +382,7 @@ public class AmzsIssue {
                             CycList Registrska = new CycList();
                             
                         try {
-                           
+                            
                             if (!registration.equals("")) {
                                     Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle with registration number " +registration +"\")");
                             }
@@ -372,23 +390,27 @@ public class AmzsIssue {
                                     Registrska = _c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle involved\")");
                             }
                             _c.assertGaf(Registrska, EnglishMt);
+                            
+                            long startTime = System.currentTimeMillis();
 
-
-                            if(!"".equals(amzsEvent) ){
-                                    CycList ObjectActedOn = new CycList();
-                                    switch (event){
-                                            case 1:
-                                                ObjectActedOn = _c.makeCycList("(#$objectActedOn " + amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
-                                                _c.assertGaf(ObjectActedOn, AMZSMt);
-                                                break;
-                                            default:
-                                                ObjectActedOn = _c.makeCycList("(#$objectActedOn #$"+amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
-                                                _c.assertGaf(ObjectActedOn, AMZSMt);
-                                                break;
-                                    }
-                                   
-                                    assertionVehicle = ObjectActedOn +", " +Registrska;
+                            CycList ObjectActedOn = new CycList();
+                            CycList model = new CycList();
+                            switch (event){
+                                        case 1:
+                                            ObjectActedOn = _c.makeCycList("(#$objectActedOn " + amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
+                                            _c.assertGaf(ObjectActedOn, AMZSMt);
+                                            break;
+                                        default:
+                                            ObjectActedOn = _c.makeCycList("(#$objectActedOn #$"+amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$" +amzsIssue +"))");
+                                            _c.assertGaf(ObjectActedOn, AMZSMt);
+                                            break;
                             }
+                                   
+                        assertionVehicle = ObjectActedOn +", " +Registrska;
+                            
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Importing into Cyc VEHICLE took: {0}", duration);
 
                         } catch (UnknownHostException ex) {
                             LOGGER.log(Level.SEVERE, null, ex);
@@ -403,26 +425,21 @@ public class AmzsIssue {
         }
         
         public String importIntoCycTopic() {
+                    long startTime = System.currentTimeMillis();
                     amzsEvent = cycService.getEvent();
+                    CycList Topic = new CycList();
                     try {
-                        if(!"".equals(amzsEvent)){
-                            switch(event){
-                                case 1:
-                                    CycList Topic = _c.makeCycList("(#$topicOfInfoTransfer #$" +amzsIssue + " (#$StuckOrConfinedVehicleSituationFn #$"+amzsIssue +"))");
-
-                                    _c.assertGaf(Topic, AMZSMt);
-
-                                    assertionTopic = String.valueOf(Topic);
-                                    break;
-                                default:
-                                    CycConstant Event = _c.getConstantByName(amzsEvent);
-                                    CycConstant Issue = _c.getConstantByName(amzsIssue);
-                                    CycConstant Predicate = _c.getConstantByName("topicOfInfoTransfer");
-                                    _c.assertGaf(AMZSMt, Predicate, Issue, Event);
-                                    assertionTopic = "("+Predicate +" " +Issue +" " +Event +")";
-                                    break;
-                            }
+                        switch(event){
+                            case 1:
+                                Topic = _c.makeCycList("(#$topicOfInfoTransfer #$" +amzsIssue + " (#$StuckOrConfinedVehicleSituationFn #$"+amzsIssue +"))");
+                                _c.assertGaf(Topic, AMZSMt);
+                                break;
+                            default:
+                                Topic = _c.makeCycList("(#$topicOfInfoTransfer #$" + amzsIssue + " #$" + amzsEvent +")");
+                                _c.assertGaf(Topic, AMZSMt);
+                                break;
                         }
+                        assertionTopic = String.valueOf(Topic);
                         
                     } catch (UnknownHostException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
@@ -431,6 +448,10 @@ public class AmzsIssue {
                     } catch (CycApiException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
                     }
+                    
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Importing into Cyc TOPIC took: {0}", duration);
                     
                     return assertionTopic;
         }
@@ -526,11 +547,16 @@ public class AmzsIssue {
         
         public String edit() {
                     try {
-                        _c.kill(_c.getConstantByName(amzsIssue));
+                        long startTime = System.currentTimeMillis();
                         
-//                        _c.kill(_c.getHLCycTerm("(#$AMZSUserFn \""+id +"\")"));
+                        _c.kill(_c.getConstantByName(amzsIssue));
                         CycList NameString = _c.makeCycList("(#$nameString (#$AMZSUserFn \"" +id +"\") \"" +name +" " +surname +"\")");
                         _c.unassertGaf(NameString, EnglishMt);
+                        
+                        
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Killing issue in Cyc took: {0}", duration);
                         
                     } catch (UnknownHostException ex) {
                             LOGGER.log(Level.SEVERE, null, ex);
@@ -544,8 +570,6 @@ public class AmzsIssue {
         }
         
         public String newApp() {
-                    if (LOGGER.isLoggable(Level.FINE))
-                        {LOGGER.fine("new app");}
                     return "response.xhtml?faces-redirect=true";
         }
         

@@ -10,7 +10,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
         <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
-        <title>New application.</title>
+        <title>Editing.</title>
     </h:head>
 
     <h:body>
@@ -76,19 +76,19 @@
                             <th class="fc"> Event: </th>
                             <th>
                                 <p:selectOneMenu id="grandparent" value="#{responsePresenter.grandparent}">
-                                    <f:selectItem itemLabel="Choose event" itemValue="" /> 
+                                    <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
                                     <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
                                     <p:ajax update="parent_malf" listener="#{responsePresenter.handleGrandparentChange}"/>
                                 </p:selectOneMenu>
                                 
                                 <p:selectOneMenu id="parent_malf" value="#{responsePresenter.parent}">
-                                    <f:selectItem itemLabel="Choose event" itemValue="" /> 
+                                    <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
                                     <f:selectItems value="#{responsePresenter.parent_malfL}"/>
                                     <p:ajax update="malfunction" listener="#{responsePresenter.handleParentChange}"/>
                                 </p:selectOneMenu>
                                 
                                 <p:selectOneMenu id="malfunction" value="#{responsePresenter.malfunction}">
-                                    <f:selectItem itemLabel="Choose event" itemValue="" /> 
+                                    <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
                                     <f:selectItems value="#{responsePresenter.malfunctionL}"/>
                                 </p:selectOneMenu>
                             </th>
