@@ -477,8 +477,7 @@ public class CycService {
                 switch(engPow)
                 {
                     case ROPOTA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine (#$LevelOfSubstanceTypeInSysTypeFn "
-                                + "#$Noise-Unusual #$AutoEngine (#$PositiveAmountFn #$LevelOfSubstanceInSystem)))");
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine #$Noise-Unusual)");
                         _c.assertGaf(malfL, Mt);
                         break;
                     case BEL_DIM:
@@ -508,7 +507,7 @@ public class CycService {
                             _c.assertGaf(malfL, Mt);
                         break;
                     case SVETI_RDECA_ZA_HLADILNO_TEKOCINO:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #LowCoolantIndicatorLight #$Device-On)");
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$LowCoolantIndicatorLight #$Device-On)");
                             _c.assertGaf(malfL, Mt);
                         break;                        
                     default: break;
