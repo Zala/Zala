@@ -60,48 +60,6 @@
         </div>
 
         <div class="center_content">
-            <h:form>
-                <ui:insert name="content">    
-                    <div>
-                    <table class="table">
-                        <tr> 
-                            <td class="fc"> Asserted: </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycIssue()}" /> </td> 
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycSender()}" /> </td> 
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycMember()}" /> </td> 
-                        </tr>
-                        <tr>
-                            <td height = "14px"> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycEvent()}" /> </td> 
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycVehicle()}" /> </td> 
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycType()}" /> </td> 
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycModel()}" /> </td> 
-                        </tr>
-
-                        <tr>
-                            <td> </td>
-                            <td> <h:outputText escape="false" value="#{amzsIssue.importIntoCycTopic()}" /> </td> 
-                        </tr>
-                    </table>
-                    </div>
-                </ui:insert>
-                </h:form>
-             
                 <ui:insert name="top">
                 <h:form>
                     <h:commandButton value="New" action="#{amzsIssue.newApp()}"  />

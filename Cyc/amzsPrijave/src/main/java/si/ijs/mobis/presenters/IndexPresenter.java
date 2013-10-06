@@ -10,13 +10,20 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.opencyc.api.CycAccess;
+import org.opencyc.api.CycApiException;
+import org.opencyc.cycobject.CycConstant;
+import org.opencyc.cycobject.CycList;
 import si.ijs.mobis.org.json.JSONException;
 import si.ijs.mobis.service.BaseService;
+import si.ijs.mobis.service.CycService;
 
 /**
  *
@@ -26,6 +33,8 @@ import si.ijs.mobis.service.BaseService;
 @Named
 @RequestScoped
 public class IndexPresenter {
+    private static final Logger LOGGER = Logger.getLogger(AmzsIssue.class.getName());
+
     private Integer id;
     private String name;
     private String surname;
@@ -37,21 +46,25 @@ public class IndexPresenter {
     private String parent2_malf;
     private String parent_malf;
     private String malfunction;
+    private Integer issueId;
     private Date date;
+    private CycAccess _c;
     
     private List<Prijave> podatki;
 
     
-    int n;
+//    int n;
     
     @Inject private BaseService baseService;
+    @Inject private CycService cycService;
     
     
     @PostConstruct
     public void postconstruct() throws ParseException, UnknownHostException, IOException, JSONException{
                   
         podatki = baseService.getData();
-        n = podatki.size()-1; 
+        _c = new CycAccess("aidemo", 3600);
+//        n = podatki.size()-1; 
         
          if (podatki.isEmpty()){
             return;
@@ -69,12 +82,15 @@ public class IndexPresenter {
         parent2_malf = podatki.get(0).getParent2_malf();
         parent_malf = podatki.get(0).getParent_malf();
         malfunction = podatki.get(0).getMalfunction();
-                
+          
+        issueId = id + 1;
     }
     
     
-    public String response() {
-        return "response.xhtml?faces-redirect=true";
+   
+    public String response() {          
+                cycService.newIssue(_c);
+                return "response.xhtml?faces-redirect=true";
     }
 
     

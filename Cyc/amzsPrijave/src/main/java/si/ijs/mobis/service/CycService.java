@@ -25,6 +25,7 @@ import org.opencyc.inference.DefaultInferenceParameters;
 import org.opencyc.inference.DefaultInferenceWorkerSynch;
 import org.opencyc.inference.InferenceResultSet;
 import org.opencyc.inference.InferenceWorkerSynch;
+import si.ijs.mobis.presenters.ResponsePresenter;
 
 
 @Stateless
@@ -33,6 +34,9 @@ public class CycService {
     private static final Logger LOGGER  = Logger.getLogger(CycService.class.getName());
     @Inject private BaseService baseService;
       
+    
+//    private CycAccess _c;
+        
     enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
     enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
     enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI, OSTALO};
@@ -55,6 +59,7 @@ public class CycService {
     enum Lock {KLJUC_SE_NE_OBRNE, KLJUC_ZLOMLJEN, SE_VRTI_V_PRAZNO, ZAKLENJENI_KLJUCI_KARTICA, OSTALO};
     enum LockMalf {V_KLJUCAVNICI_VZIGA, V_VRATIH, V_PRTLJAZNIKU, NA_SEDEZU, V_TORBICI_PREDALU, V_KLJUCAVNICI_VZIGA_MOTOR_TECE,  V_KLJUCAVNICI_VZIGA_MOTOR_NE_TECE, OSTALO};
     
+        
     public String getIssue() {
                 String amzsIssue = "AMZSIssue"+ baseService.getLastEntry().getId();
                 return amzsIssue;
@@ -63,6 +68,15 @@ public class CycService {
     public Integer getId() {
                 return baseService.getLastEntry().getId();
         }
+    
+//    public void assertMember(String clan, String clanska) {
+//        
+//                _c = new CycAccess("aidemo", 3600);
+//                
+//                CycList Member = _c.makeCycList("(#$memberWithIDInIssue #$"+getIssue() + " (#$AMZSUserFn \"" +getId() +"\") \""+ ResponsePresenter.prijava.getClanska_st() +"\")");
+//                _c.assertGaf(Member, _c.getConstantByName("AMZSMt"));
+//                
+//        }
     
     public String getEvent() {
                 String event = "";
@@ -141,12 +155,12 @@ public class CycService {
                 String assertionEvent = "";
                 
                 try {
-                    CycConstant CycAccident = _c.makeCycConstant(getEvent());
+                    CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+getId());
                     CycList event = _c.makeCycList("(#$isa #$"+CycAccident +" #$VehicleAccident)");
 //                    _c.assertGaf(event, _c.getConstantByName("UniversalVocabularyMt"));
                     assertionEvent = String.valueOf(event);
 
-                    _c.assertGaf(_c.makeCycList("(#$nameString #$"+CycAccident +" \"Vehicle accident "+baseService.getLastEntry().getId() +"\")"),Mt);
+                    _c.assertGaf(_c.makeCycList("(#$nameString #$"+CycAccident +" \"Vehicle accident "+getId() +"\")"),Mt);
                     CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$VehicleAccident)");
                     _c.assertGaf(issueEventType, Mt);
                     assertionEvent = assertionEvent +", "+ String.valueOf(issueEventType);
@@ -203,7 +217,7 @@ public class CycService {
                     CycConstant orientation;
                     CycList orientL = new CycList(); 
 
-                    String id = String.valueOf(baseService.getLastEntry().getId());
+//                    String id = String.valueOf(baseService.getLastEntry().getId());
                     Orientation orient = Orientation.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
 
                     switch(orient)
@@ -211,19 +225,19 @@ public class CycService {
                         case NA_KOLESIH: 
                             orientation = _c.getConstantByName("TopSideUp");
                             orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                + "#$" +getIssue() +") #$" +orientation +" #$AMZSVehicleAccident" +id +")");
+                                + "#$" +getIssue() +") #$" +orientation +" #$AMZSVehicleAccident" +getId() +")");
                             _c.assertGaf(orientL, Mt);
                             break;
                         case NA_STREHI:
                             orientation = _c.getConstantByName("UpsideDown");
                             orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                + "#$AMZSIssue" +id +") #$" +orientation +" #$AMZSVehicleAccident" +id +")");
+                                + "#$AMZSIssue" +getId() +") #$" +orientation +" #$AMZSVehicleAccident" +getId() +")");
                             _c.assertGaf(orientL, Mt);
                             break;
                         case NA_BOKU:
                             orientation = _c.getConstantByName("LeftSideUp");
                             orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                + "#$AMZSIssue" +id +") #$" +orientation +" #$AMZSVehicleAccident" +id +")");
+                                + "#$AMZSIssue" +getId() +") #$" +orientation +" #$AMZSVehicleAccident" +getId() +")");
                             _c.assertGaf(orientL, Mt);
                             break;
                         default: break;
@@ -329,6 +343,7 @@ public class CycService {
                     CycList malf = new CycList();
                     malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$"+getEvent() +" #$RoadVehicle #$VehicleIgnitionMalfunction)");
                     _c.assertGaf(malf, Mt);
+                    assertionEvent = String.valueOf(malf);
 
                     Ignition ignit = Ignition.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
 
@@ -336,7 +351,7 @@ public class CycService {
                     {
                         case VRTI: 
                             malfL = _c.makeCycList("(#$isa #$" +getEvent() +" #$AutoEngineTurnOver)");
-                            assertionEvent = String.valueOf(malf) + String.valueOf(malfL);
+                            assertionEvent = assertionEvent + String.valueOf(malfL);
 
                             IgnitionMalf turns = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
                             _c.assertGaf(malfL, Mt);
@@ -358,7 +373,7 @@ public class CycService {
                             
                         case NE_VRTI: 
                             malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$EngineDoesntTurnOver)");
-                            assertionEvent = String.valueOf(malfL);
+                            assertionEvent = assertionEvent + String.valueOf(malfL);
 
                             IgnitionMalf noTurn = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
                             _c.assertGaf(malfL, Mt);
@@ -385,7 +400,7 @@ public class CycService {
                             
                         case PRIZGAN_PORABNIK: 
                             malfL = _c.makeCycList("(#$situationBeforeEvent #$" +getEvent() +" #$ConsumerElectronicDevice #$Device-On))");
-                            assertionEvent = String.valueOf(malfL);
+                            assertionEvent = assertionEvent + String.valueOf(malfL);
                             _c.assertGaf(malfL, Mt);
                             
                             IgnitionMalf consumer = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
@@ -1283,6 +1298,36 @@ public class CycService {
 
                 return mapTy;
     }
+    
+     public void newIssue(CycAccess _c) {
+//    creating a concept of new AMZSIssue when opening new application
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        
+                        Integer newIssueId = getId() + 1;
+                        
+                        CycConstant AMZSReport = _c.getConstantByName("AMZSReport");
+                        CycConstant CycIssue = _c.makeCycConstant("AMZSIssue"+ newIssueId);
+                        _c.assertIsa(CycIssue, AMZSReport, _c.getConstantByName("BaseKB"));
+                        CycList NameString = _c.makeCycList("(#$nameString #$AMZSIssue"+newIssueId +" \"Issue "+newIssueId +"\")");
+                        _c.assertGaf(NameString, _c.getConstantByName("EnglishMt"));
+                        
+                        
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Importing into Cyc ISSUE took: {0}", duration);
+
+                    } catch (UnknownHostException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (NullPointerException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                    }
+    }
+    
     
     public static String toEnumCase(String s) {
                 String string = s;

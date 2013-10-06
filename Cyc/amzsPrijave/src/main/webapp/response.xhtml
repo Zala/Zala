@@ -10,6 +10,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
         <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <link href="css/jumbotron-narrow.css" rel="stylesheet"/>
+        <link href="resources/css/select2.css" rel="stylesheet"/>
+
         <title>New application.</title>
     </h:head>
 
@@ -23,6 +26,39 @@
             <h:form>
                 <table class="table">
                     <tr>
+                        <th class="fc"> Event: </th>
+                        <th>
+                            <p:selectOneMenu id="grandparent" value="#{responsePresenter.grandparent}">
+                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
+                                <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
+                                <p:ajax update="parent_malf" listener="#{responsePresenter.handleGrandparentChange()}"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu id="parent_malf" value="#{responsePresenter.parent}">
+                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
+                                <f:selectItems value="#{responsePresenter.parent_malfL}"/>
+                                <p:ajax update="malfunction" listener="#{responsePresenter.handleParentChange()}"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu id="malfunction" value="#{responsePresenter.malfunction}">
+                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
+                                <f:selectItems value="#{responsePresenter.malfunctionL}"/>
+                            </p:selectOneMenu>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Event description: </th>
+                        <th>
+                            <div class="container">
+                                <div class="form-group">
+                                    <input type="text" class="" id="searchQuery" placeholder="Event description"/>
+                                    <input type="button" value="Pass" onclick="queryQuestions($('#searchQuery').val())" />
+                                </div>
+                                <form id = "results" style = "display: inline-block"/>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
                         <th class="fc"> AMZS member: </th>
                         <th>
                             <h:selectOneRadio id="clan" value="#{responsePresenter.prijava.clan}">
@@ -33,11 +69,19 @@
                     </tr>
                     <tr>
                         <th class="fc"> Member ID: </th>
-                        <th> <h:inputText value="#{responsePresenter.prijava.clanska_st}" /> </th>
+                        <th>
+                            <h:inputText value="#{responsePresenter.prijava.clanska_st}" >
+                                <p:ajax listener="#{responsePresenter.importIntoCycMember()}"/>                            
+                            </h:inputText>    
+                        </th>
                     </tr>
                     <tr>
                         <th class="fc"> Name: </th>
-                        <th> <h:inputText value="#{responsePresenter.prijava.ime}" /> </th>
+                        <th>
+                            <h:inputText id="name" value="#{responsePresenter.prijava.ime}" >
+                                <p:ajax listener="#{responsePresenter.importIntoCycSender()}"/>
+                            </h:inputText>
+                        </th>
                     </tr>
                     <tr>
                         <th class="fc"> Surname: </th>
@@ -55,6 +99,7 @@
                             <p:selectOneMenu id="model" value="#{responsePresenter.prijava.znamka}">
                                 <f:selectItem itemLabel="Choose model" itemValue="" /> 
                                 <f:selectItems value="#{responsePresenter.modelL}"/>
+                                <p:ajax update="model" listener="#{responsePresenter.importIntoCycModel()}"/>
                             </p:selectOneMenu>
                         </th>
                     </tr>
@@ -64,36 +109,18 @@
                             <p:selectOneMenu id="type" value="#{responsePresenter.prijava.tip}">
                                 <f:selectItem itemLabel="Choose type" itemValue="" /> 
                                 <f:selectItems value="#{responsePresenter.carBodyTypeStrings()}"/>
+                                <p:ajax listener="#{responsePresenter.importIntoCycType()}"/>
                             </p:selectOneMenu>
                         </th>
                     </tr>
                     <tr>
                         <th class="fc"> Registration number: </th>
-                        <th> <h:inputText value="#{responsePresenter.prijava.registrska}" /> </th>
-                    </tr>
-
-                    <tr>
-                        <th class="fc"> Event: </th>
-                        <th>
-                            <p:selectOneMenu id="grandparent" value="#{responsePresenter.grandparent}">
-                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
-                                <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
-                                <p:ajax update="parent_malf" listener="#{responsePresenter.handleGrandparentChange}"/>
-                            </p:selectOneMenu>
-
-                            <p:selectOneMenu id="parent_malf" value="#{responsePresenter.parent}">
-                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
-                                <f:selectItems value="#{responsePresenter.parent_malfL}"/>
-                                <p:ajax update="malfunction" listener="#{responsePresenter.handleParentChange}"/>
-                            </p:selectOneMenu>
-
-                            <p:selectOneMenu id="malfunction" value="#{responsePresenter.malfunction}">
-                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
-                                <f:selectItems value="#{responsePresenter.malfunctionL}"/>
-                            </p:selectOneMenu>
+                        <th> 
+                            <h:inputText value="#{responsePresenter.prijava.registrska}">
+                                <p:ajax listener="#{responsePresenter.registrationVehicle()}"/>                            
+                            </h:inputText>    
                         </th>
                     </tr>
-
                     <tr>
                         <th> </th>
                         <th class="fc"> <h:commandButton value="Entry" action="#{responsePresenter.asserting()}" /> </th> 
@@ -101,5 +128,15 @@
                 </table>
             </h:form>
         </div>
+
+        <!-- Bootstrap core JavaScript
+          ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+
+
+        <script src="resources/js/select2.js"></script>
+        <script src="resources/js/index.js"></script>
+
+
     </h:body>
 </html>

@@ -8,11 +8,17 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -20,7 +26,9 @@ import javax.inject.Inject;
 import si.ijs.mobis.org.json.JSONException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycApiException;
+import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycObject;
 import si.ijs.mobis.service.CycService;
 
 /**
@@ -30,7 +38,9 @@ import si.ijs.mobis.service.CycService;
 @ManagedBean
 @ViewScoped
 public class ResponsePresenter implements Serializable {
-        
+    private static final Logger LOGGER = Logger.getLogger(ResponsePresenter.class.getName());
+
+    private Integer id;
     private String grandparent;
     private String parent;
     private String malfunction;
@@ -38,14 +48,23 @@ public class ResponsePresenter implements Serializable {
     private List<String> parent_malfL;
     private List<String> parent2_malfL;
     private List<String> malfunctionL;
+    private List<String> eventDescription;
         
     private CycList carBodyType;
     private List<String> carBrand;
     private CycList carModel;
     private ArrayList<String> modelL;
     private HashMap hmBrands;
+    private HashMap<Object, Object> mapTy;
+    private HashMap<Object, Object> mapMod;
+    private HashMap<Object, Object> mapBr;
     
     private CycAccess c;
+    private CycObject UniversalMt;
+    private CycObject AMZSMt;
+    private CycObject EnglishMt;    
+    private Integer event;
+    private String amzsEvent;
     
 //    @Inject private PrijaveFacade facade;
     private Prijave prijava = new Prijave();
@@ -55,13 +74,141 @@ public class ResponsePresenter implements Serializable {
     @PostConstruct
    public void postconstruct() throws UnknownHostException, IOException, JSONException{
             c = new CycAccess("aidemo", 3600);
+            UniversalMt = c.getConstantByName("UniversalVocabularyMt");
+            EnglishMt = c.getConstantByName("EnglishMt");
+            AMZSMt = c.getConstantByName("AMZSMt");
+            
+            id = baseService.getData().get(0).getId() + 1;
+//            amzsEvent = cycService.getEvent();
+            event = 0;
+            mapBr = cycService.exportFromCycCarBrandList(c);
+            
+            
             hmBrands = cycService.exportFromCycCarBrandList(c);
             carBrand = cycService.carBrandStrings(hmBrands);
-
             parent2_malfL = baseService.getGPList();
-
             inputBrand = "";
     }    
+    
+
+    public void importIntoCycSender(){
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        String name = prijava.getIme();
+//                        CycList SenderOfInfo = _c.makeCycList("(#$senderOfInfo #$"+amzsIssue +" (#$AMZSUserFn \"" +id +"\"))");
+                        
+                        CycList SenderOfInfo = c.makeCycList("(#$amzsServiceClient #$AMZSIssue"+id +" (#$AMZSUserFn \"" +id +"\"))");
+                        c.assertGaf(SenderOfInfo, AMZSMt);
+                        
+                        if ("".equals(prijava.getIme())) {
+                             name = "AMZS user";
+                        }
+                            
+                        CycList NameString2 = c.makeCycList("(#$nameString (#$AMZSUserFn \"" +id +"\") \"" +name +"\")");
+                        c.assertGaf(NameString2, EnglishMt);
+                            
+                        
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Importing into Cyc SENDER took: {0}", duration);
+                    
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+    
+        
+    public void importIntoCycMember() {
+                                                
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        
+                        if (!prijava.getClanska_st().isEmpty()){
+                            
+//                            cycService.assertMember(prijava.getClan(),prijava.getClanska_st());
+                            CycList Member = c.makeCycList("(#$memberWithIDInIssue #$AMZSIssue"+id + " (#$AMZSUserFn \"" +id +"\") \""+prijava.getClanska_st() +"\")");
+                            c.assertGaf(Member, AMZSMt);
+                        }
+                        
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Importing into Cyc MEMBER took: {0}", duration);
+                    
+                    } catch (UnknownHostException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    }
+                }
+    
+    
+    public void registrationVehicle() {             
+                try {
+                    long startTime = System.currentTimeMillis();
+                    
+                    String registration = prijava.getRegistrska();
+                    CycList Reg = c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle with registration number " +registration +"\")");
+
+//                            sploh ni teba if-else, ker itak ne bo assertu, ce ne vpises
+//                            Reg = c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle involved\")");
+
+                    c.assertGaf(Reg, EnglishMt);
+
+//                    switch (event){
+//                                case 1:
+//                                    CycList ObjectActedOn1 = c.makeCycList("(#$objectActedOn " + amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +"))");
+//                                    c.assertGaf(ObjectActedOn1, AMZSMt);
+//                                    break;
+//                                default:
+//                                    CycList ObjectActedOn2 = c.makeCycList("(#$objectActedOn #$"+amzsEvent +" (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +"))");
+//                                    c.assertGaf(ObjectActedOn2, AMZSMt);
+//                                    break;
+//                    }
+                    
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Importing into Cyc VEHICLE took: {0}", duration);
+
+                } catch (UnknownHostException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                } catch (CycApiException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }                        
+            }
+    
+    
+    public void importIntoCycType() {
+                        try {                           
+                            long startTime = System.currentTimeMillis();
+                            
+                            String type = prijava.getTip();
+                            mapTy = cycService.exportFromCycCarTypeList(c);
+                            String typeConst = String.valueOf(mapTy.get(type));
+                            CycList Type = c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+typeConst +")");
+                            c.assertGaf(Type, AMZSMt);
+                                
+                            long endTime = System.currentTimeMillis();
+                            long duration = endTime - startTime;
+                            LOGGER.log(Level.INFO, "Importing into Cyc TYPE took: {0}", duration);
+                            
+                        } catch (JSONException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        } catch (UnknownHostException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        } catch (CycApiException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        }
+            }
     
     
     public CycList carBodyTypeStrings() throws UnknownHostException, IOException, JSONException{
@@ -74,6 +221,7 @@ public class ResponsePresenter implements Serializable {
             Collections.sort(carBodyType);
             return carBodyType;
     }
+    
     
     public ArrayList<String> handleBrandChange() throws JSONException, UnknownHostException, CycApiException, IOException {  
             modelL = new ArrayList<String>();
@@ -90,6 +238,108 @@ public class ResponsePresenter implements Serializable {
     }
     
     
+    public void importIntoCycModel() {
+                    try {
+                            long startTime = System.currentTimeMillis();
+                            
+                            mapMod = cycService.getModelByBrand(c, inputBrand, mapBr);
+                            String modelConst = String.valueOf(mapMod.get(prijava.getZnamka()));
+
+                            CycList Brand = c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+ mapBr.get(inputBrand) +")");
+                            c.assertGaf(Brand, AMZSMt);
+                            
+                            CycList Model = c.makeCycList("(#$roadVehicleModel (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
+                            c.assertGaf(Model, AMZSMt);
+                            
+                            long endTime = System.currentTimeMillis();
+                            long duration = endTime - startTime;
+                            LOGGER.log(Level.INFO, "Importing into Cyc MODEL took: {0}", duration);
+                    
+                    } catch (JSONException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (UnknownHostException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    }
+        }
+    
+    
+    public void importIntoCycEvent() {
+            
+                        if (LOGGER.isLoggable(Level.FINE))
+                            {LOGGER.fine("Importing into cyc event");}
+                        
+                        long startTime = System.currentTimeMillis();
+                        
+                            amzsEvent = cycService.getEvent();
+
+                            if("nesreca".equals(grandparent)) {
+                                
+                                    cycService.accident(c, AMZSMt);
+
+                                    if(malfunction != null) {
+                                        cycService.orientation(c, AMZSMt);
+                                    }                          
+                            }
+
+                            else if("resevanje vozila".equals(grandparent)) {
+                                    event = 1;
+                                    cycService.rescuing(c, AMZSMt);
+                            }
+
+                            else if("ostalo".equals(grandparent)){
+                                    cycService.unknown(c,UniversalMt);
+                            }
+
+                            else{
+                                    cycService.malfunction(c, AMZSMt);
+                            }
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Importing into Cyc EVENT took: {0}", duration);
+                }
+        
+        
+    public void importIntoCycTopic() {
+                    long startTime = System.currentTimeMillis();
+                    try {
+                        CycList Topic = new CycList();
+                        amzsEvent = cycService.getEvent();
+                        switch(event){
+                            case 1:
+                                Topic = c.makeCycList("(#$topicOfInfoTransfer #$" +cycService.getIssue() + " (#$StuckOrConfinedVehicleSituationFn #$"+cycService.getIssue() +"))");
+                                c.assertGaf(Topic, AMZSMt);
+                                break;
+                            
+                            default:
+                                long stAssertTopic = System.currentTimeMillis();
+                                
+                                Topic = c.makeCycList("(#$topicOfInfoTransfer #$" + cycService.getIssue() + " #$" + amzsEvent +")");
+                                c.assertGaf(Topic, AMZSMt);
+                                
+                                long etAssertTopic = System.currentTimeMillis();
+                                long durationTopic = etAssertTopic - stAssertTopic;
+                                LOGGER.log(Level.INFO, "Asserting TOPIC took: {0}", durationTopic);
+                                break;
+                        }
+                        
+                    } catch (UnknownHostException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    }
+                    
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Importing into Cyc TOPIC took: {0}", duration);
+                    
+        }
+        
     
     public void saveError(Error error) {
             baseService.save(error);
@@ -136,6 +386,8 @@ public class ResponsePresenter implements Serializable {
             prijava.setParent_malf(getParent());
             prijava.setMalfunction(getMalfunction());
             baseService.saveData(prijava);
+            importIntoCycEvent();
+            importIntoCycTopic();
             return "asserting.xhtml?ib=" + inputBrand + "&faces-redirect=true";
     }
                  
@@ -148,7 +400,20 @@ public class ResponsePresenter implements Serializable {
     }
     
     
-    
+//    public List<String> complete(String query) {  
+//            String[] names = {"Bob", "George", "Henry", "Declan", "Peter", "Steven"};
+//            List<String> keywords = new ArrayList<String>();
+//            keywords.addAll(Arrays.asList(names));
+//            List<String> suggestions = new ArrayList<String>(); 
+//
+//            for (String name : keywords) { 
+//               if (name.toLowerCase().trim().startsWith(query.toLowerCase().trim())) 
+//               { 
+//                  suggestions.add(name.toUpperCase()); 
+//               } 
+//            } 
+//            return suggestions; 
+//    }  
     
     
     public Prijave getPrijava() {
@@ -246,5 +511,16 @@ public class ResponsePresenter implements Serializable {
     public void setModelL(ArrayList<String> modelL) {
         this.modelL = modelL;
     }
+
+    public List<String> getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(List<String> eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
+       
+    
     
 }
