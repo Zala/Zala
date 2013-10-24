@@ -61,6 +61,31 @@
   text-decoration : underline;
 }
 
+/*#map-canvas {
+    margin: 0px;
+    padding: 0px;
+    background-color: black;
+  }*/
+
+  #temp-canvas {
+    margin: 0px;
+    padding: 0px;
+    background-color: red;
+  }
+  
+#panel {
+    top: 5px;
+    left: 50%;
+    margin-left: -180px;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+  }
+      
+#target {
+    width: 345px;
+    }
+      
 .table{
     border-collapse: collapse;
     text-align: left;
@@ -75,6 +100,7 @@
     width: 50%;
     border: 1px solid;
     border-color:#AFAFAF ;
+    line-height: 180%;
 }
 
 tr{
@@ -100,7 +126,7 @@ th {
     font-size: 1.2em;
     padding-top: 5px;
     padding-bottom: 4px;
-    background-color:#045491 ;
+    background-color: #036fab;
     color:#ffffff;
 }
 
@@ -109,3 +135,8 @@ th {
     font-weight: bold;
 }
 
+.heading {
+    font-weight: bold;
+    font-size: x-large;
+    color: white;
+}

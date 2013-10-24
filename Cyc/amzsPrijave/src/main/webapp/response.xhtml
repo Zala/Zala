@@ -10,82 +10,111 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
         <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
-        <link href="css/jumbotron-narrow.css" rel="stylesheet"/>
+        <link href="resources/css/jumbotron-narrow.css" rel="stylesheet"/>
         <link href="resources/css/select2.css" rel="stylesheet"/>
 
         <title>New application.</title>
+
     </h:head>
 
     <h:body>
 
         <div id="top">
             <ui:insert name="top">New application.</ui:insert>
+            <br></br>
+            <br></br>
+            <h1>
+                <h:outputText value="#{responsePresenter.printIssue()}" class="heading"/>
+            </h1>
         </div>
 
         <div id="content" class="center_content">
             <h:form>
                 <table class="table">
                     <tr>
-                        <th class="fc"> Event: </th>
+                        <th class="fc"> Type of event: </th>
                         <th>
-                            <p:selectOneMenu id="grandparent" value="#{responsePresenter.grandparent}">
-                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
-                                <f:selectItems value="#{responsePresenter.parent2_malfL}"/>
-                                <p:ajax update="parent_malf" listener="#{responsePresenter.handleGrandparentChange()}"/>
-                            </p:selectOneMenu>
-
-                            <p:selectOneMenu id="parent_malf" value="#{responsePresenter.parent}">
-                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
-                                <f:selectItems value="#{responsePresenter.parent_malfL}"/>
-                                <p:ajax update="malfunction" listener="#{responsePresenter.handleParentChange()}"/>
-                            </p:selectOneMenu>
-
-                            <p:selectOneMenu id="malfunction" value="#{responsePresenter.malfunction}">
-                                <f:selectItem itemLabel="Choose event" itemValue="ostalo" /> 
-                                <f:selectItems value="#{responsePresenter.malfunctionL}"/>
-                            </p:selectOneMenu>
+                            <p:selectOneRadio id="eventType" value="#{responsePresenter.grandparent}" required="true" requiredMessage="Select a value for the type of event!">
+                                <f:selectItem id="accident" itemLabel="Accident" itemValue="nesreca" />
+                                <f:selectItem id="malfunction" itemLabel="Malfunction" itemValue="okvara" />
+                                <f:selectItem id="stuck" itemLabel="Stuck vehicle" itemValue="resevanje vozila" />
+                                <p:ajax listener="#{responsePresenter.importIntoCycEvent()}"/>
+                            </p:selectOneRadio>
                         </th>
                     </tr>
                     <tr>
                         <th class="fc"> Event description: </th>
                         <th>
-                            <div class="container">
-                                <div class="form-group">
-                                    <input type="text" class="" id="searchQuery" placeholder="Event description"/>
-                                    <input type="button" value="Pass" onclick="queryQuestions($('#searchQuery').val())" />
-                                </div>
-                                <form id = "results" style = "display: inline-block"/>
-                            </div>
+                            <h:form id="form">   
+                                <p:autoComplete  minQueryLength="2" id="autocomplete" value="#{responsePresenter.eventDescription}" multiple="true" completeMethod="#{responsePresenter.complete}">
+                                </p:autoComplete>
+                                <p:commandButton value="Submit" id="submit" update="form" style="margin:10px 0" action="#{responsePresenter.handleDescription()}" />
+                            </h:form>
                         </th>
                     </tr>
                     <tr>
+                        <th> Other notes: </th>
+                        <th>
+                            <p:inputTextarea rows="5" cols="62" value="#{responsePresenter.notes}"/>
+                        </th>
+                    </tr>
+                </table>
+
+
+
+                <div>
+                    <iframe name="cureFrame" frameborder="0" scrolling="auto" width="50%" height="300" align="left" src="#{responsePresenter.cure()}">
+                        <p>Your browser does not support iframes.</p>
+                    </iframe>
+                </div>
+                <div>
+                    <iframe name="map" frameborder="0" scrolling="auto" width="50%" height="300" align="right" src="#{responsePresenter.googleMapsTest()}">
+                        <p>Your browser does not support iframes.</p>
+                    </iframe>                
+                </div>
+
+
+
+
+                <table class="table">
+                    <tr>
                         <th class="fc"> AMZS member: </th>
                         <th>
-                            <h:selectOneRadio id="clan" value="#{responsePresenter.prijava.clan}">
+                            <p:selectOneRadio id="clan" value="#{responsePresenter.prijava.clan}">
                                 <f:selectItem id="item1" itemLabel="Yes." itemValue="Da" />
                                 <f:selectItem id="item2" itemLabel="No." itemValue="Ne" />
-                            </h:selectOneRadio>
+                            </p:selectOneRadio>
                         </th>
                     </tr>
                     <tr>
                         <th class="fc"> Member ID: </th>
                         <th>
-                            <h:inputText value="#{responsePresenter.prijava.clanska_st}" >
+                            <p:inputText value="#{responsePresenter.prijava.clanska_st}" >
                                 <p:ajax listener="#{responsePresenter.importIntoCycMember()}"/>                            
-                            </h:inputText>    
+                            </p:inputText>    
                         </th>
                     </tr>
                     <tr>
                         <th class="fc"> Name: </th>
                         <th>
-                            <h:inputText id="name" value="#{responsePresenter.prijava.ime}" >
+                            <p:inputText id="name" value="#{responsePresenter.prijava.ime}" >
                                 <p:ajax listener="#{responsePresenter.importIntoCycSender()}"/>
-                            </h:inputText>
+                            </p:inputText>
                         </th>
                     </tr>
                     <tr>
                         <th class="fc"> Surname: </th>
-                        <th> <h:inputText value="#{responsePresenter.prijava.priimek}" /> </th>
+                        <th> <p:inputText value="#{responsePresenter.prijava.priimek}" /> </th>
+                    </tr>
+                    <tr>
+                        <th class="fc"> Vehicle type: </th>
+                        <th>    
+                            <p:selectOneMenu id="type" value="#{responsePresenter.prijava.tip}" height="300">
+                                <f:selectItem itemLabel="Choose type" itemValue="" /> 
+                                <f:selectItems value="#{responsePresenter.carBodyTypeStrings()}"/>
+                                <p:ajax listener="#{responsePresenter.importIntoCycType()}"/>
+                            </p:selectOneMenu>
+                        </th>
                     </tr>
                     <tr>
                         <th class="fc"> Car brand and model: </th>
@@ -104,33 +133,23 @@
                         </th>
                     </tr>
                     <tr>
-                        <th class="fc"> Car type: </th>
-                        <th>    
-                            <p:selectOneMenu id="type" value="#{responsePresenter.prijava.tip}">
-                                <f:selectItem itemLabel="Choose type" itemValue="" /> 
-                                <f:selectItems value="#{responsePresenter.carBodyTypeStrings()}"/>
-                                <p:ajax listener="#{responsePresenter.importIntoCycType()}"/>
-                            </p:selectOneMenu>
-                        </th>
-                    </tr>
-                    <tr>
                         <th class="fc"> Registration number: </th>
                         <th> 
-                            <h:inputText value="#{responsePresenter.prijava.registrska}">
+                            <p:inputText value="#{responsePresenter.prijava.registrska}">
                                 <p:ajax listener="#{responsePresenter.registrationVehicle()}"/>                            
-                            </h:inputText>    
+                            </p:inputText>    
                         </th>
                     </tr>
                     <tr>
                         <th> </th>
-                        <th class="fc"> <h:commandButton value="Entry" action="#{responsePresenter.asserting()}" /> </th> 
+                        <th class="fc"> <p:commandButton value="Entry" action="#{responsePresenter.asserting()}" /> </th> 
                     </tr>
                 </table>
-            </h:form>
+            </h:form>            
         </div>
 
         <!-- Bootstrap core JavaScript
-          ================================================== -->
+        ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
 
 

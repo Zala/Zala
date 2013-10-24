@@ -90,6 +90,7 @@ public class IndexPresenter {
    
     public String response() {          
                 cycService.newIssue(_c);
+//                cycService.newInconvenientEvent(_c);
                 return "response.xhtml?faces-redirect=true";
     }
 

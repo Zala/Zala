@@ -13,9 +13,12 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import static si.ijs.mobis.service.CycService.toEnumCase;
 
 @Stateless
 public class BaseService{
+        
+        enum EventType{NESRECA, RESEVANJE_VOZILA, OKVARA};
         
         private static final Logger LOGGER = Logger.getLogger(BaseService.class.getName());
         @PersistenceContext(unitName="si.ijs.mobis_amzsPrijave_war_1.0-SNAPSHOTPU")
@@ -73,5 +76,29 @@ public class BaseService{
                 Prijave last = list.get(0);
                 return last;
         }
+        
+        public String getEvent(Integer i) {
+            String event = "";
+            try {
+                String pm2 = getLastEntry().getParent2_malf();
+                EventType e = EventType.valueOf(toEnumCase(pm2));
+                Integer issueNum = getLastEntry().getId() + i;
+                switch(e)
+                {
+                    case NESRECA: 
+                        event = "AMZSVehicleAccident"+issueNum;
+                        break;
+                    case RESEVANJE_VOZILA:
+                        event = "(#$StuckOrConfinedVehicleSituationFn #$AMZSIssue" + issueNum +")";
+                        break;
+                    default: 
+                        event = "AMZSVehicleMalfunction" +issueNum;
+                        break;
+                }
+            } catch (NullPointerException e) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose the type of event!", e);
+            }
+            return event;
+    }
         
 }

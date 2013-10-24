@@ -95,14 +95,18 @@ public class AmzsIssue {
 
                 inputBrand = parameterMap.get("ib");
                 _c = new CycAccess("aidemo", 3600);
-                amzsIssue = cycService.getIssue();
-                amzsEvent = cycService.getEvent();
+                amzsIssue = cycService.getCurrentIssue();
+                amzsEvent = baseService.getEvent(0);
                 event = 0;
                 UniversalMt = _c.getConstantByName("UniversalVocabularyMt");
                 EnglishMt = _c.getConstantByName("EnglishMt");
                                
             }
            
+        public String printIssue(){
+            String Issue = "Issue No. "+id;
+            return Issue;
+        }
         
         public String printName() {
                     String n = name;
@@ -259,6 +263,8 @@ public class AmzsIssue {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
                         } catch(IOException e) {
                             Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, null, e);
+                        } catch (IllegalArgumentException e) {
+                            Logger.getLogger(AmzsIssue.class.getName()).log(Level.SEVERE, "WTF!", e);
                         }
                         return Hlid;
         }
@@ -302,7 +308,15 @@ public class AmzsIssue {
         }
         
         public String newApp() {
+                    
+                    long startTime = System.currentTimeMillis();
+                    
                     cycService.newIssue(_c);
+                    
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Creating new issue: {0}", duration);
+                    
                     return "response.xhtml?faces-redirect=true";
         }
         

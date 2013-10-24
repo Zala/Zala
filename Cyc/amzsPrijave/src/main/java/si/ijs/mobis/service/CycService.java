@@ -37,108 +37,73 @@ public class CycService {
     
 //    private CycAccess _c;
         
-    enum EventType{NESRECA, RESEVANJE_VOZILA, VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
-    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, OSTALO};
-    enum Position{IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI, OSTALO};
-    enum Orientation {NA_KOLESIH, NA_STREHI, NA_BOKU, OSTALO};
-    enum Malfunction {VZIG, MOTOR, PRENOS_MOCI, ELEKTRIKA, PODVOZJE, PNEVMATIKE, GORIVO, KLJUCAVNICA, OSTALO};
-    enum Ignition {VRTI, NE_VRTI, PRIZGAN_PORABNIK, OSTALO};
-    enum IgnitionMalf {GORI_LUCKA_NA_ARMATURI, GORIJO_VSE_LUCKE_NA_ARMATURI, LUCI_GORIJO, LUCI_NE_GORIJO, AKUMULATOR, OSTALO};
-    enum Engine {UGASNIL_MED_VOZNJO, IZGUBLJA_MOC_NE_VLECE, PREGREVA, GLAVNI_JERMEN, OSTALO};
-    enum EngineMalf {ROPOTA, BEL_DIM, CRN_DIM, LUC_ZA_OLJE_SVETI, UTRIPA_RUMENA_ZA_MOTOR, ZAKUHAL, BREZ_HLADILNE, SVETI_RDECA_ZA_HLADILNO_TEKOCINO, OSTALO};
-    enum Transmission {MENJALNIK, SKLOPKA, KARDAN, PEDAL_ZA_PLIN, OSTALO};
-    enum TransmissionMalf {NE_PRESTAVLJA, OSTAL_V_PRESTAVI, AVTOMATSKI_NE_DELA, ZICA_SKLOPKE, PEDAL_SKLOPKE_OSTAL_NOTRI, PEDAL_SKLOPKE_TRD, PADEL_DOL, DELA_NE_GRE_V_OBRATE, SE_NE_ODZIVA, OSTALO};
-    enum Electricity {OSTAL_BREZ_MED_VOZNJO, OSTAL_BREZ_NA_PARKIRISCU, LUCI, BRISALCI, SIPE_RAZBITE, SIPA_SE_NE_ZAPRE, OSTALO};
-    enum ElectricityMalf {ALTERNATOR, AKUMULATOR, VAROVALKE, PREDNJE, ZADNJE, DOLGE, KRATKE, VEC_LUCI_NE_DELA, STOP_LUC, SMERNIKI, MOTORCEK, PREDNJA, ZADNJA, STRANSKA, VOZNIKOVA, SOVOZNIKOVA, STRANSKA_ZADAJ, OSTALO};
-    enum Chassis {KRMILNI_MEHANIZEM, VZMETENJE, ZAVORE, HIDRAVLIKA, OSTALO};
-    enum ChassisMalf {VOLAN_TRD, ZGLOB, ROKA, KONCNIK, AMORTIZER, VZMET, ZABLOKIRANE, ODPOVEDALE, AVTO_NA_TLEH, AVTO_NI_NA_TLEH, OSTALO};    
-    enum Tires{PRAZNA, PREDRTA, VEC_PRAZNIH, VEC_PREDRTIH, BREZ_1, BREZ_VEC, OSTALO};
+    enum StuckIn{OSTAL_V_BLATU, OSTAL_NA_KOLICKU, OSTAL_V_SNEGU, OSTAL_NA_PREVISU, OSTAL_NA_ZIDU_SKARPI, ZAKOPAL_V_BLATU, ZAKOPAL_V_SNEGU};
+    enum Accident {NA_KOLESIH, NA_STREHI, NA_BOKU, IZVEN_CESTE_DO_20M, IZVEN_CESTE_NAD_20M, POD_CESTO, V_JARKU_OB_CESTI, NA_CESTI, 
+            AVTO_SE_JE_PREVRNIL};
+    enum Noises {ROPOTA, CUDNI_ZVOKI, CVILI};
+    enum Ignition {STARTER, ZAGANJAC, VERGLA, OBRNE, NE_OBRNE, VRTI, NE_VRTI, NE_ZAVERGLA, NE_ZALAUFA, NE_ZAZENE, 
+            NE_VZGE, VZIG, AKUMULATOR};
+    enum Engine {MOTOR_ROPOTA, JERMEN, AVTO_NE_VLECE, HLADILNA_TEKOCINA, OLJNA_CRPALKA, MOTOR, BEL_DIM_IZ_MOTORJA, CRN_DIM_IZ_MOTORJA,
+            UGASNIL_MED_VOZNJO, CRKNIL, IZGUBLJA_MOC, PREGREVA, ZAKUHAL, BREZ_HLADILNE, GLAVNI_JERMEN};
+    enum Transmission {PRENOS_MOCI, MENJALNIK, MENJALNIK_NE_DELA, NE_GRE_V_PRESTAVO, NE_PRESTAVLJA, OSTAL_V_PRESTAVI, AVTOMATSKI_MENJALNIK_NE_DELA,
+            ZICA_SKLOPKE, PEDAL_SKLOPKE_OSTAL_NOTRI, PEDAL_SKLOPKE_TRD, PEDAL_ZA_PLIN_PADEL_DOL, PEDAL_ZA_PLIN_SE_NE_ODZIVA,
+            PEDAL_ZA_PLIN_DELA_NE_GRE_V_OBRATE, SKLOPKA_NE_DELA, PEDAL_ZA_PLIN_NE_DELA, GAS_NE_DELA, KARDAN};
+    enum Electricity {ELEKTRIKA, ELEKTRIKA_ODPOVEDALA, RACUNALNIK_CRKNIL, ALTERNATOR, AKUMULATOR, VAROVALKE, OSTAL_BREZ_ELEKTRIKE_MED_VOZNJO,
+            OSTAL_BREZ_ELEKTRIKE_NA_PARKIRISCU, SMERNIKI_NE_DELAJO, BRISALCI, MOTORCEK_PRI_BRISALCIH}; 
+    enum Chassis {PODVOZJE, ZAVORNA_TEKOCINA_POD_NORMALNO, AVTO_NA_TLEH, KOLO_ZABLOKIRA, ZAVORE_ZABLOKIRALE, KRMILNI_MEHANIZEM, VOLAN_TRD, ZGLOB, 
+            ROKA, KONCNIK, AMORTIZER, VZMETENJE, VZMET, ZAVORE, ZAVORE_ODPOVEDALE, HIDRAVLIKA};  
+    enum Tires {CENTRIRAT_PNEVMATIKE, SPUSCENA_ZRACNICA, SPUSCENA_PNEVMATIKA, DVE_PRAZNI_PNEVMATIKI, DVE_PREDRTI_PNEVMATIKI,
+            VEC_PRAZNIH_PNEVMATIK, VEC_PREDRTIH_PNEVMATIK, IMA_REZERVNO_PNEVMATIKO, NIMA_REZERVNEGA_KOLESA, ZVITA_FELTNA, ZRACNICA_POCASI_SPUSTILA, 
+            ZRACNICA_SE_SPRAZNILA, PRAZNA_ZRACNICA, PRESEKANA_ZRACNICA, POCENA_GUMA, NI_KLJUCA_ZA_ZRACNICO, VARNOSTNI_VIJAK, 
+            NE_MORE_DVITI_VIJAKA_NA_PNEVMATIKI, PREDRTA_ZRACNICA, UKRADENA_ZRACNICA, BREZ_ZRACNICE,  BREZ_VEC_ZRACNIC, VEC_UKRADENIH_PNEVMATIK};
     enum TiresMalf {IMA_REZERVO, NIMA_REZERVE, NI_KLJUCA, VARNOSTNI_VIJAK, NE_MORE_ODVITI_VIJAKA, UKRADENA, NI_UKRADENA, OSTALO};
-    enum Fuel {BREZ, NAROBE_TOCIL, ZMRZNJENO, UMAZANO, OSTALO};
-    enum FuelMalf {EURO_95, EURO_100, DIESEL, OSTALO};
-    enum Lock {KLJUC_SE_NE_OBRNE, KLJUC_ZLOMLJEN, SE_VRTI_V_PRAZNO, ZAKLENJENI_KLJUCI_KARTICA, OSTALO};
-    enum LockMalf {V_KLJUCAVNICI_VZIGA, V_VRATIH, V_PRTLJAZNIKU, NA_SEDEZU, V_TORBICI_PREDALU, V_KLJUCAVNICI_VZIGA_MOTOR_TECE,  V_KLJUCAVNICI_VZIGA_MOTOR_NE_TECE, OSTALO};
-    
-        
-    public String getIssue() {
-                String amzsIssue = "AMZSIssue"+ baseService.getLastEntry().getId();
-                return amzsIssue;
-        }
+    enum Fuel {BREZ_GORIVA, ZMANJKALO_GORIVA, NI_DOVODA_GORIVA, NAFTA_NAMESTO_BENCINA, BENCIN_NAMEST_DIESLA, NAPACNO_GORIVO, NAROBE_TOCIL, 
+            SENZOR_ZA_BENCIN_NE_DELA, ZMRZNJENO_GORIVO, NAROBE_TANKAL, UMAZANO_GORIVO, DIESEL_NAMESTO_BENCINA, BREZ_EURO_95, BREZ_EURO_100,
+            BREZ_DIESLA};
+    enum Lock {ZAKLENIL_KLJUCE_V_AVTO, ZAKLENJENI_KLJUCI, ZAKLENJENA_KARTICA, KLJUCAVNICA_NE_PREPOZNA_KLJUCA, KLJUC_NE_ODPIRA, ODKLEPANJE,
+            NE_MORE_ODKLENIT, ELEKTRONSKO_SE_NE_DA_ODKLENIT, KLJUC_NE_GRE_V_KLJUCAVNICO, NAVADNI_NITI_REZERVNI_KLJUC_NE_DELA, IZGUBLJENI_KLJUCI,
+            KLJUC_SE_NE_OBRNE, KLJUC_ZLOMLJEN, KLJUC_SE_VRTI_V_PRAZNO, NE_MORE_OBRNIT_KLJUCA_V_KLJUCAVNICI_VZIGA, KLJUC_ZLOMLJEN_V_VRATIH,
+            KLJUC_ZLOMLJEN_V_KLJUCAVNICI_VZIGA, KLJUC_SE_VRTI_V_PRAZNO_V_KLJUCAVNICI_VZIGA, KLJUC_SE_VRTI_V_PRAZNO_V_VRATIH};
     
     public Integer getId() {
-                return baseService.getLastEntry().getId();
+                return baseService.getLastEntry().getId() + 1;
         }
     
-//    public void assertMember(String clan, String clanska) {
-//        
-//                _c = new CycAccess("aidemo", 3600);
-//                
-//                CycList Member = _c.makeCycList("(#$memberWithIDInIssue #$"+getIssue() + " (#$AMZSUserFn \"" +getId() +"\") \""+ ResponsePresenter.prijava.getClanska_st() +"\")");
-//                _c.assertGaf(Member, _c.getConstantByName("AMZSMt"));
-//                
-//        }
-    
-    public String getEvent() {
-                String event = "";
-                String pm2 = baseService.getLastEntry().getParent2_malf();
-                EventType e = EventType.valueOf(toEnumCase(pm2));
-                switch(e)
-                {
-                    case NESRECA: 
-                        event = "AMZSVehicleAccident"+getId();
-                        break;
-                    case RESEVANJE_VOZILA:
-                        event = "(#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +")";
-                        break;
-                    case OSTALO: 
-                        event = "InconvenientTrafficEvent" +getId();
-                        break;
-                    default: 
-                        event = "AMZSVehicleMalfunction" +getId();
-                        break;
-                }
-                return event;
+    public Integer getCurrentId() {
+                return baseService.getLastEntry().getId();
     }
     
-    public String rescuing(CycAccess _c, CycObject Mt) {
-                    String assertionEvent = "";
+    public String getIssue() {
+                return "AMZSIssue"+ getId();
+        }
+    
+    public String getCurrentIssue() {
+                return "AMZSIssue"+getCurrentId();
+    }
+        
+    public void rescuing(CycAccess _c, CycObject Mt) {
                     CycList loc = new CycList();
                     
                     try {
-                        CycList issueET = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$StuckOrConfinedVehicleSituation)");
-                        _c.assertGaf(issueET, Mt);
                         
-                        _c.assertGaf(_c.makeCycList("(#$nameString (#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +") \"Stuck situation "+baseService.getLastEntry().getId() +"\")"), _c.getConstantByName("EnglishMt"));
+                        long startTime = System.currentTimeMillis();
+                        _c.assertGaf(_c.makeCycList("(#$nameString (#$StuckOrConfinedVehicleSituationFn #$" + getIssue() +") \"Stuck situation "+getId() +"\")"), _c.getConstantByName("EnglishMt"));
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Asserting nameString: {0}", duration);
                         
-                        assertionEvent = String.valueOf(issueET);
+                        startTime = System.currentTimeMillis();
+                        _c.assertGaf(_c.makeCycList("(#$issueTopic #$" +getIssue() + " (#$StuckOrConfinedVehicleSituationFn #$"+getIssue() +"))"), Mt);
+                        endTime = System.currentTimeMillis();
+                        duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Asserting issueTopic: {0}", duration);
                         
-                        StuckIn s = StuckIn.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-                                switch(s)
-                                {
-                                    case OSTAL_V_BLATU: 
-                                        loc = _c.makeCycList("(#$objectFoundInLocationType "+getEvent() +" (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$MuddyArea)");
-                                        _c.assertGaf(loc, Mt);
-                                        break;
-                                    case OSTAL_NA_KOLICKU: 
-                                        loc = _c.makeCycList("(#$objectFoundInLocationType "+getEvent() +" (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$Pole-Rod)");
-                                        _c.assertGaf(loc, Mt);
-                                        break;
-                                    case OSTAL_V_SNEGU: 
-                                        loc = _c.makeCycList("(#$objectFoundInLocationType "+getEvent() +" (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$SnowCoveredArea)");
-                                        _c.assertGaf(loc, Mt);
-                                        break;
-                                    case OSTAL_NA_PREVISU: 
-                                        loc = _c.makeCycList("(#$objectFoundInLocationType "+getEvent() +" (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$Cliff)");
-                                        _c.assertGaf(loc, Mt);
-                                        break;
-                                    case OSTAL_NA_ZIDU_SKARPI:
-                                        loc = _c.makeCycList("(#$objectFoundInLocationType "+getEvent() +" (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$Wall-ExternalToStructure)");
-                                        _c.assertGaf(loc, Mt);
-                                        break;
-                                    default: break;                                
-                                }
-                            
-                        assertionEvent = assertionEvent +", " + String.valueOf(loc);
+                        startTime = System.currentTimeMillis();
+                        _c.assertGaf(_c.makeCycList("(#$vehicleAffected (#$StuckOrConfinedVehicleSituationFn #$"+getIssue() +") (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +getId() +"))"), Mt);
+                        endTime = System.currentTimeMillis();
+                        duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Asserting vehicleAffected: {0}", duration);
+                        
                             
                     } catch (UnknownHostException ex) {
                         Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
@@ -147,59 +112,43 @@ public class CycService {
                     } catch (CycApiException ex) {
                         Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
-                    return assertionEvent;
-                }
+    }
     
-    public String accident(CycAccess _c, CycObject Mt) {
-                String assertionEvent = "";
-                
+    public void stuckDetails(CycAccess _c, CycObject Mt, String keyword) {
                 try {
-                    CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+getId());
-                    CycList event = _c.makeCycList("(#$isa #$"+CycAccident +" #$VehicleAccident)");
-//                    _c.assertGaf(event, _c.getConstantByName("UniversalVocabularyMt"));
-                    assertionEvent = String.valueOf(event);
+                    long startTime = System.currentTimeMillis();
 
-                    _c.assertGaf(_c.makeCycList("(#$nameString #$"+CycAccident +" \"Vehicle accident "+getId() +"\")"),Mt);
-                    CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$VehicleAccident)");
-                    _c.assertGaf(issueEventType, Mt);
-                    assertionEvent = assertionEvent +", "+ String.valueOf(issueEventType);
+                    StuckIn s = StuckIn.valueOf(toEnumCase(keyword));
+                    CycList loc = new CycList();
 
-                    Position pos = Position.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-                    CycList posL = new CycList(); 
-                    switch(pos)
+                    switch(s)
                     {
-                        case V_JARKU_OB_CESTI: 
-                            posL = _c.makeCycList("(#$objectFoundInLocationType #$" +getEvent() + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                    +getIssue() +") #$Ditch)");
-                            _c.assertGaf(posL, Mt);
+                        case OSTAL_V_BLATU: case ZAKOPAL_V_BLATU:
+                            loc = _c.makeCycList("(#$objectFoundInLocationType (#$StuckOrConfinedVehicleSituationFn #$"+ getIssue() +") (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$MuddyArea)");
+                            _c.assertGaf(loc, Mt);
                             break;
-                        case NA_CESTI: 
-                            posL = _c.makeCycList("(#$objectFoundInLocationType #$" +getEvent() + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                    +getIssue() +") #$Roadway)");
-                            _c.assertGaf(posL, Mt);
+                        case OSTAL_NA_KOLICKU: 
+                            loc = _c.makeCycList("(#$objectFoundInLocationType (#$StuckOrConfinedVehicleSituationFn #$"+ getIssue() +") (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$Pole-Rod)");
+                            _c.assertGaf(loc, Mt);
                             break;
-                        case IZVEN_CESTE_DO_20M: 
-                            posL = _c.makeCycList("(#$objectFoundInLocationType #$" +getEvent() + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                    +getIssue() +") #$OffRoad)");
-                            _c.assertGaf(posL, Mt);
+                        case OSTAL_V_SNEGU: case ZAKOPAL_V_SNEGU:
+                            loc = _c.makeCycList("(#$objectFoundInLocationType (#$StuckOrConfinedVehicleSituationFn #$"+ getIssue() +") (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$SnowCoveredArea)");
+                            _c.assertGaf(loc, Mt);
                             break;
-                        case IZVEN_CESTE_NAD_20M: 
-                            posL = _c.makeCycList("(#$objectFoundInLocationType #$" +getEvent() + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                    +getIssue() +") #$OffRoad)");
-                            _c.assertGaf(posL, Mt);
+                        case OSTAL_NA_PREVISU: 
+                            loc = _c.makeCycList("(#$objectFoundInLocationType (#$StuckOrConfinedVehicleSituationFn #$"+ getIssue() +") (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$Cliff)");
+                            _c.assertGaf(loc, Mt);
                             break;
-                        case POD_CESTO:
-                            posL = _c.makeCycList("(#$objectFoundInLocationType #$" +getEvent() + " (#$VehicleInvolvedInAMZSReportFn #$" 
-                                    +getIssue() +") #$UnderRoadway)");
-                            _c.assertGaf(posL, Mt);
+                        case OSTAL_NA_ZIDU_SKARPI:
+                            loc = _c.makeCycList("(#$objectFoundInLocationType (#$StuckOrConfinedVehicleSituationFn #$"+ getIssue() +") (#$VehicleInvolvedInAMZSReportFn #$"+getIssue() +") #$Wall-ExternalToStructure)");
+                            _c.assertGaf(loc, Mt);
                             break;
-                        default: break;
+                        default: break;                                
                     }
-                
-                    assertionEvent = assertionEvent + ", " + posL;
-        //                _c.assertGaf(posL, Mt); ko bojo vsi dokoncani
 
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Asserting STUCK DETAILS: {0}", duration);
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -207,121 +156,124 @@ public class CycService {
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-                return assertionEvent;
-                }
+    }
     
-    public String orientation(CycAccess _c, CycObject Mt) {
-                String assertionEvent = "";
+    public void accident(CycAccess _c, CycObject Mt) {
+                try {
+                    
+                    long startTime = System.currentTimeMillis();
+                    CycConstant CycAccident = _c.makeCycConstant("AMZSVehicleAccident"+getId());
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Creating AMZSVehicleAccident: {0}", duration);
+                
+                    startTime = System.currentTimeMillis();
+                    _c.assertGaf(_c.makeCycList("(#$nameString #$"+CycAccident +" \"Vehicle accident "+getId() +"\")"),Mt);
+                    endTime = System.currentTimeMillis();
+                    duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "asserting accident nameString: {0} ", duration);
+                                        
+                    startTime = System.currentTimeMillis();
+                    _c.assertGaf(_c.makeCycList("(#$issueTopic #$" + getIssue() + " #$" + CycAccident +")"), Mt);
+                    endTime = System.currentTimeMillis();
+                    duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Asserting accident issueTopic: {0} ", duration);
+                    
+                    startTime = System.currentTimeMillis();
+                    _c.assertGaf(_c.makeCycList("(#$vehicleAffected #$" +CycAccident +" (#$VehicleInvolvedInAMZSReportFn #$" +getIssue() +"))"), Mt);
+                    endTime = System.currentTimeMillis();
+                    duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Asserting accident vehicleAffected: {0} ", duration);
+                    
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CycApiException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+    
+    public void accidentDetails(CycAccess _c, CycObject Mt, String keyword) {
                 try {
                     CycConstant orientation;
-                    CycList orientL = new CycList(); 
+                    CycList accL = new CycList(); 
 
-//                    String id = String.valueOf(baseService.getLastEntry().getId());
-                    Orientation orient = Orientation.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-
-                    switch(orient)
+                    Accident acc = Accident.valueOf(toEnumCase(keyword));
+                    long startTime = System.currentTimeMillis();
+                    
+                    switch(acc)
                     {
                         case NA_KOLESIH: 
-                            orientation = _c.getConstantByName("TopSideUp");
-                            orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                + "#$" +getIssue() +") #$" +orientation +" #$AMZSVehicleAccident" +getId() +")");
-                            _c.assertGaf(orientL, Mt);
+                            accL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+                                + "#$" +getIssue() +") #$TopSideUp #$AMZSVehicleAccident" +getId() +")");
+                            _c.assertGaf(accL, Mt);
                             break;
                         case NA_STREHI:
-                            orientation = _c.getConstantByName("UpsideDown");
-                            orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                + "#$AMZSIssue" +getId() +") #$" +orientation +" #$AMZSVehicleAccident" +getId() +")");
-                            _c.assertGaf(orientL, Mt);
+                            accL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+                                + "#$AMZSIssue" +getId() +") #$UpsideDown #$AMZSVehicleAccident" +getId() +")");
+                            _c.assertGaf(accL, Mt);
                             break;
                         case NA_BOKU:
-                            orientation = _c.getConstantByName("LeftSideUp");
-                            orientL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
-                                + "#$AMZSIssue" +getId() +") #$" +orientation +" #$AMZSVehicleAccident" +getId() +")");
-                            _c.assertGaf(orientL, Mt);
+                            accL = _c.makeCycList("(#$roadVehicleOrientationAfterAccident (#$VehicleInvolvedInAMZSReportFn "
+                                + "#$AMZSIssue" +getId() +") #$LeftSideUp #$AMZSVehicleAccident" +getId() +")");
+                            _c.assertGaf(accL, Mt);
+                            break;
+                        case V_JARKU_OB_CESTI: 
+                            accL = _c.makeCycList("(#$objectFoundInLocationType #$" +baseService.getEvent(1) + " (#$VehicleInvolvedInAMZSReportFn #$" 
+                                    +getIssue() +") #$Ditch)");
+                            _c.assertGaf(accL, Mt);
+                            break;
+                        case NA_CESTI: 
+                            accL = _c.makeCycList("(#$objectFoundInLocationType #$" +baseService.getEvent(1) + " (#$VehicleInvolvedInAMZSReportFn #$" 
+                                    +getIssue() +") #$Roadway)");
+                            _c.assertGaf(accL, Mt);
+                            break;
+                        case IZVEN_CESTE_DO_20M: 
+                            accL = _c.makeCycList("(#$objectFoundInLocationType #$" +baseService.getEvent(1) + " (#$VehicleInvolvedInAMZSReportFn #$" 
+                                    +getIssue() +") #$OffRoad)");
+                            _c.assertGaf(accL, Mt);
+                            break;
+                        case IZVEN_CESTE_NAD_20M: 
+                            accL = _c.makeCycList("(#$objectFoundInLocationType #$" +baseService.getEvent(1) + " (#$VehicleInvolvedInAMZSReportFn #$" 
+                                    +getIssue() +") #$OffRoad)");
+                            _c.assertGaf(accL, Mt);
+                            break;
+                        case POD_CESTO:
+                            accL = _c.makeCycList("(#$objectFoundInLocationType #$" +baseService.getEvent(1) + " (#$VehicleInvolvedInAMZSReportFn #$" 
+                                    +getIssue() +") #$UnderRoadway)");
+                            _c.assertGaf(accL, Mt);
+                            break;
+                        case AVTO_SE_JE_PREVRNIL:
+//                            kako je orientiran?
                             break;
                         default: break;
                     }
-                    assertionEvent = String.valueOf(orientL);
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;
+                    LOGGER.log(Level.INFO, "Asserting ACCIDENT DETAILS: {0}", duration);
                     
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
-                    return assertionEvent;
-                }
-    
-    public String unknown(CycAccess _c, CycObject Mt) {
-            String assertionEvent = "";
-        try {
+            }
             
-                CycList issueET = _c.makeCycList("(#$issueEventType #$"+ getIssue() +" #$InconvenientTrafficEvent)");
-                _c.assertGaf(issueET, Mt);
-                
-                CycConstant InconEvent = _c.makeCycConstant(getEvent());
-//                _c.assertGaf(_c.makeCycList("#$isa"), assertionEvent);
-                _c.assertGaf(_c.makeCycList("(#$nameString #$" + InconEvent +" \"Inconvenient traffic event "+getId() +"\")"), _c.getConstantByName("EnglishMt"));
-                
-                assertionEvent = String.valueOf(issueET); 
-                
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (CycApiException ex) {
-            Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return assertionEvent;
-    
-    }    
-        
-    public String malfunction(CycAccess _c, CycObject Mt) {
-            String assertionEvent = "";
-            try {
-                CycList issueEventType = _c.makeCycList("(#$issueEventType #$"+getIssue() +" #$TransportationDevice-VehicleMalfunction)");
-                _c.assertGaf(issueEventType, Mt);
-                
+    public void malfunction(CycAccess _c, CycObject Mt) {
+            try {                
                 
                 CycConstant RoadVehicleMalfunction = _c.getConstantByName("RoadVehicleMalfunction");
-                CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction"+baseService.getLastEntry().getId());
+                CycConstant AMZSVehicleMalfunction = _c.makeCycConstant("AMZSVehicleMalfunction" +getId());
                 _c.assertIsa(AMZSVehicleMalfunction, RoadVehicleMalfunction,_c.getConstantByName("UniversalVocabularyMt"));
+                _c.assertGaf(_c.makeCycList("(#$issueTopic #$" + getIssue() + " #$AMZSVehicleMalfunction" + getId() +")"), _c.getConstantByName("UniversalVocabularyMt"));
+              
+                _c.assertGaf(_c.makeCycList("(#$vehicleAffected #$"+AMZSVehicleMalfunction +" (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +getId() +"))"), Mt);
+                               
                 
-                _c.assertGaf(_c.makeCycList("(#$nameString #$"+AMZSVehicleMalfunction +" \"Vehicle malfunction of "+baseService.getLastEntry().getParent2_malf()
-                        +" " +baseService.getLastEntry().getId() +"\")"), _c.getConstantByName("EnglishMt"));
-                
-                CycService.Malfunction malf = CycService.Malfunction.valueOf(toEnumCase(baseService.getLastEntry().getParent2_malf()));
-
-                switch(malf)
-                {
-                    case VZIG: 
-                        assertionEvent = ignition(_c, Mt);
-                        break;
-                    case MOTOR:
-                        assertionEvent = engine(_c, Mt);
-                        break;
-                    case PRENOS_MOCI:
-                        assertionEvent = transmission(_c, Mt);
-                        break;
-                    case ELEKTRIKA: 
-                        assertionEvent = electricity(_c, Mt);
-                        break;
-                    case PODVOZJE:
-                        assertionEvent = chassis(_c, Mt);
-                        break;
-                    case PNEVMATIKE:
-                        assertionEvent = tires(_c, Mt);
-                        break;
-                    case GORIVO:
-                        assertionEvent = fuel(_c,Mt);
-                        break;
-                    case KLJUCAVNICA:
-                        assertionEvent = lock(_c,Mt);
-                        break;
-                    default: break;
-                }
-
+//                _c.assertGaf(_c.makeCycList("(#$nameString #$"+AMZSVehicleMalfunction +" \"Vehicle malfunction of " + getIssue()
+//                        +" " +getId() +"\")"), _c.getConstantByName("EnglishMt"));
+                                
             } catch (UnknownHostException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -331,245 +283,142 @@ public class CycService {
             } catch (NullPointerException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
-
-            return assertionEvent;
-                }   
+    }   
     
-    public String ignition(CycAccess _c, CycObject Mt) {
-                String assertionEvent = "";
-                
+    public void noises(CycAccess _c, CycObject Mt) {
                 try {
-                    CycList malfL = new CycList(); 
-                    CycList malf = new CycList();
-                    malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$"+getEvent() +" #$RoadVehicle #$VehicleIgnitionMalfunction)");
+                    CycList malf = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$AMZSVehicleMalfunction"+getId()+" #$RoadVehicle #$Device-Rattling)");
                     _c.assertGaf(malf, Mt);
-                    assertionEvent = String.valueOf(malf);
-
-                    Ignition ignit = Ignition.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-
-                    switch(ignit)
-                    {
-                        case VRTI: 
-                            malfL = _c.makeCycList("(#$isa #$" +getEvent() +" #$AutoEngineTurnOver)");
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
-
-                            IgnitionMalf turns = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-                            _c.assertGaf(malfL, Mt);
-                            switch(turns)
-                            {
-                                case GORI_LUCKA_NA_ARMATURI:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$PrototypicalIndicatorLight #$Device-On)");
-                                    assertionEvent = assertionEvent + String.valueOf(malfL);  
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case GORIJO_VSE_LUCKE_NA_ARMATURI:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$VehicleIndicatorLight #$Device-On)");
-                                    assertionEvent = assertionEvent + String.valueOf(malfL);
-                                    _c.assertGaf(malfL, Mt);     
-                                    break;
-                                default: break;
-                            }
-                            break;
-                            
-                        case NE_VRTI: 
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$EngineDoesntTurnOver)");
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
-
-                            IgnitionMalf noTurn = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-                            _c.assertGaf(malfL, Mt);
-                            switch(noTurn)
-                            {
-                                case LUCI_GORIJO:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$AutomobileHeadLight #$Device-On)");
-                                    assertionEvent = assertionEvent + String.valueOf(malfL);  
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case LUCI_NE_GORIJO:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$AutomobileHeadLight #$Device-FunctionallyDefective)");
-                                    assertionEvent = assertionEvent + String.valueOf(malfL);  
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case AKUMULATOR:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$ChargingSystemIndicatorLight #$Device-On)");
-                                    assertionEvent = assertionEvent + String.valueOf(malfL);  
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break;
-                            }
-                            break;
-                            
-                        case PRIZGAN_PORABNIK: 
-                            malfL = _c.makeCycList("(#$situationBeforeEvent #$" +getEvent() +" #$ConsumerElectronicDevice #$Device-On))");
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
-                            _c.assertGaf(malfL, Mt);
-                            
-                            IgnitionMalf consumer = IgnitionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-                            switch(consumer)
-                            {
-                                case AKUMULATOR:
-                                     malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$ChargingSystemIndicatorLight #$Device-On)");
-                                    assertionEvent = assertionEvent + String.valueOf(malfL);  
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break;
-                            }
-                            
-                            break;
-                        default: break;
-                            
-                    }
+//                    where do rattling noisees come from?
+                    
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
                 }
-                
-                return assertionEvent;
-                }
+    }
     
-    public String engine(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            String assertionEvent = "";
-            
-            try{
-            Engine eng = Engine.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-                
-                CycList engineMalf = _c.makeCycList("(#$isa #$" +getEvent() +" #$PerformanceDegradation-AutoEngine)");
-                _c.assertGaf(engineMalf, Mt); 
-                CycList malfType = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$RoadVehicle #$PerformanceDegradation-AutoEngine)");
-                _c.assertGaf(malfType, Mt);    
-                
-                switch(eng)
-                {
-                    case UGASNIL_MED_VOZNJO:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine #$AutoEngineStalls)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case IZGUBLJA_MOC_NE_VLECE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine #$AutoEngineLosingPower)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case PREGREVA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine #$AutoEngineOverheating)");
-                        assertionEvent = String.valueOf(malfL);
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case GLAVNI_JERMEN:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$EngineBelt #$EngineBeltMalfunction)");
-                        assertionEvent = String.valueOf(malfL);
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    default: break;
+    public void stalls(CycAccess _c, CycObject Mt) {
+                try {
+                    CycList malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$AMZSVehicleMalfunction" +getId() +" #$AutoEngine #$AutoEngineStalls)");
+                    _c.assertGaf(malf, Mt);
+                    
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CycApiException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                assertionEvent = String.valueOf(malfL) + enMalf(_c, Mt);
+    }
+    
+    public void indicatorLights(CycAccess _c, CycObject Mt) {
+//                koliko luck? katere lucke? kaksne barve?
+    }
+    
+    public void tugging(CycAccess _c, CycObject Mt) {
+//                ravno tankal? narobe, umazano?
+    }
+    
+    public void oil(CycAccess _c, CycObject Mt) {
                 
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
-            }
-            return assertionEvent;
-            }
-
-    public String enMalf(CycAccess _c, CycObject Mt) {
-        
-            String assertionEvent = "";
-            
+    }
+    
+    public void alternator(CycAccess _c, CycObject Mt) {
+                
+    }
+    
+    public void engineType(CycAccess _c, CycObject Mt) {
+//                diesel, bencin
+    }
+    
+    public void ignition(CycAccess _c, CycObject Mt, String keyword) {                
+                try {
+                    CycList malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$AMZSVehicleMalfunction"+getId()+" #$RoadVehicle #$VehicleIgnitionMalfunction)");
+                    _c.assertGaf(malf, Mt);
+                    
+                    Ignition ignition = Ignition.valueOf(toEnumCase(keyword));
+                    
+                    switch(ignition) {
+                        case STARTER: case ZAGANJAC: 
+                            break;
+                        case VERGLA: case VRTI: case OBRNE:
+                            _c.assertGaf(_c.makeCycList("(#$isa #$" +baseService.getEvent(1) +" #$AutoEngineTurnOver)"), Mt);
+                            break;
+                        case NE_VRTI: case NE_ZAVERGLA: case NE_OBRNE: case NE_ZALAUFA: case NE_ZAZENE:
+                            _c.assertGaf(_c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Automobile #$EngineDoesntTurnOver)"), Mt);
+                            break;
+                        case AKUMULATOR:
+                            break;   
+                        case NE_VZGE: case VZIG:
+                            break;   
+                    }
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+        }
+    
+    public void engine(CycAccess _c, CycObject Mt, String keyword) {
             try {
-
+                long startTime = System.currentTimeMillis();
+    //                CycList engineMalf = _c.makeCycList("(#$isa #$" +getEvent() +" #$PerformanceDegradation-AutoEngine)");
+    //                _c.assertGaf(engineMalf, Mt); 
+                _c.assertGaf(_c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$RoadVehicle #$PerformanceDegradation-AutoEngine)"), Mt);   
+                
                 CycList malfL = new CycList();
-                EngineMalf engPow = EngineMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-
-                switch(engPow)
-                {
-                    case ROPOTA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine #$Noise-Unusual)");
+                Engine eng = Engine.valueOf(toEnumCase(keyword));
+                
+                switch(eng) {
+                    case MOTOR_ROPOTA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoEngine #$Noise-Unusual)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case BEL_DIM:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine (#$LevelOfSubstanceTypeInSysTypeFn "
+                    case JERMEN: case GLAVNI_JERMEN:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$EngineBelt #$EngineBeltMalfunction)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case AVTO_NE_VLECE: case IZGUBLJA_MOC:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoEngine #$AutoEngineLosingPower)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case HLADILNA_TEKOCINA: case BREZ_HLADILNE:
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$CoolantTank #$CoolantTank-Empty)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case OLJNA_CRPALKA:
+                        break;
+                    case MOTOR:
+                        break;
+                    case BEL_DIM_IZ_MOTORJA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoEngine (#$LevelOfSubstanceTypeInSysTypeFn "
                                 + "#$Smoke-White #$AutoEngine (#$PositiveAmountFn #$LevelOfSubstanceInSystem)))");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case CRN_DIM:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoEngine (#$LevelOfSubstanceTypeInSysTypeFn "
+                    case CRN_DIM_IZ_MOTORJA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoEngine (#$LevelOfSubstanceTypeInSysTypeFn "
                                 + "#$Smoke-Black #$AutoEngine (#$PositiveAmountFn #$LevelOfSubstanceInSystem)))");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case LUC_ZA_OLJE_SVETI:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$OilLevelIndicatorLight #$Device-On)");
-                            _c.assertGaf(malfL, Mt);
+                    case UGASNIL_MED_VOZNJO: case CRKNIL:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoEngine #$AutoEngineStalls)");
+                        _c.assertGaf(malfL, Mt);
                         break;
-                    case UTRIPA_RUMENA_ZA_MOTOR:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$CheckEngineIndicatorLight #$Device-On)");
-                            _c.assertGaf(malfL, Mt);
+                    case PREGREVA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoEngine #$AutoEngineOverheating)");
+                        _c.assertGaf(malfL, Mt);
                         break;
                     case ZAKUHAL:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$AutoEngine #$AutoEngineOverheated)");
-                            _c.assertGaf(malfL, Mt);
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$AutoEngine #$AutoEngineOverheated)");
+                        _c.assertGaf(malfL, Mt);
                         break;
-                    case BREZ_HLADILNE:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$CoolantTank #$CoolantTank-Empty)");
-                            _c.assertGaf(malfL, Mt);
-                        break;
-                    case SVETI_RDECA_ZA_HLADILNO_TEKOCINO:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$LowCoolantIndicatorLight #$Device-On)");
-                            _c.assertGaf(malfL, Mt);
-                        break;                        
-                    default: break;
                 }
-                assertionEvent = String.valueOf(malfL);
-
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            }catch (NullPointerException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value.", ex);
-            }
-
-            return assertionEvent;
-            }
-        
-    public String transmission(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            String assertionEvent = "";
-            
-            Transmission trans = Transmission.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-            try{
-                switch(trans)
-                {
-                    case MENJALNIK:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Gearbox #$GearboxMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case SKLOPKA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Clutch #$ClutchMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case KARDAN:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$PTOShaft #$PTOMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case PEDAL_ZA_PLIN:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$GasPedal #$GasPedalMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    default: break;
-                }
-                assertionEvent = String.valueOf(malfL) + transMalf(_c, Mt);
+                long endTime = System.currentTimeMillis();
+                long duration = endTime - startTime;
+                LOGGER.log(Level.INFO, "Asserting ENGINE malfunction: {0}", duration);
                 
             } catch (UnknownHostException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
@@ -577,61 +426,78 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
-            
-            return assertionEvent;
-            }
-
-    public String transMalf(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            String assertionEvent = "";
-            
-            TransmissionMalf trans = TransmissionMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-            try{
-                switch(trans)
-                {
-                    case NE_PRESTAVLJA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Gearbox #$DoesntShiftGears)");
+    }
+    
+    public void transmission(CycAccess _c, CycObject Mt, String keyword) {
+            try {   
+                long startTime = System.currentTimeMillis();
+                
+                _c.assertGaf(_c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$RoadVehicle #$VehicleTransmissionMalfunction)"), Mt);
+                
+                CycList malfL = new CycList();
+                Transmission trans = Transmission.valueOf(toEnumCase(keyword));
+                
+                switch(trans) {
+                    case MENJALNIK: case MENJALNIK_NE_DELA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Gearbox #$GearboxMalfunction)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case NE_GRE_V_PRESTAVO: case NE_PRESTAVLJA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Gearbox #$DoesntShiftGears)");
                         _c.assertGaf(malfL, Mt);
                         break;
                     case OSTAL_V_PRESTAVI:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Gearbox #$StuckInGear)");
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Gearbox #$StuckInGear)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case AVTOMATSKI_NE_DELA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Gearbox #$AutomaticDoesntShift)");
+                    case AVTOMATSKI_MENJALNIK_NE_DELA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Gearbox #$AutomaticDoesntShift)");
                         _c.assertGaf(malfL, Mt);
                         break;
                     case ZICA_SKLOPKE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$ClutchWire #$ClutchWireMalfunction)");
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$ClutchWire #$ClutchWireMalfunction)");
                         _c.assertGaf(malfL, Mt);
                         break;
                     case PEDAL_SKLOPKE_OSTAL_NOTRI:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Clutch #$ClutchPedal-StuckDown)");
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Clutch #$ClutchPedal-StuckDown)");
                         _c.assertGaf(malfL, Mt);
                         break;
                     case PEDAL_SKLOPKE_TRD:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Clutch #$ClutchPedal-Stiff)");
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Clutch #$ClutchPedal-Stiff)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case PADEL_DOL:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$GasPedal #$GasPedal-StuckDown)");
+                    case PEDAL_ZA_PLIN_NE_DELA: case GAS_NE_DELA: 
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$GasPedal #$GasPedalMalfunction)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case DELA_NE_GRE_V_OBRATE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$GasPedal #$GasPedal-DoesntAccelerate)");
+                    case PEDAL_ZA_PLIN_PADEL_DOL:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$GasPedal #$GasPedal-StuckDown)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case SE_NE_ODZIVA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$GasPedal #$GasPedal-DoesntRespond)");
+                    case PEDAL_ZA_PLIN_SE_NE_ODZIVA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$GasPedal #$GasPedal-DoesntRespond)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    default: break;
+                    case PEDAL_ZA_PLIN_DELA_NE_GRE_V_OBRATE:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$GasPedal #$GasPedal-DoesntAccelerate)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case SKLOPKA_NE_DELA:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Clutch #$ClutchMalfunction)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case KARDAN:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$PTOShaft #$PTOMalfunction)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case PRENOS_MOCI:
+                        break;
                 }
-                assertionEvent = String.valueOf(malfL);
+                
+                long endTime = System.currentTimeMillis();
+                long duration = endTime - startTime;
+                LOGGER.log(Level.INFO, "Asserting TRANSMISSION malfunction: {0}", duration);
                 
             } catch (UnknownHostException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
@@ -639,46 +505,58 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value.", ex);
             }
-            
-            return assertionEvent;
-            }
+    }
     
-    public String electricity(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            CycList malf = new CycList();
-            String assertionEvent = "";
-            
-            Electricity elec = Electricity.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-            try{
-                malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$"+getEvent() +" #$RoadVehicle #$VehicleElectricityMalfunction)");
-                _c.assertGaf(malf, Mt);
-                switch(elec)
-                {
-                    case OSTAL_BREZ_MED_VOZNJO:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$VehicleState-Drive)");
+    public void electricity(CycAccess _c, CycObject Mt, String keyword) { 
+            try {
+                long startTime = System.currentTimeMillis();
+                
+                _c.assertGaf(_c.makeCycList("(#$malfunctionTypeAffectsSit #$"+baseService.getEvent(1) +" #$RoadVehicle #$VehicleElectricityMalfunction)"), Mt);
+                
+                CycList malfL = new CycList();
+                Electricity elec = Electricity.valueOf(toEnumCase(keyword));
+                
+                switch(elec) {
+                    case ELEKTRIKA: case ELEKTRIKA_ODPOVEDALA: case RACUNALNIK_CRKNIL:
+                        break;
+                    case ALTERNATOR:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$Alternator #$AlternatorMalfunction)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case OSTAL_BREZ_NA_PARKIRISCU:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Automobile #$VehicleState-Parked)");
+                    case AKUMULATOR:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutomobileBattery #$BatteryMalfunction)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    case LUCI:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomotiveLight #$AutomotiveLightMalfunction)");
-                        assertionEvent = String.valueOf(malfL);
+                    case VAROVALKE:
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$AutoFuse #$AutoFuse-Blown)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case OSTAL_BREZ_ELEKTRIKE_MED_VOZNJO:
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Automobile #$VehicleState-Drive)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case OSTAL_BREZ_ELEKTRIKE_NA_PARKIRISCU:
+                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Automobile #$VehicleState-Parked)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
+                    case SMERNIKI_NE_DELAJO:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutomobileTurnSignals #$TurnSignalsMalfunction)");
                         _c.assertGaf(malfL, Mt);
                         break;
                     case BRISALCI:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$RegularWindshieldWiper #$WindshieldWiperMalfunction)");
-                        assertionEvent = String.valueOf(malfL);
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$RegularWindshieldWiper #$WindshieldWiperMalfunction)");
                         _c.assertGaf(malfL, Mt);
                         break;
-                    default: break;
+                    case MOTORCEK_PRI_BRISALCIH:
+                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$WindshieldWiperMotor #$WindshieldWiperMotorMalfunction)");
+                        _c.assertGaf(malfL, Mt);
+                        break;
                 }
-                assertionEvent = String.valueOf(malf) + String.valueOf(malfL) + elecMalf(_c, Mt);
+                
+                long endTime = System.currentTimeMillis();
+                long duration = endTime - startTime;
+                LOGGER.log(Level.INFO, "Asserting ELECTRICITY malfunction: {0}", duration);
                 
             } catch (UnknownHostException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
@@ -686,513 +564,379 @@ public class CycService {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
             } catch (CycApiException ex) {
                 Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
             }
-            
-            return assertionEvent;
-            }
+    }
     
-    public String elecMalf(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = null; 
-            String assertionEvent = "";
-            
-            ElectricityMalf elecM = ElectricityMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-            try{
-                switch(elecM)
-                {
-                    case ALTERNATOR:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Alternator #$AlternatorMalfunction)");
-                        break;
-                    case AKUMULATOR:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileBattery #$BatteryMalfunction)");
-                        break;
-                    case VAROVALKE:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$AutoFuse #$AutoFuse-Blown)");
-                        break;
-                    case PREDNJE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileHeadLight #$AutomobileHeadLightMalfunction)");
-                        break;
-                    case ZADNJE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileTailLight #$TailLightMalfunction)");
-                        break;
-                    case DOLGE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$HeadLight-HighBeam #$HighBeamMalfunction)");
-                        break;
-                    case KRATKE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$HeadLight-LowBeam #$LowBeamMalfunction)");
-                        break;
-                    case STOP_LUC:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileBrakeLight #$BrakeLightMalfunction)");
-                        break;
-                    case SMERNIKI:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileTurnSignals #$TurnSignalsMalfunction)");
-                        break;
-                    case MOTORCEK:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$WindshieldWiperMotor #$WindshieldWiperMotorMalfunction)");
-                        break;
-                    case PREDNJA:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Windshield #$AutomobileWindow-Broken)");
-                        break;
-                    case ZADNJA:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$RearWindowWithDefroster #$AutomobileWindow-Broken)");
-                        break;
-                    case STRANSKA:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$SideWindow #$AutomobileWindow-Broken)");
-                        break;
-                    case VOZNIKOVA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Window-DriversSide #$AutomobileWindow-WontClose)");
-                        break;
-                    case SOVOZNIKOVA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Window-PassengerSide #$AutomobileWindow-WontClose)");
-                        break;
-                    case STRANSKA_ZADAJ:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$Window-SecondRow #$AutomobileWindow-WontClose)");
-                        break;
-                    default: break;
-                }
-                
-                if (malfL != null ) {
-                    _c.assertGaf(malfL, Mt);
-                }                
-                assertionEvent = String.valueOf(malfL);
-                
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
-            }
-            
-            return assertionEvent;
-            }
-        
-    public String chassis(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            String assertionEvent = "";
-            
-            Chassis chass = Chassis.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-            try{
-                
-                CycList malfType = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$RoadVehicle #$ChassisMalfunction)");
-                _c.assertGaf(malfType, Mt);    
-                
-                switch(chass)
-                {
-                    case KRMILNI_MEHANIZEM:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileSteeringSystem #$SteeringSystemMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case VZMETENJE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileSuspensionSystem #$SuspensionSystemMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case ZAVORE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$VehicleBrakeSystem #$BrakeSystemMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case HIDRAVLIKA:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$VehicleHydraulics #$HydraulicsMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    default: break;
-                }
-                assertionEvent = String.valueOf(malfL) + chassMalf(_c, Mt);
-                
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
-            }
-            
-            return assertionEvent;
-            }
-    
-    public String chassMalf(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            String assertionEvent = "";
-            
-            ChassisMalf chass = ChassisMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-            try{
-                switch(chass)
-                {
-                    case VOLAN_TRD:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$SteeringWheel #$SteeringWheelMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case ZGLOB:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$CVJoint #$CVJointMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case KONCNIK:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$TrackRodEnd #$TrackRodEndMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case AMORTIZER:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$ShockAbsorber #$ShockAbsorberMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case VZMET:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutomobileSpring #$SpringMalfunction)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case ODPOVEDALE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$VehicleBrakeSystem #$VehicleBrakeFailure)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case ZABLOKIRANE:
-                        malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$VehicleBrakeSystem #$VehicleBrake-Blocked)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case AVTO_NA_TLEH:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$RoadVehicle #$Vehicle-Low)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    default: break;
-                }
-                assertionEvent = String.valueOf(malfL);
-                
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
-            }
-            
-            return assertionEvent;
-            }
-    
-    public String tires(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            CycList malfL1 = new CycList(); 
-            String assertionEvent = "";
-            
-            Tires tires = Tires.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-            try{
-                switch(tires)
-                {
-                    case PRAZNA: 
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Tire #$FlatTire)");
-                        malfL1 = _c.makeCycList("(#$numberOfObjectsInSit #$" +getEvent() +" #$FlatTire 1)");
-                        _c.assertGaf(malfL, Mt);
-                        _c.assertGaf(malfL1, Mt);
-                        break;
-                    case VEC_PRAZNIH:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Tire #$FlatTire)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case PREDRTA: 
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Tire #$PerforatedTire)");
-                        malfL1 = _c.makeCycList("(#$numberOfObjectsInSit #$" +getEvent() +" #$PerforatedTire 1)");
-                        _c.assertGaf(malfL, Mt);
-                        _c.assertGaf(malfL1, Mt);
-                        break;
-                    case VEC_PREDRTIH:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$Tire #$PerforatedTire)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case BREZ_1:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$RoadVehicle #$VehicleMissingATire)");
-                        malfL1 = _c.makeCycList("(#$numberOfItemsMissing #$" +getEvent() +" #$Tire 1)");
-                        _c.assertGaf(malfL, Mt);   
-                        _c.assertGaf(malfL1, Mt);
-                        break;
-                    case BREZ_VEC:
-                        malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$RoadVehicle #$VehicleMissingATire)");
-                        _c.assertGaf(malfL, Mt);   
-                        break;
-                    default: break;
-                }
-                assertionEvent = String.valueOf(malfL) +" " +String.valueOf(malfL1) +" " +tiresMalf(_c, Mt);
-                
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
-            }
-        
-            return assertionEvent;
-            }
-
-    public String tiresMalf(CycAccess _c, CycObject Mt) {
-        
-            CycList malfL = new CycList(); 
-            String assertionEvent = "";
-            
-            TiresMalf tires = TiresMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-            try{
-                switch(tires)
-                {
-                    case IMA_REZERVO:
-                        malfL = _c.makeCycList("(#$possessesTypeInSit #$" +getEvent() +" #$SpareTire)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case NIMA_REZERVE:
-                        malfL = _c.makeCycList("(#$itemsMissing #$" +getEvent() +" #$SpareTire)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case NI_KLJUCA:
-                        malfL = _c.makeCycList("(#$itemsMissing #$" +getEvent() +" #$WheelLockKey)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case NE_MORE_ODVITI_VIJAKA:
-                        malfL = _c.makeCycList("(#$unableToUnscrew #$" +getEvent() +" #$WheelLockKey #$RoadVehicle)");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    case UKRADENA:
-                        malfL = _c.makeCycList("(#$itemsStolen #$" +getEvent() +" (#$UniquePartFn (#$VehicleInvolvedInAMZSReportFn #$" +getIssue() +") #$Tire))");
-                        _c.assertGaf(malfL, Mt);
-                        break;
-                    default: break;
-                }
-                assertionEvent = String.valueOf(malfL);
-                
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CycApiException ex) {
-                Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
-            }
-            
-            return assertionEvent;
-            }
-    
-    public String fuel(CycAccess _c, CycObject Mt) {
-                String assertionEvent = "";
-                
+    public void chassis(CycAccess _c, CycObject Mt, String keyword) {
                 try {
-                    CycList malfL = new CycList(); 
+                    long startTime = System.currentTimeMillis();
+
+                    _c.assertGaf(_c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$RoadVehicle #$ChassisMalfunction)"), Mt);    
                     
-                    Fuel fuel = Fuel.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-                    FuelMalf fuelM = FuelMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
-                                        
-                    CycList fuelMalf = _c.makeCycList("(#$isa #$" +getEvent() +" #$FuelSystemMalfunction)");
-                    _c.assertGaf(fuelMalf, Mt); 
+                    Chassis chassis = Chassis.valueOf(toEnumCase(keyword));
+                    CycList malfL = new CycList();
                     
-                    switch(fuel)
-                    {
-                        case BREZ: 
-                            switch(fuelM)
-                            {
-                                case EURO_95:
-                                    malfL = _c.makeCycList("(#$itemsMissing #$" +getEvent() +" #$GasolineFuel-95)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case EURO_100:
-                                    malfL = _c.makeCycList("(#$itemsMissing #$" +getEvent() +" #$GasolineFuel-100)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case DIESEL:
-                                    malfL = _c.makeCycList("(#$itemsMissing #$" +getEvent() +" #$DieselFuel)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break; 
-                            }
-                            assertionEvent = String.valueOf(malfL);
+                    switch(chassis) {
+                        case ZAVORNA_TEKOCINA_POD_NORMALNO:
                             break;
-                            
-                        case NAROBE_TOCIL: 
-                            switch(fuelM)
-                            {
-                                case EURO_95:
-                                    malfL = _c.makeCycList("(#$pumpingWrongFuel #$" +getEvent() +" #$DieselFuel #$GasolineFuel-95)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case EURO_100:
-                                    malfL = _c.makeCycList("(#$pumpingWrongFuel #$" +getEvent() +" #$DieselFuel #$GasolineFuel-100)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case DIESEL:
-                                    malfL = _c.makeCycList("(#$pumpingWrongFuel #$" +getEvent() +" #$GasolineFuel-95 #$DieselFuel)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break;
-                            }
-                            assertionEvent = String.valueOf(malfL);
-                            break;                            
-                        case ZMRZNJENO: 
-                            malfL = _c.makeCycList("(#$stateOfMatterInSit #$" +getEvent() +" #$DieselFuel #$DieselFuel-Frozen)");
+                        case AVTO_NA_TLEH:
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$RoadVehicle #$Vehicle-Low)");
                             _c.assertGaf(malfL, Mt);
-                            assertionEvent = String.valueOf(malfL);
                             break;
-                        case UMAZANO:
-                            malfL = _c.makeCycList("(#$isa #$" +getEvent() +" #$ContaminationEvent)");
+                        case KOLO_ZABLOKIRA:
+                            break;
+                        case ZAVORE_ZABLOKIRALE:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$VehicleBrakeSystem #$VehicleBrake-Blocked)");
                             _c.assertGaf(malfL, Mt);
-                            assertionEvent = String.valueOf(malfL);
-                            switch(fuelM)
-                            {
-                                case EURO_95:
-                                    malfL = _c.makeCycList("(#$objectContaminated #$" +getEvent() +" #$ThePrototypicalGasolineFuel-95)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case EURO_100:
-                                    malfL = _c.makeCycList("(#$objectContaminated #$" +getEvent() +" #$ThePrototypicalGasolineFuel-100)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case DIESEL:
-                                    malfL = _c.makeCycList("(#$objectContaminated #$" +getEvent() +" #$ThePrototypicalDieselFuel)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break;                                     
-                            }
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
                             break;
-                        default: break;                            
+                        case KRMILNI_MEHANIZEM:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutomobileSteeringSystem #$SteeringSystemMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case VOLAN_TRD:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$SteeringWheel #$SteeringWheelMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case ZGLOB:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$CVJoint #$CVJointMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case ROKA:
+                            break;
+                        case KONCNIK:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$TrackRodEnd #$TrackRodEndMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case AMORTIZER:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$ShockAbsorber #$ShockAbsorberMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case VZMETENJE:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutomobileSuspensionSystem #$SuspensionSystemMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case VZMET:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutomobileSpring #$SpringMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case ZAVORE:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$VehicleBrakeSystem #$BrakeSystemMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case ZAVORE_ODPOVEDALE:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$VehicleBrakeSystem #$VehicleBrakeFailure)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case HIDRAVLIKA:
+                            malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$VehicleHydraulics #$HydraulicsMalfunction)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case PODVOZJE:
+                            break;     
                     }
-                                                
+
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;    
+                    LOGGER.log(Level.INFO, "Asserting CHASSIS malfucntion: {0}", duration);
+                    
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
                 }
-                
-                return assertionEvent;
-                }
+    }
     
-    public String lock(CycAccess _c, CycObject Mt) {
-                String assertionEvent = "";
-                
+    public void tires(CycAccess _c, CycObject Mt, String keyword) {
                 try {
+                    long startTime = System.currentTimeMillis();
+                    
                     CycList malfL = new CycList(); 
                     CycList malfL1 = new CycList(); 
 
-                    Lock lock = Lock.valueOf(toEnumCase(baseService.getLastEntry().getParent_malf()));
-                    LockMalf lockM = LockMalf.valueOf(toEnumCase(baseService.getLastEntry().getMalfunction()));
+                    Tires tires = Tires.valueOf(toEnumCase(keyword));
 
-                    CycList lockMalf = _c.makeCycList("(#$isa #$" +getEvent() +" #$LockMalfunction)");
-                    
-                   _c.assertGaf(lockMalf, Mt); 
-                   
-                   assertionEvent = String.valueOf(lockMalf);
-                    
-                    switch(lock)
-                    {
-                        case KLJUC_SE_NE_OBRNE: 
-                            switch(lockM)
-                            {
-                                case V_KLJUCAVNICI_VZIGA:
-                                    malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$VehicleIgnitionSwitch #$LockMalfunction-KeyWontTurn)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case V_VRATIH:
-                                    malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoPowerDoorLock #$LockMalfunction-KeyWontTurn)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break; 
-                            }
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
+                    switch(tires) {
+                        case CENTRIRAT_PNEVMATIKE:
                             break;
-                            
-                        case KLJUC_ZLOMLJEN: 
-                            CycList malfLi = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$VehicleKey #$Torn)");
-                            _c.assertGaf(malfLi, Mt);
-                            switch(lockM)
-                            {
-                                case V_KLJUCAVNICI_VZIGA:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$VehicleIgnitionKey #$Torn)");
-                                    malfL1 = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleIgnitionKey #$VehicleIgnitionSwitch)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    _c.assertGaf(malfL1, Mt); 
-                                    break;
-                                case V_VRATIH:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$VehicleDoorKey #$Torn)");
-                                    malfL1 = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleDoorKey #$AutoPowerDoorLock)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    _c.assertGaf(malfL1, Mt); 
-                                    break;
-                                default: break;
-                            }
-                            assertionEvent =  assertionEvent + String.valueOf(malfLi) + String.valueOf(malfL) + String.valueOf(malfL1);
-                            break;                            
-                        case SE_VRTI_V_PRAZNO: 
-                            switch(lockM)
-                            {
-                                case V_KLJUCAVNICI_VZIGA:
-                                    malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$VehicleIgnitionSwitch #$LockMalfunction-KeySpinning)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case V_VRATIH:
-                                    malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +getEvent() +" #$AutoPowerDoorLock #$LockMalfunction-KeySpinning)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                default: break;
-                            }
-                            assertionEvent = assertionEvent +  String.valueOf(malfL);
-                            break;
-                        case ZAKLENJENI_KLJUCI_KARTICA:
-                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$RoadVehicle #$Device-Locked)");
+                        case SPUSCENA_PNEVMATIKA: case SPUSCENA_ZRACNICA: case ZRACNICA_POCASI_SPUSTILA: case ZRACNICA_SE_SPRAZNILA: 
+                        case PRAZNA_ZRACNICA:
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Tire #$FlatTire)");
+                            malfL1 = _c.makeCycList("(#$numberOfObjectsInSit #$" +baseService.getEvent(1) +" #$FlatTire 1)");
                             _c.assertGaf(malfL, Mt);
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
-                            switch(lockM)
-                            {
-                                case V_PRTLJAZNIKU:
-                                    malfL = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleDoorKey #$TrunkOfCar)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case NA_SEDEZU:
-                                    malfL = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleDoorKey #$AutomobileSeat)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case V_TORBICI_PREDALU:
-                                    malfL = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleDoorKey #$VehicleFrontStorageBox)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    break;
-                                case V_KLJUCAVNICI_VZIGA_MOTOR_TECE:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$AutoEngine #$Device-On)");
-                                    malfL1 = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleIgnitionKey #$VehicleIgnitionSwitch)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    _c.assertGaf(malfL1, Mt); 
-                                    break;
-                                case V_KLJUCAVNICI_VZIGA_MOTOR_NE_TECE:
-                                    malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +getEvent() +" #$AutoEngine #$Device-Off)");
-                                    malfL1 = _c.makeCycList("(#$objectStuckInsideObject #$" +getEvent() +" #$VehicleIgnitionKey #$VehicleIgnitionSwitch)");
-                                    _c.assertGaf(malfL, Mt); 
-                                    _c.assertGaf(malfL1, Mt); 
-                                    break;                                    
-                                default: break;                                     
-                            }
-                            assertionEvent = assertionEvent + String.valueOf(malfL);
+                            _c.assertGaf(malfL1, Mt);
                             break;
-                        default: break;                            
+                        case DVE_PRAZNI_PNEVMATIKI: case VEC_PRAZNIH_PNEVMATIK: case VEC_UKRADENIH_PNEVMATIK: 
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Tire #$FlatTire)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case BREZ_VEC_ZRACNIC:
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$RoadVehicle #$VehicleMissingATire)");
+                            _c.assertGaf(malfL, Mt);   
+                        case DVE_PREDRTI_PNEVMATIKI: case VEC_PREDRTIH_PNEVMATIK: 
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Tire #$PerforatedTire)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case IMA_REZERVNO_PNEVMATIKO:
+                            malfL = _c.makeCycList("(#$possessesTypeInSit #$" +baseService.getEvent(1) +" #$SpareTire)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case NIMA_REZERVNEGA_KOLESA:
+                            malfL = _c.makeCycList("(#$itemsMissing #$" +baseService.getEvent(1) +" #$SpareTire)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case ZVITA_FELTNA:
+                            break;
+                        case PRESEKANA_ZRACNICA: 
+                            break;
+                        case UKRADENA_ZRACNICA: 
+                            malfL = _c.makeCycList("(#$itemsStolen #$" +baseService.getEvent(1) +" (#$UniquePartFn (#$VehicleInvolvedInAMZSReportFn #$" +getIssue() +") #$Tire))");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case BREZ_ZRACNICE:
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$RoadVehicle #$VehicleMissingATire)");
+                            malfL1 = _c.makeCycList("(#$numberOfItemsMissing #$" +baseService.getEvent(1) +" #$Tire 1)");
+                            _c.assertGaf(malfL, Mt);   
+                            _c.assertGaf(malfL1, Mt);
+                            break;
+                        case POCENA_GUMA: case PREDRTA_ZRACNICA:
+                            malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$Tire #$PerforatedTire)");
+                            malfL1 = _c.makeCycList("(#$numberOfObjectsInSit #$" +baseService.getEvent(1) +" #$PerforatedTire 1)");
+                            _c.assertGaf(malfL, Mt);
+                            _c.assertGaf(malfL1, Mt);
+                            break;
+                        case NI_KLJUCA_ZA_ZRACNICO:
+                            malfL = _c.makeCycList("(#$itemsMissing #$" +baseService.getEvent(1) +" #$WheelLockKey)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case VARNOSTNI_VIJAK:
+                            break;
+                        case NE_MORE_DVITI_VIJAKA_NA_PNEVMATIKI:
+                            malfL = _c.makeCycList("(#$unableToUnscrew #$" +baseService.getEvent(1) +" #$WheelLockKey #$RoadVehicle)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
                     }
-                                                
+                    
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;    
+                    LOGGER.log(Level.INFO, "Asserting TIRES malfunction: {0}", duration);
+                    
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CycApiException ex) {
                     Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (NullPointerException ex) {
-                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, "You have to choose a value!", ex);
                 }
-                
-                return assertionEvent;
+            }
+    
+    public void fuel(CycAccess _c, CycObject Mt, String keyword) {
+                try {
+                    long startTime = System.currentTimeMillis();
+
+                    _c.assertGaf(_c.makeCycList("(#$isa #$" +baseService.getEvent(1) +" #$FuelSystemMalfunction)"), Mt);
+                    
+                    Fuel fuel = Fuel.valueOf(toEnumCase(keyword));
+                    CycList malfL = new CycList();
+                    
+                    switch(fuel) {
+                        case ZMANJKALO_GORIVA: case BREZ_GORIVA:
+                            break;
+                        case NI_DOVODA_GORIVA:
+                            break;
+                        case NAFTA_NAMESTO_BENCINA: case DIESEL_NAMESTO_BENCINA: 
+                            malfL = _c.makeCycList("(#$pumpingWrongFuel #$" +baseService.getEvent(1) +" #$DieselFuel #$GasolineFuel-95)");
+                            _c.assertGaf(malfL, Mt);                            
+                            break;
+                        case BENCIN_NAMEST_DIESLA:
+                            malfL = _c.makeCycList("(#$pumpingWrongFuel #$" +baseService.getEvent(1) +" #$GasolineFuel-95 #$DieselFuel)");
+                            _c.assertGaf(malfL, Mt); 
+                            break;
+                        case NAPACNO_GORIVO: case NAROBE_TANKAL: case NAROBE_TOCIL:  
+                            break;
+                        case SENZOR_ZA_BENCIN_NE_DELA:
+                            break;
+                        case ZMRZNJENO_GORIVO:
+                            malfL = _c.makeCycList("(#$stateOfMatterInSit #$" +baseService.getEvent(1) +" #$DieselFuel #$DieselFuel-Frozen)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case UMAZANO_GORIVO:
+//                            rethink that!!!
+                            malfL = _c.makeCycList("(#$isa #$" +baseService.getEvent(1) +" #$ContaminationEvent)");
+                            _c.assertGaf(malfL, Mt);
+                            break;
+                        case BREZ_EURO_95:
+                            malfL = _c.makeCycList("(#$itemsMissing #$" +baseService.getEvent(1) +" #$GasolineFuel-95)");
+                            _c.assertGaf(malfL, Mt); 
+                            break;
+                        case BREZ_EURO_100:
+                            malfL = _c.makeCycList("(#$itemsMissing #$" +baseService.getEvent(1) +" #$GasolineFuel-100)");
+                            _c.assertGaf(malfL, Mt); 
+                            break;
+                        case BREZ_DIESLA:
+                            malfL = _c.makeCycList("(#$itemsMissing #$" +baseService.getEvent(1) +" #$DieselFuel)");
+                            _c.assertGaf(malfL, Mt); 
+                            break; 
+                        
+                    }
+
+
+                    long endTime = System.currentTimeMillis();
+                    long duration = endTime - startTime;    
+                    LOGGER.log(Level.INFO, "Asserting FUEL malfunction: {0}", duration);
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CycApiException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                 }
+    }
+    
+    public void keys(CycAccess _c, CycObject Mt, String keyword) {
+                    try {
+                        long startTime = System.currentTimeMillis();
+
+                        _c.assertGaf(_c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$RoadVehicle #$LockMalfunction)"), Mt);
+
+                        Lock lock = Lock.valueOf(toEnumCase(keyword));
+                        CycList malfL = new CycList();
+                        
+                        switch(lock) {
+                            case ZAKLENIL_KLJUCE_V_AVTO: case ZAKLENJENA_KARTICA: case ZAKLENJENI_KLJUCI:
+                                malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$RoadVehicle #$Device-Locked)");
+                                _c.assertGaf(malfL, Mt);
+                                break;
+//                                bi dodal se kje so zaklenjeni?
+                            case IZGUBLJENI_KLJUCI:
+                                break;
+                            case KLJUCAVNICA_NE_PREPOZNA_KLJUCA:
+                                break;
+                            case NE_MORE_ODKLENIT: case KLJUC_NE_ODPIRA: case ODKLEPANJE:
+                                malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoPowerDoorLock #$LockMalfunction-KeyWontTurn)");
+                                _c.assertGaf(malfL, Mt); 
+                                break;
+                            case NE_MORE_OBRNIT_KLJUCA_V_KLJUCAVNICI_VZIGA:
+                                malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$VehicleIgnitionSwitch #$LockMalfunction-KeyWontTurn)");
+                                _c.assertGaf(malfL, Mt); 
+                                break;
+                            case ELEKTRONSKO_SE_NE_DA_ODKLENIT:
+                                break;
+                            case KLJUC_NE_GRE_V_KLJUCAVNICO:
+                                break;
+                            case NAVADNI_NITI_REZERVNI_KLJUC_NE_DELA:
+                                break;
+                            case KLJUC_ZLOMLJEN:
+//                                kje?
+                                malfL = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$VehicleKey #$Torn)");
+                                _c.assertGaf(malfL, Mt);
+                                break;
+                            case KLJUC_ZLOMLJEN_V_KLJUCAVNICI_VZIGA:
+                                _c.assertGaf(_c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$VehicleIgnitionKey #$Torn)"), Mt); 
+                                _c.assertGaf(_c.makeCycList("(#$objectStuckInsideObject #$" +baseService.getEvent(1) +" #$VehicleIgnitionKey #$VehicleIgnitionSwitch)"), Mt); 
+                                break;
+                            case KLJUC_ZLOMLJEN_V_VRATIH:
+                                _c.assertGaf(_c.makeCycList("(#$stateOfDeviceTypeInSituation #$" +baseService.getEvent(1) +" #$VehicleDoorKey #$Torn)"), Mt); 
+                                _c.assertGaf(_c.makeCycList("(#$objectStuckInsideObject #$" +baseService.getEvent(1) +" #$VehicleDoorKey #$AutoPowerDoorLock)"), Mt); 
+                                break;
+                            case KLJUC_SE_VRTI_V_PRAZNO:
+                                break;
+                            case KLJUC_SE_VRTI_V_PRAZNO_V_KLJUCAVNICI_VZIGA:
+                                malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$VehicleIgnitionSwitch #$LockMalfunction-KeySpinning)");
+                                _c.assertGaf(malfL, Mt); 
+                                break;
+                            case KLJUC_SE_VRTI_V_PRAZNO_V_VRATIH:
+//                                preveri, ce je ok!!
+                                malfL = _c.makeCycList("(#$malfunctionTypeAffectsSit #$" +baseService.getEvent(1) +" #$AutoPowerDoorLock #$LockMalfunction-KeySpinning)");
+                                _c.assertGaf(malfL, Mt); 
+                                break;
+                        }
+
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startTime;
+                        LOGGER.log(Level.INFO, "Asserting LOCK malfunction: {0}", duration);
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+    }
+    
+//    public void batteryDead(CycAccess _c, CycObject Mt) {
+//                try{
+//                    CycList malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$AMZSVehicleMalfunction"+getId()+" #$AutomobileBattery #$BatteryMalfunction)");
+//                    _c.assertGaf(malf, Mt);
+//                    
+//                } catch (UnknownHostException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (IOException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//    }
+//    
+//    public void batteryWarning(CycAccess _c, CycObject Mt) {
+//                try{
+//                    CycList malf = _c.makeCycList("(#$stateOfDeviceTypeInSituation #$AMZSVehicleMalfunction"+getId()+" #$ChargingSystemIndicatorLight #$Device-On)");
+//                    _c.assertGaf(malf, Mt);
+//                } catch (UnknownHostException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (IOException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//    }
+//        
+//    public void engineNoises(CycAccess _c, CycObject Mt) {
+//                try {
+//                    CycList malf = _c.makeCycList("(#$malfunctionTypeAffectsSit #$AMZSVehicleMalfunction"+getId()+" #$AutoEngine #$Noise-Unusual)");
+//                    _c.assertGaf(malf, Mt);
+//                    
+//                } catch (UnknownHostException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (IOException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (CycApiException ex) {
+//                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//    }
+        
+    public void assertSender(CycAccess c, CycObject Mt, Integer id, String ime) {
+                try {
+                    CycList amzsServiceClient = c.makeCycList("(#$amzsServiceClient #$AMZSIssue"+id +" (#$AMZSUserFn \"" +id +"\"))");
+                    c.assertGaf(amzsServiceClient, Mt);
+
+                    if ("".equals(ime)) {
+                         ime = "AMZS user";
+                    }
+
+                    CycList NameString2 = c.makeCycList("(#$nameString (#$AMZSUserFn \"" +id +"\") \"" +ime +"\")");
+                    c.assertGaf(NameString2, c.getConstantByName("EnglishMt"));
+                    
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CycApiException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+    
+    public void assertMember(CycAccess c, CycObject Mt, Integer id, String clanska) {
+                try {
+                    CycList Member = c.makeCycList("(#$memberWithIDInIssue #$AMZSIssue"+id + " (#$AMZSUserFn \"" +id +"\") \""+clanska +"\")");
+                    c.assertGaf(Member, Mt);
+                    
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CycApiException ex) {
+                    Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                }          
+        }
     
     /**
      * Accesses Cyc and returns hashmap of car brand names and appropriate Cyc 
@@ -1279,24 +1023,90 @@ public class CycService {
                 return mapModelNames;
     } 
     
-    public HashMap exportFromCycCarTypeList(CycAccess _c) throws JSONException, UnknownHostException, CycApiException, IOException {
-                //CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
-                 CycFort fort = _c.getKnownFortByName("RoadVehicleTypeByBodyStyle-AmzsPurposes");
-                CycList instances = _c.getAllInstances(fort);
-                CycObject English = _c.getConstantByName("EnglishMt");
+    public HashMap exportFromCycCarTypeList(CycAccess _c) {
+                    HashMap<Object, Object> mapTy = new HashMap<Object, Object>();
+                        
+                    try {
+                        //CycFort fort = _c.getKnownFortByName("AutomobileTypeByBodyStyle");
+                           CycFort fort = _c.getKnownFortByName("RoadVehicleTypeByBodyStyle-AmzsPurposes");
+                           CycList instances = _c.getAllInstances(fort);
+                           CycObject English = _c.getConstantByName("EnglishMt");
 
-                HashMap<Object, Object> mapTy = new HashMap<Object, Object>();
 
-                for (Iterator it = instances.iterator(); it.hasNext();) {
-                    Object constantTy = it.next();
-                    CycFort nameStrTy = _c.getKnownFortByName(String.valueOf(constantTy));
-                    CycList nameStr = _c.getNameStrings(nameStrTy, English);
-                    if (!nameStr.isEmpty()){
-                        mapTy.put(nameStr.get(0), constantTy);
+                           for (Iterator it = instances.iterator(); it.hasNext();) {
+                               Object constantTy = it.next();
+                               CycFort nameStrTy = _c.getKnownFortByName(String.valueOf(constantTy));
+                               CycList nameStr = _c.getNameStrings(nameStrTy, English);
+                               if (!nameStr.isEmpty()){
+                                   mapTy.put(nameStr.get(0), constantTy);
+                               }
+                           }
+
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
+                        return mapTy;
+    }
+    
+    public void assertRegistration(CycAccess c, CycObject Mt, Integer id, String reg) {
+                    try {
+                            CycList Reg = c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle with registration number " +reg +"\")");
 
-                return mapTy;
+                //                            sploh ni teba if-else, ker itak ne bo assertu, ce ne vpises
+                //                            Reg = c.makeCycList("(#$nameString (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") \"Vehicle involved\")");
+
+                            c.assertGaf(Reg, Mt);
+                            
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+    }
+    
+    public void assertType(CycAccess c, CycObject Mt, Integer id, String type) {
+                    try {
+                            HashMap mapTy = exportFromCycCarTypeList(c);
+                            String typeConst = String.valueOf(mapTy.get(type));
+                            CycList Type = c.makeCycList("(#$roadVehicleBodyStyle (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+typeConst +")");
+                            c.assertGaf(Type, Mt);
+                            
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+    }
+    
+    public void assertModel(CycAccess c, CycObject Mt, Integer id, String brand, String inputBrand) {
+                    try {
+                            HashMap mapBr = exportFromCycCarBrandList(c); 
+                            HashMap mapMod = getModelByBrand(c, inputBrand, mapBr);
+                            String modelConst = String.valueOf(mapMod.get(brand));
+
+                            CycList Brand = c.makeCycList("(#$isa (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+ mapBr.get(inputBrand) +")");
+                            c.assertGaf(Brand, Mt);
+
+                            CycList Model = c.makeCycList("(#$roadVehicleModel (#$VehicleInvolvedInAMZSReportFn #$AMZSIssue" +id +") #$"+modelConst +")");
+                            c.assertGaf(Model, Mt);
+                            
+                    } catch (JSONException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (CycApiException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CycService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
     }
     
      public void newIssue(CycAccess _c) {
@@ -1304,12 +1114,12 @@ public class CycService {
                     try {
                         long startTime = System.currentTimeMillis();
                         
-                        Integer newIssueId = getId() + 1;
+//                        Integer newIssueId = getId() + 1;
                         
                         CycConstant AMZSReport = _c.getConstantByName("AMZSReport");
-                        CycConstant CycIssue = _c.makeCycConstant("AMZSIssue"+ newIssueId);
+                        CycConstant CycIssue = _c.makeCycConstant("AMZSIssue"+ getId());
                         _c.assertIsa(CycIssue, AMZSReport, _c.getConstantByName("BaseKB"));
-                        CycList NameString = _c.makeCycList("(#$nameString #$AMZSIssue"+newIssueId +" \"Issue "+newIssueId +"\")");
+                        CycList NameString = _c.makeCycList("(#$nameString #$AMZSIssue"+getId() +" \"Issue "+getId() +"\")");
                         _c.assertGaf(NameString, _c.getConstantByName("EnglishMt"));
                         
                         
@@ -1328,6 +1138,30 @@ public class CycService {
                     }
     }
     
+//    public void newInconvenientEvent(CycAccess _c) {
+//                    try {
+//                        long startTime = System.currentTimeMillis();
+//                        
+////                        Integer newIssueId = getId() + 1;
+//                        
+//                        CycConstant AMZSReport = _c.getConstantByName("InconvenientTrafficEvent");
+//                        CycConstant Event = _c.makeCycConstant("InconvenientTrafficEvent"+ getId());
+//                        _c.assertIsa(Event, AMZSReport, _c.getConstantByName("BaseKB"));
+//                        CycList NameString = _c.makeCycList("(#$nameString #$InconvenientTrafficEvent"+getId() +" \"Traffic event "+getId() +"\")");
+//                        _c.assertGaf(NameString, _c.getConstantByName("EnglishMt"));
+//                        
+//                        
+//                        long endTime = System.currentTimeMillis();
+//                        long duration = endTime - startTime;
+//                        LOGGER.log(Level.INFO, "Importing into Cyc Traffic EVENT took: {0}", duration);
+//                    } catch (UnknownHostException ex) {
+//                        LOGGER.log(Level.SEVERE, null, ex);
+//                    } catch (IOException ex) {
+//                            LOGGER.log(Level.SEVERE, null, ex);
+//                    } catch (CycApiException ex) {
+//                            LOGGER.log(Level.SEVERE, null, ex);
+//                    }
+//    }
     
     public static String toEnumCase(String s) {
                 String string = s;
